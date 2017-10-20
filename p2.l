@@ -27,7 +27,7 @@ op_binario	\*|(\*\*)|\/|(&&)|(\|\|)|\^|>|<|(>=)|(<=)|(==)|(!=)
 equals	=
 entero	[0-9]+
 fl_bool_ch	([0-9]+(.[0-9]+)?)|(\’[^\’]\’)|(true)|(false)
-cadena	\”[^\”]*\”
+cadena	\"[^\"]*\"
 nombre	[_a-zA-Z][_a-zA-Z0-9]*
 %%
 {cabecera_programa}	{ printf("cabecera_programa\n"); }		
