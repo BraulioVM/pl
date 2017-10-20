@@ -29,7 +29,11 @@ entero	[0-9]+
 fl_bool_ch	([0-9]+(.[0-9]+)?)|(\'[^\']\')|(verdadero)|(falso)
 cadena	\"[^\"]*\"
 nombre	[_a-zA-Z][_a-zA-Z0-9]*
+
+
 %%
+
+
 {cabecera_programa}	{ printf("{cabecera_programa}"); }		
 {llave_izq}	{ printf("{llave_izq}"); }
 {llave_der}	{ printf("{llave_der}"); }
@@ -69,5 +73,8 @@ nombre	[_a-zA-Z][_a-zA-Z0-9]*
 %%
 
 int main() {
+
 	yylex();
+
+	printf( "\n\n" );
 }
