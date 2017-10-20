@@ -7,7 +7,7 @@ parentesis_izq	\(
 parentesis_der	\)
 token_subprograma	procedimiento
 marca_ini_declar_variables	sean
-marca_fin_declar_variables	.
+marca_fin_declar_variables	\.
 tipo	(booleano)|(entero)|(real)|(caracter)
 nombre	[_a-zA-Z][_a-zA-Z0-9]*
 coma	,
