@@ -1,0 +1,12 @@
+BIENVENIDO {
+    sean
+        booleano t;
+    .
+
+    procedimiento hey(entero n, caracter c) {
+        sean .
+        imprimir n, c
+    }
+
+    hey(4, 'c');
+}
