@@ -1,0 +1,11 @@
+BIENVENIDO {
+    sean
+        entero int;
+    .
+    
+    para i := 0 hasta 10 hacer {
+        int = int + i;
+    }
+
+    imprimir int;
+}
