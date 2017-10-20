@@ -1,0 +1,19 @@
+BIENVENIDO
+
+sean
+entero a ;
+real b;
+real c;
+entero d;
+.
+
+a = 10;
+b = 10.1;
+c = ( b - a ) * 50 / 2;
+captar d;
+
+si ( d > c )
+	imprimir "Hola, mundo.";
+else
+	c = 0;
+	imprimir c + 1;
