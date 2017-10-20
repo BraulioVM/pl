@@ -61,6 +61,8 @@ nombre	[_a-zA-Z][_a-zA-Z0-9]*
 {fl_bool_ch}	{ printf("{fl_bool_ch}"); }
 {cadena}	{ printf("{cadena}"); }
 {nombre}	{ printf("{nombre}"); }
+[\ \t\n]		{ printf( "%s",yytext ); }
+.			{ printf("No se pudo reconocer: %s\n", yytext ); }
 
 
 %%
