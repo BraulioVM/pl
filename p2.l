@@ -1,10 +1,10 @@
 cabecera_programa	BIENVENIDO
-llave_izq	{
-llave_der	}
-corchete_izq	[
-corchete_der	]
-parentesis_izq	(
-parentesis_der 	)
+llave_izq	\{
+llave_der	\}
+corchete_izq	\[
+corchete_der	\]
+parentesis_izq	\(
+parentesis_der	\)
 token_subprograma	procedimiento
 marca_ini_declar_variables	sean
 marca_fin_declar_variables	.
@@ -22,7 +22,7 @@ do	hacer
 scanf	captar
 printf	imprimir
 return	volver
-plus_minus	+|-
+plus_minus	\+|-
 not	!
 op_binario	\*|(\*\*)|\/|(&&)|(\|\|)|\^|>|<|(>=)|(<=)|(==)|(!=)
 equals	=
