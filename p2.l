@@ -9,7 +9,6 @@ token_subprograma	procedimiento
 marca_ini_declar_variables	sean
 marca_fin_declar_variables	\.
 tipo	(booleano)|(entero)|(real)|(caracter)
-nombre	[_a-zA-Z][_a-zA-Z0-9]*
 coma	,
 PYC	;
 if	si
@@ -29,6 +28,7 @@ equals	=
 entero	[0-9]+
 fl_bool_ch	([0-9]+(.[0-9]+)?)|(\’[^\’]\’)|(true)|(false)
 cadena	\”[^\”]*\”
+nombre	[_a-zA-Z][_a-zA-Z0-9]*
 %%
 {cabecera_programa}	{ printf("cabecera_programa\n"); }		
 {llave_izq}	{ printf("llave_izq\n"); }
@@ -41,7 +41,6 @@ cadena	\”[^\”]*\”
 {marca_ini_declar_variables}	{ printf("marca_ini_declar_variables\n"); }
 {marca_fin_declar_variables}	{ printf("marca_fin_declar_variables\n"); }
 {tipo}	{ printf("tipo\n"); }
-{nombre}	{ printf("nombre\n"); }
 {coma}	{ printf("coma\n"); }
 {PYC}	{ printf("PYC\n"); }
 {if}	{ printf("if\n"); }
@@ -61,6 +60,7 @@ cadena	\”[^\”]*\”
 {entero}	{ printf("entero\n"); }
 {fl_bool_ch}	{ printf("fl_bool_ch\n"); }
 {cadena}	{ printf("cadena\n"); }
+{nombre}	{ printf("nombre\n"); }
 
 
 %%
