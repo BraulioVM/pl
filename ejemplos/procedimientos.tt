@@ -1,6 +1,6 @@
 BIENVENIDO {
     sean
-        booleano t;
+        booleano t
     .
 
     procedimiento hey(entero n, caracter c) {
@@ -8,5 +8,6 @@ BIENVENIDO {
         imprimir n, c
     }
 
+    t = falso;
     hey(4, 'c');
 }
