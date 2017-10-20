@@ -1,6 +1,6 @@
 BIENVENIDO {
     sean
-        booleano t;
+        booleano t
     .
 
     procedimiento hey(entero n, caracter c) {
