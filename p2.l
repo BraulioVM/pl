@@ -26,7 +26,7 @@ not	!
 op_binario	\*|(\*\*)|\/|(&&)|(\|\|)|\^|>|<|(>=)|(<=)|(==)|(!=)
 equals	=
 entero	[0-9]+
-fl_bool_ch	([0-9]+(.[0-9]+)?)|(\'[^\']\')|(true)|(false)
+fl_bool_ch	([0-9]+(.[0-9]+)?)|(\'[^\']\')|(verdadero)|(falso)
 cadena	\"[^\"]*\"
 nombre	[_a-zA-Z][_a-zA-Z0-9]*
 %%
