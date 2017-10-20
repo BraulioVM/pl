@@ -30,37 +30,37 @@ fl_bool_ch	([0-9]+(.[0-9]+)?)|(\'[^\']\')|(true)|(false)
 cadena	\"[^\"]*\"
 nombre	[_a-zA-Z][_a-zA-Z0-9]*
 %%
-{cabecera_programa}	{ printf("cabecera_programa\n"); }		
-{llave_izq}	{ printf("llave_izq\n"); }
-{llave_der}	{ printf("llave_der\n"); }
-{corchete_izq}	{ printf("corchete_izq\n"); }
-{corchete_der}	{ printf("corchete_der\n"); }
-{parentesis_izq}	{ printf("parentesis_izq\n"); }
-{parentesis_der}	{ printf("parentesis_der\n"); }
-{token_subprograma}	{ printf("token_subprograma\n"); }
-{marca_ini_declar_variables}	{ printf("marca_ini_declar_variables\n"); }
-{marca_fin_declar_variables}	{ printf("marca_fin_declar_variables\n"); }
-{tipo}	{ printf("tipo\n"); }
-{coma}	{ printf("coma\n"); }
-{PYC}	{ printf("PYC\n"); }
-{if}	{ printf("if\n"); }
-{else}	{ printf("else\n"); }
-{while}	{ printf("while\n"); }
-{for}	{ printf("for\n"); }
-{direccion_for}	{ printf("direccion_for\n"); }
-{init_for}	{ printf("init_for\n"); }
-{do}	{ printf("do\n"); }
-{scanf}	{ printf("scanf\n"); }
-{printf}	{ printf("printf\n"); }
-{return}	{ printf("return\n"); }
-{plus_minus}	{ printf("plus_minus\n"); }
-{not}	{ printf("not\n"); }
-{op_binario}	{ printf("op_binario\n"); }
-{equals}	{ printf("equals\n"); }
-{entero}	{ printf("entero\n"); }
-{fl_bool_ch}	{ printf("fl_bool_ch\n"); }
-{cadena}	{ printf("cadena\n"); }
-{nombre}	{ printf("nombre\n"); }
+{cabecera_programa}	{ printf("{cabecera_programa}"); }		
+{llave_izq}	{ printf("{llave_izq}"); }
+{llave_der}	{ printf("{llave_der}"); }
+{corchete_izq}	{ printf("{corchete_izq}"); }
+{corchete_der}	{ printf("{corchete_der}"); }
+{parentesis_izq}	{ printf("{parentesis_izq}"); }
+{parentesis_der}	{ printf("{parentesis_der}"); }
+{token_subprograma}	{ printf("{token_subprograma}"); }
+{marca_ini_declar_variables}	{ printf("{marca_ini_declar_variables}"); }
+{marca_fin_declar_variables}	{ printf("{marca_fin_declar_variables}"); }
+{tipo}	{ printf("{tipo}"); }
+{coma}	{ printf("{coma}"); }
+{PYC}	{ printf("{PYC}"); }
+{if}	{ printf("{if}"); }
+{else}	{ printf("{else}"); }
+{while}	{ printf("{while}"); }
+{for}	{ printf("{for}"); }
+{direccion_for}	{ printf("{direccion_for}"); }
+{init_for}	{ printf("{init_for}"); }
+{do}	{ printf("{do}"); }
+{scanf}	{ printf("{scanf}"); }
+{printf}	{ printf("{printf}"); }
+{return}	{ printf("{return}"); }
+{plus_minus}	{ printf("{plus_minus}"); }
+{not}	{ printf("{not}"); }
+{op_binario}	{ printf("{op_binario}"); }
+{equals}	{ printf("{equals}"); }
+{entero}	{ printf("{entero}"); }
+{fl_bool_ch}	{ printf("{fl_bool_ch}"); }
+{cadena}	{ printf("{cadena}"); }
+{nombre}	{ printf("{nombre}"); }
 
 
 %%
