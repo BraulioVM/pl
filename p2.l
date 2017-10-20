@@ -61,7 +61,8 @@ nombre	[_a-zA-Z][_a-zA-Z0-9]*
 {fl_bool_ch}	{ printf("{fl_bool_ch}"); }
 {cadena}	{ printf("{cadena}"); }
 {nombre}	{ printf("{nombre}"); }
-[\ \t\n]		{ printf( "%s",yytext ); }
+[\ \t]		{ printf( "%s",yytext ); }
+[\n]            { yylineno++; printf("\n"); }
 .			{ printf("Error léxico: %s no esperado en línea %d\n", yytext, yylineno ); }
 
 
