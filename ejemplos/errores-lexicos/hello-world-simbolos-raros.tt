@@ -1,0 +1,5 @@
+BIENVENIDO {
+           #
+  imprimir "HOLA", 32.2 $$$$
+  && @
+}
