@@ -1,3 +1,4 @@
-lex
-p2.c
-y.tab.c
+debug/*.c
+compilador/*.c
+debug/tokenizador
+debug/tokenizador-mac
