@@ -3,7 +3,34 @@
   // código C
 %}
 
-%token whatever
+%token CABECERA_PROGRAMA
+%token LLAVE_IZQ LLAVE_DER
+%token CORCHETE_IZQ CORCHETE_DER
+%token PARENTESIS_IZQ PARENTESIS_DER 
+%token TOKEN_SUBPROGRAMA 
+%token MARCA_INI_DECLAR_VARIABLES 
+%token MARCA_FIN_DECLAR_VARIABLES 
+%token TIPO 
+%token NOMBRE 
+%token COMA 
+%token PYC 
+%token IF 
+%token ELSE 
+%token WHILE 
+%token FOR 
+%token DIRECCION_FOR 
+%token INIT_FOR 
+%token DO 
+%token SCANF 
+%token PRINTF 
+%token RETURN 
+%token PLUS_MINUS 
+%token NOT 
+%token OP_BINARIO 
+%token EQUALS 
+%token ENTERO 
+%token FL_BOOL_CH 
+%token CADENA 
 
 %start PROGRAMA
 
@@ -11,23 +38,26 @@
 %%
 
 
-PROGRAMA : CABECERA_PROGRAMA BLOQUE A
+PROGRAMA : CABECERA_PROGRAMA BLOQUE
   ;
 
 
-
-
-
-
-
-
-MARCA_INI_DECLAR_VARIABLES : "sean"
+BLOQUE : INICIO_DE_BLOQUE DECLAR_DE_VARIABLES_LOCALES DECLAR_DE_SUBPROGS SENTENCIAS FIN_DE_BLOQUE
   ;
 
-
-
-MATRIZ : '{' LISTA_VECTORES '}'
+INICIO_DE_BLOQUE : LLAVE_IZQ
   ;
+FIN_DE_BLOQUE : LLAVE_DER
+  ;
+
+DECLAR_DE_SUBPROGS : DECLAR_DE_SUBPROGS DECLAR_SUBPROGS
+                                         |  
+<Declar_subprog> ::= <Cabecera_subprograma> <bloque>
+
+<Declar_de_variables_locales> ::= <Marca_ini_declar_variables>
+                                                              <Variables_locales>
+                                                              <Marca_fin_declar_variables>
+                                  |
 
 
 %%
@@ -44,20 +74,9 @@ main(){
 
 /* 
 
-<bloque> ::= <Inicio_de_bloque>
-                               <Declar_de_variables_locales>
-                               <Declar_de_subprogs>
-                               <Sentencias>
-                      <Fin_de_bloque>
-      
-<Declar_de_subprogs> ::= <Declar_de_subprogs> <Declar_subprog>
-                                         |  
-<Declar_subprog> ::= <Cabecera_subprograma> <bloque>
 
-<Declar_de_variables_locales> ::= <Marca_ini_declar_variables>
-                                                              <Variables_locales>
-                                                              <Marca_fin_declar_variables>
-                                  |
+      
+
 <Marca_ini_declarar_variables> ::=  sean
 <Marca_fin_declarar_variables> ::=  .
 <Variables_locales> ::= <variable_local>, <Variables_locales> | <variable_local>
