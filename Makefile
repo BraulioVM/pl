@@ -4,6 +4,9 @@ lex: p2.c
 lexmac: p2.c
 	gcc p2.c -o lex -ll
 
+yacc: p3.y
+	yacc p3.y
+
 p2.c: p2.l
 	lex p2.l
 	mv lex.yy.c p2.c
