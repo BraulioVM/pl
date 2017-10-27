@@ -5,10 +5,13 @@
 
 %token whatever
 
+%start PROGRAMA
+
+
 %%
 
 
-PROGRAMA : CABECERA_PROGRAMA BLOQUE
+PROGRAMA : CABECERA_PROGRAMA BLOQUE A
   ;
 
 
@@ -23,11 +26,12 @@ MARCA_INI_DECLAR_VARIABLES : "sean"
 
 
 
-  MATRIZ : '{' LISTA_VECTORES '}'
+MATRIZ : '{' LISTA_VECTORES '}'
   ;
 
 
 %%
+
 
 #include "lexyy.c"
 #include "error.y"
