@@ -52,13 +52,117 @@ FIN_DE_BLOQUE : LLAVE_DER
 
 DECLAR_DE_SUBPROGS : DECLAR_DE_SUBPROGS DECLAR_SUBPROGS
                                          |  
-<Declar_subprog> ::= <Cabecera_subprograma> <bloque>
-
-<Declar_de_variables_locales> ::= <Marca_ini_declar_variables>
-                                                              <Variables_locales>
-                                                              <Marca_fin_declar_variables>
+  ;
+DECLAR_DE_SUBPROGS : CABECERA_SUBPROG BLOQUE
+  ;
+DECLAR_DE_VARIABLES_LOCALES : MARCA_INI_DECLAR_VERIABLES VARABLES_LOCALES MARCA_FIN_DECLAR_VERIABLES
                                   |
+  ;
+MARCA_INI_DECLARAR_VARIABLES :  "sean"
+  ;
+MARCA_FIN_DECLARAR_VARIABLES :  '.'
+  ;
+VARIABLES_LOCALES : VARIABLE_LOCAL ',' VARIABLES_LOCALES | VARIABLE_LOCAL
+  ;
+VARIABLE_LOCAL : TIPO LISTA_IDENTIFICADOR
+  ;
+LISTA_IDENTIFICADOR : IDENTIFICADOR | IDENTIFICADOR ',' LISTA_IDENTIFICADOR
+  ;
+IDENTIFICADOR : NOMBRE | NOMBRE CORCHETE_IZQ DIMENSIONES CORCHETE_DER
+  ;
+DIMENSIONES : NATURAL | NATURAL ',' NATURAL
+  ;
+INICIO_DE_BLOQUE : LLAVE_IZQ
+  ;
+FIN_DE_BLOQUE : LLAVE_DER
+  ;
+CABECERA_SUBPROGRAMA : PROCEDIMIENTO NOMBRE PARENTESIS_IZQ LISTA_PARAMETROS PARENTESIS_DER
+  ;
+PARAMETRO : TIPO IDENTIFICADOR
+  ;
+LISTA_PARAMETROS : PARAMETRO ',' LISTA_PARAMETROS | PARAMETRO |
+  ;
+SENTENCIAS : SENTENCIAS SENTENCIA
+                               |  SENTENCIA
+  ;
+SENTENCIA : BLOQUE
+                               |  SENTENCIA_ASIGNACION    
+                               |  SENTENCIA_IF
+                               |  SENTENCIA_WHILE
+                               |  SENTENCIA_ENTRADA
+            |  SENTENCIA_SALIDA         
+            |  LLAMADA_PROCED
+            |  SENTENCIA_FOR
+        | SENTENCIA_RETURN
+  ;
+SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR EQUALS EXPR PYC
+  ;
+SENTENCIA_IF : "si" PARENTESIS_IZQ EXPR PARENTESIS_DER SENTENCIA SENTENCIA_ELSE
+  ;
+SENTENCIA_ELSE : "si_so" SENTENCIA |
+  ;
+SENTENCIA_WHILE : "mientras" PARENTESIS_IZQ EXPR PARENTESIS_DER SENTENCIA
+  ;
+SENTENCIA_FOR : "para" NOMBRE ":=" EXPR DIRECCION_FOR EXPR "hacer" SENTENCIA
+  ;
+SENTENCIA_ENTRADA : NOMB_ENTRADA LISTA_IDENTIFICADOR_EXPR PYC
+  ;
+NOMB_ENTRADA : "captar"
+  ;
+SENTENCIA_SALIDA : NOMB_SALIDA LISTA_EXPRESIONES_O_CADENA PYC
+  ;
+LISTA_EXPRESIONES_O_CADENA : EXPR_O_CADENA
+                                                     | EXPR_O_CADENA','LISTA_EXPRESIONES_O_CADENA
+  ;
+EXPR_O_CADENA : EXPR | CADENA
+  ;
+NOMB_SALIDA : "imprimir"
+  ;
+SENTENCIA_RETURN : "volver" PYC
+  ;
+LLAMADA_PROCED : NOMBRE PARENTESIS_IZQ LISTA_EXPR PARENTESIS_DER PYC
+  ;
+ALFANUM : LETRA | DIGITO
+  ;
+PALABRA : ALFANUM PALABRA | "_" PALABRA |
+  ;
 
+EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER
+         | OP_UNARIO EXPR
+         | EXPR OP_BINARIO EXPR
+         | IDENTIFICADOR_EXPR
+         | LITERAL
+  ;
+
+IDENTIFICADOR_EXPR : NOMBRE | NOMBRE CORCHETE_IZQ EXPR CORCHETE_DER | NOMBRE CORCHETE_IZQ EXPR',' EXPR CORCHETE_DER
+  ;
+LISTA_IDENTIFICADOR_EXPR : IDENTIFICADOR_EXPR | IDENTIFICADOR_EXPR',' 
+                                          | LISTA_IDENTIFICADOR_EXPR
+  ;
+LITERAL : NUMERO
+            | BOOLEANO
+            | CARACTER
+  | VECTOR
+  | MATRIZ
+  ;
+NUMERO : NATURAL
+| REAL
+  ;
+NATURAL : DIGITO | DIGITO NATURAL
+  ;
+REAL : NATURAL.NATURAL
+  ;
+LISTA_EXPR : EXPR',' LISTA_EXPR
+    | EXPR
+    |
+  ;
+VECTOR : LLAVE_IZQ LISTA_EXPR LLAVE_DER
+  ;
+LISTA_VECTORES : VECTOR 
+    | VECTOR',' LISTA_VECTORES
+  ;
+MATRIZ : LLAVE_IZQ LISTA_VECTORES LLAVE_DER
+  ;
 
 %%
 
@@ -77,106 +181,117 @@ main(){
 
       
 
-<Marca_ini_declarar_variables> ::=  sean
-<Marca_fin_declarar_variables> ::=  .
-<Variables_locales> ::= <variable_local>, <Variables_locales> | <variable_local>
-<variable_local> ::= <tipo> <lista_identificador>
-<tipo> ::= booleano | entero | real | caracter
+MARCA_INI_DECLARAR_VARIABLES :  "sean"
+  ;
+MARCA_FIN_DECLARAR_VARIABLES :  '.'
+  ;
+VARIABLES_LOCALES : VARIABLE_LOCAL ',' VARIABLES_LOCALES | VARIABLE_LOCAL
+  ;
+VARIABLE_LOCAL : TIPO LISTA_IDENTIFICADOR
+  ;
+TIPO : BOOLEANO | ENTERO | REAL | CARACTER
+  ;
+LISTA_IDENTIFICADOR : IDENTIFICADOR | IDENTIFICADOR ',' LISTA_IDENTIFICADOR
+  ;
+IDENTIFICADOR : NOMBRE | NOMBRE CORCHETE_IZQ DIMENSIONES CORCHETE_DER
+  ;
+DIMENSIONES : NATURAL | NATURAL ',' NATURAL
+  ;
+CABECERA_PROGRAMA : BIENVENIDO
+  ;
+INICIO_DE_BLOQUE : LLAVE_IZQ
+  ;
+FIN_DE_BLOQUE : LLAVE_DER
+  ;
+CABECERA_SUBPROGRAMA : PROCEDIMIENTO NOMBRE PARENTESIS_IZQ LISTA_PARAMETROS PARENTESIS_DER
+  ;
+PARAMETRO : TIPO IDENTIFICADOR
+  ;
+LISTA_PARAMETROS : PARAMETRO ',' LISTA_PARAMETROS | PARAMETRO |
+  ;
+SENTENCIAS : SENTENCIAS SENTENCIA
+                               |  SENTENCIA
+  ;
+SENTENCIA : BLOQUE
+                               |  SENTENCIA_ASIGNACION    
+                               |  SENTENCIA_IF
+                               |  SENTENCIA_WHILE
+                               |  SENTENCIA_ENTRADA
+            |  SENTENCIA_SALIDA         
+            |  LLAMADA_PROCED
+            |  SENTENCIA_FOR
+        | SENTENCIA_RETURN
+  ;
+SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR EQUALS EXPR PYC
+  ;
+SENTENCIA_IF : "si" PARENTESIS_IZQ EXPR PARENTESIS_DER SENTENCIA SENTENCIA_ELSE
+  ;
+SENTENCIA_ELSE : "si_so" SENTENCIA |
+  ;
+SENTENCIA_WHILE : "mientras" PARENTESIS_IZQ EXPR PARENTESIS_DER SENTENCIA
+  ;
+SENTENCIA_FOR : "para" NOMBRE ":=" EXPR DIRECCION_FOR EXPR "hacer" SENTENCIA
+  ;
+DIRECCION_FOR : "hasta" | "bajando_hasta"
+  ;
+SENTENCIA_ENTRADA : NOMB_ENTRADA LISTA_IDENTIFICADOR_EXPR PYC
+  ;
+NOMB_ENTRADA : "captar"
+  ;
+SENTENCIA_SALIDA : NOMB_SALIDA LISTA_EXPRESIONES_O_CADENA PYC
+  ;
+LISTA_EXPRESIONES_O_CADENA : EXPR_O_CADENA
+                                                     | EXPR_O_CADENA','LISTA_EXPRESIONES_O_CADENA
+  ;
+EXPR_O_CADENA : EXPR | CADENA
+  ;
+NOMB_SALIDA : "imprimir"
+  ;
+SENTENCIA_RETURN : "volver" PYC
+  ;
+LLAMADA_PROCED : NOMBRE PARENTESIS_IZQ LISTA_EXPR PARENTESIS_DER PYC
+  ;
+ALFANUM : LETRA | DIGITO
+  ;
+PALABRA : ALFANUM PALABRA | "_" PALABRA | <--------------
+  ;
 
-<lista_identificador> ::= <identificador> | <identificador>, <lista_identificador>
-<identificador> ::= <nombre> | <nombre>[<dimensiones>]
-<dimensiones> ::= <natural> | <natural>,<natural>
+EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER
+         | OP_UNARIO EXPR  <-------------------
+         | EXPR OP_BINARIO EXPR
+         | IDENTIFICADOR_EXPR
+         | LITERAL
+  ;
 
-<Cabecera_programa> ::= BIENVENIDO
-<Inicio_de_bloque> ::= {
-<Fin_de_bloque> ::= }
-
-<Cabecera_subprograma> ::= procedimiento <nombre> (<lista_parametros>)
-<parametro> ::= <tipo> <identificador>
-<lista_parametros> ::= <parametro>, <lista_parametros> | <parametro> |
-
-
-<Sentencias> ::= <Sentencias> <Sentencia>
-                               |  <Sentencia>
-
-
-<Sentencia> ::= <bloque>
-                               |  <sentencia_asignacion>    
-                               |  <sentencia_if>
-                               |  <sentencia_while>
-                               |  <sentencia_entrada>
-            |  <sentencia_salida>         
-            |  <llamada_proced>
-            |  <sentencia_for>
-        | <sentencia_return>
-
-
-<sentencia_asignacion> ::= <identificador_expr> = <expr>;
-<sentencia_if> ::= si (<expr>) <sentencia> <sentencia_else>
-<sentencia_else> ::= si_no <sentencia> |
-<sentencia_while> ::= mientras (<expr>) <sentencia>
-<sentencia_for> ::= para <nombre> := <expr> <direccion_for> <expr> hacer <sentencia>
-<direccion_for> ::= hasta | bajando_hasta
-<sentencia_entrada> ::= <nomb_entrada> <lista_identificador_expr>;
-<nomb_entrada> ::= captar
-<sentencia_salida> ::= <nomb_salida> <lista_expresiones_o_cadena>;
-<lista_expresiones_o_cadena> ::= <expr_o_cadena> 
-                                                     | <expr_o_cadena>,<lista_expresiones_o_cadena>
-
-<expr_o_cadena> ::= <expr> | <cadena>
-<nomb_salida> ::= imprimir
-<sentencia_return> ::= volver;
-<llamada_proced> ::= <nombre>(<lista_expr>);
-
-<letra> ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
-<digito> ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-<alfanum> ::= <letra> | <digito>
-<palabra> ::= <alfanum> <palabra> | "_" <palabra> |
-<nombre> ::= <letra> <palabra> | “_” <nombre>
-
-<expr> ::= ( <expr> )
-         | <op_unario> <expr>
-         | <expr> <op_binario> <expr>
-         | <identificador_expr>
-         | <literal>
-<op_unario> ::= "-" | "!" | “+”
-
-<op_aritmetico> ::= "+" | "-" | "*" | “**” | "/"
-<op_logico> ::= "&&" | "||" | "^"
-<op_comparacion> ::= ">" | ">=" | "<" | "<=" | "==" | "!="
-<op_binario> ::=  <op_aritmetico> | <op_logico> | <op_comparacion>
-
-<identificador_expr> ::= <nombre> | <nombre>[<expr>] | <nombre>[<expr>, <expr>]
-<lista_identificador_expr> ::= <identificador_expr> | <identificador_expr>, 
-                                          | <lista_identificador_expr>
-<literal> ::= <numero>
-            | <booleano>
-            | <caracter>
-  | <vector>
-  | <matriz>
-
-<booleano> ::= “verdadero” | “falso”
-<numero> ::= <natural>
-| <real>
-<natural> ::= <digito> | <digito> <natural>
-<real> ::= <natural>.<natural>
-
-<imprimible> ::= <alfanum> | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" | "," | "-" | "." | "/" | ":" | ";" | "<" | "=" | ">" | "?" | "@" | "["  | "]" | "^" | "_" | "`" | "{" | "|" | "}" | "~" | " " | "\"" | "\'" | "\n"
-<comilla_simple> ::= "'"
-<comilla_doble> ::= '"'
-<cadena_aux> ::=  <imprimible> <cadena_aux> | 
-<cadena> ::= <comilla_doble> <cadena_aux> <comilla_doble>
-
-<caracter> ::= <comilla_simple> <imprimible> <comilla_simple>
-
-<lista_expr> ::= <expr>, <lista_expr>
-    | <expr>
+IDENTIFICADOR_EXPR : NOMBRE | NOMBRE[EXPR] | NOMBRE CORCHETE_IZQ EXPR',' EXPR CORCHETE_DER
+  ;
+LISTA_IDENTIFICADOR_EXPR : IDENTIFICADOR_EXPR | IDENTIFICADOR_EXPR',' 
+                                          | LISTA_IDENTIFICADOR_EXPR
+  ;
+LITERAL : NUMERO
+            | BOOLEANO
+            | CARACTER
+  | VECTOR
+  | MATRIZ
+  ;
+NUMERO : NATURAL <-------
+| REAL
+  ;
+NATURAL : DIGITO | DIGITO NATURAL
+  ;
+REAL : NATURAL.NATURAL
+  ;
+LISTA_EXPR : EXPR',' LISTA_EXPR
+    | EXPR
     |
-<vector> ::= { <lista_expr> }
-
-<lista_vectores> ::= <vector> 
-    | <vector>, <lista_vectores>
-<matriz> ::= { <lista_vectores> }
+  ;
+VECTOR : LLAVE_IZQ LISTA_EXPR LLAVE_DER
+  ;
+LISTA_VECTORES : VECTOR 
+    | VECTOR',' LISTA_VECTORES
+  ;
+MATRIZ : LLAVE_IZQ LISTA_VECTORES LLAVE_DER
+  ;
 
 */
 }
