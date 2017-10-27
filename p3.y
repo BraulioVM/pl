@@ -1,7 +1,7 @@
 
 %{
   // código C
-}
+%}
 
 %token whatever
 
@@ -9,6 +9,21 @@
 
 
 PROGRAMA : CABECERA_PROGRAMA BLOQUE
+  ;
+
+
+
+
+
+
+
+
+MARCA_INI_DECLAR_VARIABLES : "sean"
+  ;
+
+
+
+  MATRIZ : '{' LISTA_VECTORES '}'
   ;
 
 
