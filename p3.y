@@ -8,6 +8,9 @@
 %%
 
 
+PROGRAMA : CABECERA_PROGRAMA BLOQUE
+  ;
+
 
 %%
 
@@ -18,24 +21,24 @@
 main(){
   
   yyparse();
-}
 
 
-<programa> ::= <cabecera_programa> <bloque>
+/* 
+
 <bloque> ::= <Inicio_de_bloque>
                                <Declar_de_variables_locales>
                                <Declar_de_subprogs>
                                <Sentencias>
                       <Fin_de_bloque>
-			
+      
 <Declar_de_subprogs> ::= <Declar_de_subprogs> <Declar_subprog>
-                                         |	
+                                         |  
 <Declar_subprog> ::= <Cabecera_subprograma> <bloque>
 
 <Declar_de_variables_locales> ::= <Marca_ini_declar_variables>
                                                               <Variables_locales>
                                                               <Marca_fin_declar_variables>
-                               		|
+                                  |
 <Marca_ini_declarar_variables> ::=  sean
 <Marca_fin_declarar_variables> ::=  .
 <Variables_locales> ::= <variable_local>, <Variables_locales> | <variable_local>
@@ -60,13 +63,13 @@ main(){
 
 
 <Sentencia> ::= <bloque>
-                               |  <sentencia_asignacion>		
+                               |  <sentencia_asignacion>    
                                |  <sentencia_if>
                                |  <sentencia_while>
                                |  <sentencia_entrada>
-		        |  <sentencia_salida>		      
-		        |  <llamada_proced>
-		        |  <sentencia_for>
+            |  <sentencia_salida>         
+            |  <llamada_proced>
+            |  <sentencia_for>
         | <sentencia_return>
 
 
@@ -111,8 +114,8 @@ main(){
 <literal> ::= <numero>
             | <booleano>
             | <caracter>
-	| <vector>
-	| <matriz>
+  | <vector>
+  | <matriz>
 
 <booleano> ::= “verdadero” | “falso”
 <numero> ::= <natural>
@@ -129,10 +132,14 @@ main(){
 <caracter> ::= <comilla_simple> <imprimible> <comilla_simple>
 
 <lista_expr> ::= <expr>, <lista_expr>
-		| <expr>
-		|
+    | <expr>
+    |
 <vector> ::= { <lista_expr> }
 
 <lista_vectores> ::= <vector> 
-		| <vector>, <lista_vectores>
+    | <vector>, <lista_vectores>
 <matriz> ::= { <lista_vectores> }
+
+*/
+}
+
