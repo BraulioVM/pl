@@ -26,6 +26,6 @@
 #define NOT 281
 #define OP_BINARIO 282
 #define EQUALS 283
-#define ENTERO 284
+#define NATURAL 284
 #define FL_BOOL_CH 285
 #define CADENA 286

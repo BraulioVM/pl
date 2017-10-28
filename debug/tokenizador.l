@@ -33,7 +33,7 @@ nombre	[_a-zA-Z][_a-zA-Z0-9]*
 
 %%
 
-{cabecera_programa}	{ printf("{cabecera_programa}"); }		
+{cabecera_programa}	{ printf("{cabecera_programa}"); }
 {llave_izq}	{ printf("{llave_izq}"); }
 {llave_der}	{ printf("{llave_der}"); }
 {corchete_izq}	{ printf("{corchete_izq}"); }
@@ -60,7 +60,7 @@ nombre	[_a-zA-Z][_a-zA-Z0-9]*
 {not}	{ printf("{not}"); }
 {op_binario}	{ printf("{op_binario}"); }
 {equals}	{ printf("{equals}"); }
-{entero}	{ printf("{entero}"); }
+{natural}	{ printf("{natural}"); }
 {fl_bool_ch}	{ printf("{fl_bool_ch}"); }
 {cadena}	{ printf("{cadena}"); }
 {nombre}	{ printf("{nombre}"); }

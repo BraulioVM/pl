@@ -1,40 +1,39 @@
-
 %{
   // código C
 %}
 
 %token CABECERA_PROGRAMA
-%token LLAVE_IZQ 
+%token LLAVE_IZQ
 %token LLAVE_DER
-%token CORCHETE_IZQ 
+%token CORCHETE_IZQ
 %token CORCHETE_DER
-%token PARENTESIS_IZQ 
-%token PARENTESIS_DER 
-%token TOKEN_SUBPROGRAMA 
-%token MARCA_INI_DECLAR_VARIABLES 
-%token MARCA_FIN_DECLAR_VARIABLES 
-%token TIPO 
-%token NOMBRE 
-%token COMA 
-%token PYC 
-%token IF 
-%token ELSE 
-%token WHILE 
-%token FOR 
-%token DIRECCION_FOR 
-%token INIT_FOR 
-%token DO 
-%token SCANF 
-%token PRINTF 
-%token RETURN 
-%token PLUS_MINUS 
-%token NOT 
+%token PARENTESIS_IZQ
+%token PARENTESIS_DER
+%token TOKEN_SUBPROGRAMA
+%token MARCA_INI_DECLAR_VARIABLES
+%token MARCA_FIN_DECLAR_VARIABLES
+%token TIPO
+%token NOMBRE
+%token COMA
+%token PYC
+%token IF
+%token ELSE
+%token WHILE
+%token FOR
+%token DIRECCION_FOR
+%token INIT_FOR
+%token DO
+%token SCANF
+%token PRINTF
+%token RETURN
+%token PLUS_MINUS
+%token NOT
 %token OP_UNARIO
-%token OP_BINARIO 
-%token EQUALS 
-%token ENTERO 
-%token FL_BOOL_CH 
-%token CADENA 
+%token OP_BINARIO
+%token EQUALS
+%token NATURAL
+%token FL_BOOL_CH
+%token CADENA
 
 %start PROGRAMA
 
@@ -48,7 +47,7 @@ BLOQUE : INICIO_DE_BLOQUE DECLAR_DE_VARIABLES_LOCALES DECLAR_DE_SUBPROGS SENTENC
   ;
 
 DECLAR_DE_SUBPROGS : DECLAR_DE_SUBPROGS DECLAR_SUBPROGS
-  |  
+  |
   ;
 
 
@@ -69,8 +68,8 @@ LISTA_IDENTIFICADOR : IDENTIFICADOR
 IDENTIFICADOR : NOMBRE
   | NOMBRE CORCHETE_IZQ DIMENSIONES CORCHETE_DER
   ;
-DIMENSIONES : ENTERO
-  | ENTERO ',' ENTERO
+DIMENSIONES : NATURAL
+  | NATURAL ',' NATURAL
   ;
 
 
@@ -139,8 +138,8 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER
          | EXPR OP_BINARIO EXPR
          | IDENTIFICADOR_EXPR
          | FL_BOOL_CH
-         | VECTOR      
-         | MATRIZ       
+         | VECTOR
+         | MATRIZ
   ;
 
 IDENTIFICADOR_EXPR : NOMBRE
@@ -158,7 +157,7 @@ LISTA_EXPR : EXPR ',' LISTA_EXPR
   ;
 VECTOR : LLAVE_IZQ LISTA_EXPR LLAVE_DER
   ;
-LISTA_VECTORES : VECTOR 
+LISTA_VECTORES : VECTOR
     | VECTOR ',' LISTA_VECTORES
   ;
 MATRIZ : LLAVE_IZQ LISTA_VECTORES LLAVE_DER
@@ -173,11 +172,11 @@ MATRIZ : LLAVE_IZQ LISTA_VECTORES LLAVE_DER
 
 
 main(){
-  
+
   yyparse();
 
 
-/* 
+/*
 
 Qué hay que arreglar por ahora:
 
@@ -191,4 +190,3 @@ Qué hay que arreglar por ahora:
 */
 
 }
-
