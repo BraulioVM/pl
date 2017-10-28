@@ -1,24 +1,48 @@
-debug/tokenizador-mac: debug/tokenizador.c
-	gcc debug/tokenizador.c -o debug/tokenizador -ll
+CC = gcc
+CCFLAGS =  -Wall -g
+LEXER = lex
+BISON = yacc
+BIN = ./bin
+SRC = ./compilador
+# not like real objects, but intermediate steps
+OBJ = ./obj
+DEBUG = ./debug
+OS := $(shell uname)
 
-debug/tokenizador: debug/tokenizador.c
-	gcc debug/tokenizador.c -o debug/tokenizador -lfl
+ifeq ($(OS),Linux)
+	TOKENIZER_FLAGS = -lfl
+endif
+ifeq ($(OS),Darwin)
+	TOKENIZER_FLAGS = -ll
+endif
 
-debug/tokenizador.c: debug/tokenizador.l
-	lex debug/tokenizador.l
-	mv lex.yy.c debug/tokenizador.c
+all: tokenizer
 
-compilador/tokenizador-mac: compilador/tokenizador.c
-	gcc compilador/tokenizador.c -o compilador/tokenizador -ll
+tokenizer: $(BIN)/tokenizador
 
-compilador/tokenizador: compilador/tokenizador.c
-	gcc compilador/tokenizador.c -o compilador/tokenizador -lfl
+$(BIN)/tokenizador: $(OBJ)/tokenizador.c
+	$(CC) $(CC_FLAGS) -I$(SRC) $^ -o $@ $(TOKENIZER_FLAGS)
 
-compilador/tokenizador.c: compilador/tokenizador.l
-	lex compilador/tokenizador.l
-	mv lex.yy.c compilador/tokenizador.c
+$(OBJ)/tokenizador.c: $(SRC)/tokenizador.l
+	$(LEXER) -o $@ $^
 
-compilador/gramatica.c: compilador/gramatica.y
-	yacc compilador/gramatica.y -o compilador/gramatica.c
+grammar: $(OBJ)/gramatica.c
 
+$(OBJ)/gramatica.c: $(SRC)/gramatica.y
+	$(BISON) $^ -o $@
 
+debug: $(DEBUG)/tokenizador
+
+$(DEBUG)/tokenizador: $(DEBUG)/tokenizador.c
+	$(CC) $(CC_FLAGS) -I$(SRC) $^ -o $@ $(TOKENIZER_FLAGS)
+
+$(DEBUG)/tokenizador.c: $(DEBUG)/tokenizador.l
+	$(LEXER) $^ -o $@
+
+clean:
+	rm -f $(OBJ)/*
+
+mrproper: clean
+	rm -f $(BIN)/*
+
+.PHONY: all clean mrproper
