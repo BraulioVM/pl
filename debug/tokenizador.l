@@ -29,7 +29,10 @@ entero	[0-9]+
 fl_bool_ch	([0-9]+(.[0-9]+)?)|(\'[^\']\')|(verdadero)|(falso)
 cadena	\"[^\"]*\"
 nombre	[_a-zA-Z][_a-zA-Z0-9]*
+
+
 %%
+
 {cabecera_programa}	{ printf("{cabecera_programa}"); }		
 {llave_izq}	{ printf("{llave_izq}"); }
 {llave_der}	{ printf("{llave_der}"); }
@@ -61,12 +64,16 @@ nombre	[_a-zA-Z][_a-zA-Z0-9]*
 {fl_bool_ch}	{ printf("{fl_bool_ch}"); }
 {cadena}	{ printf("{cadena}"); }
 {nombre}	{ printf("{nombre}"); }
-[\ \t\n]		{ printf( "%s",yytext ); }
-.			{ printf("No se pudo reconocer: %s\n", yytext ); }
+[\ \t]		{ printf( "%s",yytext ); }
+[\n]            { yylineno++; printf("\n"); }
+.			{ printf("Error léxico: %s no esperado en línea %d\n", yytext, yylineno ); }
 
 
 %%
 
 int main() {
+
 	yylex();
+
+	printf( "\n\n" );
 }

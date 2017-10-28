@@ -1,2 +1,6 @@
-lex
-p2.c
+debug/*.c
+compilador/*.c
+compilador/tokenizador
+compilador/tokenizador-mac
+debug/tokenizador
+debug/tokenizador-mac

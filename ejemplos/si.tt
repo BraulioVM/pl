@@ -1,19 +1,35 @@
 BIENVENIDO
 
+
 sean
-entero a ;
-real b;
-real c;
-entero d;
+entero a,
+real b,
+real c,
+entero d[10],
+booleano si
 .
 
-a = 10;
+
+a = +10;
 b = 10.1;
-c = ( b - a ) * 50 / 2;
-captar d;
+c = ( b - a ) * 50 / (-(+2));
+captar d[0];
+si = falso;
+
 
 si ( d > c )
 	imprimir "Hola, mundo.";
-else
+
+si_no si ( si ){
 	c = 0;
 	imprimir c + 1;
+}
+
+si_no{
+	imprimir d[9], "";
+	si ( ! si && d[0] == 'c' )
+		imprimir "Cadena sin cerrar;
+}
+
+
+imprimir '', ', _holi, "3", óñn, π, que_no?;
