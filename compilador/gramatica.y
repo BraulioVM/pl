@@ -174,19 +174,4 @@ MATRIZ : LLAVE_IZQ LISTA_VECTORES LLAVE_DER
 main(){
 
   yyparse();
-
-
-/*
-
-Qué hay que arreglar por ahora:
-
-  54: CABECERA_SUBPROG es lo mismo que TOKEN_SUBPROGRAMA?
-  76: de dónde sale PROCEDIMIENTO?
-  138: dígito, letra, caracter, alfanum
-  161: booleano
-  145: OP_UNARIO used but not token nor rules
-  166: real, natural
-
-*/
-
 }
