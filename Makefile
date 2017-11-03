@@ -29,7 +29,7 @@ $(OBJ)/tokenizador.c: $(SRC)/tokenizador.l
 grammar: $(OBJ)/gramatica.c
 
 $(OBJ)/gramatica.c: $(SRC)/gramatica.y
-	$(BISON) $^ -o $@
+	$(BISON) -v $^ -o $@
 
 debug: $(DEBUG)/tokenizador
 
