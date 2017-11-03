@@ -64,7 +64,7 @@ nombre	[_a-zA-Z][_a-zA-Z0-9]*
 {not}	{ return NOT; }
 {op_binario}	{ return OP_BINARIO; }
 {equals}	{ return EQUALS; }
-{entero}	{ return ENTERO; }
+{natural}	{ return NATURAL; }
 {fl_bool_ch}	{ return FL_BOOL_CH; }
 {cadena}	{ return CADENA; }
 {nombre}	{ return NOMBRE; }
