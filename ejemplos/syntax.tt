@@ -1,5 +1,5 @@
 BIENVENIDO {
-    sean matriz m_ent<entero>[5,5]; vector v_real<real>[10]; m_car<caracter>[2,2]; v_bool[5].
+    sean entero m_ent[5,5]; real v_real[10]; caracter m_car[2,2]; booleano v_bool[5].
 
     procedimiento foo(entero a, caracter b, booleano c){
         sean .
