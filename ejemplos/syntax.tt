@@ -1,5 +1,5 @@
 BIENVENIDO {
-    sean.
+    sean matriz m_ent<entero>[5][5], vector v_real<real>[10], m_car<caracter>[2][2], v_bool[5].
 
     procedimiento foo(entero a, caracter b, booleano c){
         sean .
@@ -18,6 +18,17 @@ BIENVENIDO {
     }
 
     foo(0, 'a', falso);
+
+
+    procedimiento far(entero a[2]){
+
+        sean real x.
+
+        x = a[0] + 1;
+
+        foo(a[1], 'x', x < 3);
+    }
+
  
     procedimiento candy(real x){
         sean .
@@ -31,11 +42,25 @@ BIENVENIDO {
 
     candy(2.0);
 
-    for i := 0 hasta 10 hacer {
+
+    for i := 0 hasta 4 hacer {
+        for j := 0 hasta 4 hacer {
+            m_ent[i][j] = i+j;
+            v_real[i] = i;
+            v_real[i+1] = j;
+        }
+    }
+
+
+    for i := 0 hasta 4 hacer {
         si ((i + 8 || i - (i ** 4)) && !(i ^ 8)){
-            imprimir i;
+            imprimir m_ent[i][i];
+            m_car[i][j] = 'g';
         } si no {
             imprimir i ** (i + 10 / (2 - 1) * 3);
+            imprimir 5 - m_ent[5-i][0];
+            imprimir v_real[i*2];
+            v_bool[i] = verdadero;
         }
     }
 }
