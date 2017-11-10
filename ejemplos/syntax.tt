@@ -1,5 +1,5 @@
 BIENVENIDO {
-    sean matriz m_ent<entero>[5][5], vector v_real<real>[10], m_car<caracter>[2][2], v_bool[5].
+    sean matriz m_ent<entero>[5,5], vector v_real<real>[10], m_car<caracter>[2,2], v_bool[5].
 
     procedimiento foo(entero a, caracter b, booleano c){
         sean .
@@ -45,7 +45,7 @@ BIENVENIDO {
 
     for i := 0 hasta 4 hacer {
         for j := 0 hasta 4 hacer {
-            m_ent[i][j] = i+j;
+            m_ent[i,j] = i+j;
             v_real[i] = i;
             v_real[i+1] = j;
         }
@@ -54,11 +54,11 @@ BIENVENIDO {
 
     for i := 0 hasta 4 hacer {
         si ((i + 8 || i - (i ** 4)) && !(i ^ 8)){
-            imprimir m_ent[i][i];
-            m_car[i][j] = 'g';
+            imprimir m_ent[i,i];
+            m_car[i,j] = 'g';
         } si no {
             imprimir i ** (i + 10 / (2 - 1) * 3);
-            imprimir 5 - m_ent[5-i][0];
+            imprimir 5 - m_ent[5-i,0];
             imprimir v_real[i*2];
             v_bool[i] = verdadero;
         }
