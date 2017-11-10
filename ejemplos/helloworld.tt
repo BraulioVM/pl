@@ -1,4 +1,4 @@
 BIENVENIDO {
   sean entero a.
-  imprimir "HOLA", 32.2
+  imprimir "HOLA", 32.2;
 }

@@ -17,7 +17,6 @@
 %token MARCA_FIN_DECLAR_VARIABLES
 %token TIPO
 %token NOMBRE
-%right COMA
 %token PYC
 %token IF
 %token ELSE
@@ -37,6 +36,7 @@
 %left PLUS_MINUS
 %left OP_BINARIO
 %left NOT
+%right COMA
 
 %start PROGRAMA
 
