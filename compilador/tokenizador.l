@@ -30,7 +30,7 @@ not	!
 op_binario	\*|(\*\*)|\/|(&&)|(\|\|)|\^|>|<|(>=)|(<=)|(==)|(!=)
 equals	=
 natural	[0-9]+
-fl_bool_ch	([0-9]+(.[0-9]+)?)|(\'[^\']\')|(verdadero)|(falso)
+fl_bool_ch	([0-9]+\.([0-9]+)?)|(\'[^\']\')|(verdadero)|(falso)
 cadena	\"[^\"]*\"
 nombre	[_a-zA-Z][_a-zA-Z0-9]*
 

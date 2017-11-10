@@ -1,5 +1,5 @@
 BIENVENIDO {
-    sean entero m_ent[5,5]; real v_real[10]; caracter m_car[2,2]; booleano v_bool[5].
+    sean entero m_ent[5,5]; real v_real[10]; caracter m_car[2,2]; booleano v_bool[5];.
 
     procedimiento foo(entero a, caracter b, booleano c){
         sean .
@@ -22,7 +22,7 @@ BIENVENIDO {
 
     procedimiento far(entero a[2]){
 
-        sean real x.
+        sean real x;.
 
         x = a[0] + 1;
 
@@ -44,7 +44,9 @@ BIENVENIDO {
 
 
     for i := 0 hasta 4 hacer {
+        sean .
         for j := 0 hasta 4 hacer {
+            sean .
             m_ent[i,j] = i+j;
             v_real[i] = i;
             v_real[i+1] = j;
@@ -53,10 +55,13 @@ BIENVENIDO {
 
 
     for i := 0 hasta 4 hacer {
+        sean .
         si ((i + 8 || i - (i ** 4)) && !(i ^ 8)){
+           sean.
             imprimir m_ent[i,i];
             m_car[i,j] = 'g';
         } si no {
+             sean.
             imprimir i ** (i + 10 / (2 - 1) * 3);
             imprimir 5 - m_ent[5-i,0];
             imprimir v_real[i*2];
