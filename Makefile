@@ -20,16 +20,21 @@ all: tokenizer
 
 tokenizer: $(BIN)/tokenizador
 
+gramatizer: $(BIN)/gramatizador
+
 $(BIN)/tokenizador: $(OBJ)/tokenizador.c
 	$(CC) $(CC_FLAGS) -I$(SRC) $^ -o $@ $(TOKENIZER_FLAGS)
 
-$(OBJ)/tokenizador.c: $(SRC)/tokenizador.l
+$(OBJ)/tokenizador.c: $(SRC)/tokenizador.l $(OBJ)/gramatica.h
 	$(LEXER) -o $@ $^
+
+$(BIN)/gramatizador: $(OBJ)/gramatica.c $(OBJ)/tokenizador.c
+	$(CC) $(CC_FLAGS) -I$(SRC) $(OBJ)/gramatica.c -o $@ $(TOKENIZER_FLAGS)
 
 grammar: $(OBJ)/gramatica.c
 
 $(OBJ)/gramatica.c: $(SRC)/gramatica.y
-	$(BISON) -v $^ -o $@
+	$(BISON) --debug --verbose -dv $^ -o $@
 
 debug: $(DEBUG)/tokenizador
 

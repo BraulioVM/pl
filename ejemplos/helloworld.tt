@@ -1,3 +1,4 @@
 BIENVENIDO {
+  sean int a.
   imprimir "HOLA", 32.2
 }

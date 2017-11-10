@@ -1,5 +1,5 @@
 %{
-#include "tabla.h"
+#include "gramatica.h"
 %}
 
 cabecera_programa	BIENVENIDO
@@ -68,16 +68,9 @@ nombre	[_a-zA-Z][_a-zA-Z0-9]*
 {fl_bool_ch}	{ return FL_BOOL_CH; }
 {cadena}	{ return CADENA; }
 {nombre}	{ return NOMBRE; }
-[\ \t]		{ printf( "%s",yytext ); }
-[\n]            { yylineno++; printf("\n"); }
+[\ \t]		{ }
+[\n]            { }
 .			{ printf("Error léxico: %s no esperado en línea %d\n", yytext, yylineno ); }
 
 
 %%
-
-int main() {
-
-	yylex();
-
-	printf( "\n\n" );
-}

@@ -1,5 +1,8 @@
 %{
+  #include "tokenizador.c"
   // código C
+  void yyerror(char *s);
+  int yydebug = 1;
 %}
 
 %token CABECERA_PROGRAMA
@@ -165,11 +168,10 @@ MATRIZ : LLAVE_IZQ LISTA_VECTORES LLAVE_DER
 
 %%
 
+void yyerror(char *s) {
+    printf("Yacc error: %s\n", s);
+}
 
-#include "lexyy.c"
-#include "error.y"
-
-
-main(){
+int main(){
   yyparse();
 }
