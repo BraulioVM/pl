@@ -2,6 +2,7 @@ BIENVENIDO {
     sean entero int.
     
     para i := 0 hasta 10 hacer {
+        sean entero x.
         int = int + i;
     }
 
