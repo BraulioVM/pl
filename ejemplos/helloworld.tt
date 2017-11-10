@@ -1,4 +1,4 @@
 BIENVENIDO {
-  sean int a.
+  sean entero a.
   imprimir "HOLA", 32.2
 }
