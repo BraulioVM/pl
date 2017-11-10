@@ -20,7 +20,7 @@ all: tokenizer
 
 tokenizer: $(BIN)/tokenizador
 
-gramatizer: $(BIN)/gramatizador
+grammarizer: $(BIN)/gramatizador
 
 $(BIN)/tokenizador: $(OBJ)/tokenizador.c
 	$(CC) $(CC_FLAGS) -I$(SRC) $^ -o $@ $(TOKENIZER_FLAGS)
@@ -50,4 +50,4 @@ clean:
 mrproper: clean
 	rm -f $(BIN)/*
 
-.PHONY: all clean mrproper
+.PHONY: all clean mrproper tokenizer grammarizer grammar debug
