@@ -1,11 +1,10 @@
 BIENVENIDO {
-    sean
+    sea
         booleano t
     .
 
     procedimiento hey(entero n, caracter c) {
-        sean .
-        imprimir n, c
+        imprimir n, c;
     }
 
     t = falso;
