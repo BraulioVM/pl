@@ -2,11 +2,11 @@ BIENVENIDO
 
 
 sean
-entero a,
-real b,
-real c,
-entero d[10],
-booleano si
+entero a;
+real b;
+real c;
+entero d[10];
+booleano si;
 .
 
 
