@@ -10,7 +10,6 @@ corchete_der	\]
 parentesis_izq	\(
 parentesis_der	\)
 token_subprograma	procedimiento
-marca_ini_declar_variables	sean
 marca_fin_declar_variables	\.
 tipo	(booleano)|(entero)|(real)|(caracter)
 coma	,
@@ -33,6 +32,7 @@ natural	[0-9]+
 fl_bool_ch	([0-9]+\.([0-9]+)?)|(\'[^\']\')|(verdadero)|(falso)
 cadena	\"[^\"]*\"
 nombre	[_a-zA-Z][_a-zA-Z0-9]*
+marca_ini_declar_variables    sean?
 
 
 %%
