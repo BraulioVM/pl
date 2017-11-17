@@ -1,51 +1,37 @@
 BIENVENIDO {
-    sean entero m_ent[5,5]; real v_real[10]; caracter m_car[2,2]; booleano v_bool[5];.
+    sean
+        entero m_ent[5,5];
+        real v_real[10];
+        caracter m_car[2,2];
+        booleano v_bool[5];
+    .
 
     procedimiento foo(entero a, caracter b, booleano c){
-        sean .
-
         procedimiento bar(entero aa){
-            sean .
-
-            procedimiento baz(caracter bb, booleano cc){
-                sean .
-            }
-
+            procedimiento baz(caracter bb, booleano cc){}
             baz('b', verdadero);
         }
-
         bar(1);
     }
 
     procedimiento far(entero a[2]){
-        sean real x;.
-
+        sea real x.
         x = a[0] + 1;
 
         foo(a[1], 'x', x < 3);
     }
 
- 
     procedimiento candy(real x){
-        sean .
- 
-        procedimiento fluffy(entero a[2]){
-            sean .
-        }
-
+        procedimiento fluffy(entero a[2]){}
         fluffy({3, 4});
     }
-
+    
     foo(0, 'a', falso);
-
-
+    
     candy(2.0);
 
-
     para i := 0 hasta 4 hacer {
-        sean .
         para j := 0 hasta 4 hacer {
-            sean .
             m_ent[i,j] = i+j;
             v_real[i] = i;
             v_real[i+1] = j;
@@ -54,13 +40,10 @@ BIENVENIDO {
 
 
     para i := 0 hasta 4 hacer {
-        sean .
-        si ((a)) {
-           sean.
+        si ((i + 8 || i - (i ** 4)) && !(i ^ 8)){
             imprimir m_ent[i,i];
             m_car[i,j] = 'g';
-        } si no {
-             sean.
+        } si_no {
             imprimir i ** (i + 10 / (2 - 1) * 3);
             imprimir 5 - m_ent[5-i,0];
             imprimir v_real[i*2];

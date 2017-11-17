@@ -1,8 +1,7 @@
 BIENVENIDO {
-    sean entero int;.
+    sea entero int.
     
     para i := 0 hasta 10 hacer {
-        sean.
         int = int + i;
     }
 

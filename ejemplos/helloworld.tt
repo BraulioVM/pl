@@ -1,4 +1,3 @@
 BIENVENIDO {
-  sean.
   imprimir "HOLA", 32.2;
 }
