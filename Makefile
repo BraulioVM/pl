@@ -16,7 +16,7 @@ ifeq ($(OS),Darwin)
 	TOKENIZER_FLAGS = -ll
 endif
 
-all: tokenizer
+all: grammarizer tokenizer
 
 tokenizer: $(BIN)/tokenizador
 
