@@ -169,7 +169,10 @@ VECTOR : LLAVE_IZQ LISTA_EXPR LLAVE_DER
 %%
 
 void yyerror(char *s) {
-    printf("Yacc error: %s\n", s);
+    printf(
+           "Yacc error at line %d: %s\n. The error was found at %d\n",
+           yylineno,
+           s);
 }
 
 int main(){

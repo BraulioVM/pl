@@ -69,7 +69,7 @@ nombre	[_a-zA-Z][_a-zA-Z0-9]*
 {cadena}	{ return CADENA; }
 {nombre}	{ return NOMBRE; }
 [\ \t]		{ }
-[\n]            { }
+[\n]            { yylineno++;}
 .			{ printf("Error léxico: %s no esperado en línea %d\n", yytext, yylineno ); }
 
 
