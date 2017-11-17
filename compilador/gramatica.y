@@ -1,8 +1,9 @@
 %{
   #include "tokenizador.c"
   // código C
-  void yyerror(char *s);
-  int yydebug = 1;
+  #define YYERROR_VERBOSE 1
+  void yyerror(const char *s);
+  // int yydebug = 1;
 %}
 
 %token CABECERA_PROGRAMA
@@ -191,11 +192,12 @@ VECTOR : LLAVE_IZQ LISTA_EXPR LLAVE_DER
 
 %%
 
-void yyerror(char *s) {
+void yyerror(const char *s) {
     printf(
-           "Yacc error at line %d: %s\n. The error was found at %d\n",
+           "Yacc error at line %d: %s. Unexpected \"%s\"\n",
            yylineno,
-           s);
+           s,
+           yytext);
 }
 
 int main(){

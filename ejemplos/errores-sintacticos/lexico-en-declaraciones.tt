@@ -1,0 +1,7 @@
+BIENVENIDO {
+           sean
+             entero x, y, $a
+           .
+
+           imprimir "hola"
+}
