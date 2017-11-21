@@ -1,0 +1,8 @@
+BIENVENIDO {
+           procedimiento hola(a a, entero b) {
+                         imprimir a;
+
+                         
+           }
+
+}
