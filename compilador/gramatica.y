@@ -34,10 +34,15 @@
 %token FL_BOOL_CH
 %token CADENA
 
+%left OP_OR
+%left OP_AND
+%left OP_EQ
+%left OP_CMP
 %left PLUS_MINUS
-%left OP_BINARIO
-%left NOT
+%left OP_MULT
+%right NOT
 %right COMA
+
 
 %start PROGRAMA
 
@@ -170,7 +175,11 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER
          | NOT EXPR
          | PLUS_MINUS EXPR
          | EXPR PLUS_MINUS EXPR
-         | EXPR OP_BINARIO EXPR
+         | EXPR OP_OR EXPR
+         | EXPR OP_AND EXPR
+         | EXPR OP_EQ EXPR
+         | EXPR OP_CMP EXPR
+         | EXPR OP_MULT EXPR
          | IDENTIFICADOR_EXPR
          | FL_BOOL_CH
          | NATURAL

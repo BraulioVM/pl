@@ -26,7 +26,11 @@ printf               imprimir
 return               volver
 plus_minus           \+|-
 not                  !
-op_binario           \*|(\*\*)|\/|(&&)|(\|\|)|\^|>|<|(>=)|(<=)|(==)|(!=)
+op_or                \|\|
+op_and               \&\&
+op_eq                (==)|(!=)
+op_cmp               <|>|(<=)|(>=)
+op_mult              \*|(\/)
 equals               =
 natural              [0-9]+
 fl_bool_ch           ([0-9]*\.[0-9]+)|(\'[^\']\')|(verdadero)|(falso)
@@ -63,7 +67,11 @@ fin_declaracion_variables       \.
 {return}               { return RETURN; }
 {plus_minus}           { return PLUS_MINUS; }
 {not}                  { return NOT; }
-{op_binario}           { return OP_BINARIO; }
+{op_or}                { return OP_OR; }
+{op_and}               { return OP_AND; }
+{op_eq}                { return OP_EQ; }
+{op_cmp}               { return OP_CMP; }
+{op_mult}              { return OP_MULT; }
 {equals}               { return EQUALS; }
 {natural}              { return NATURAL; }
 {fl_bool_ch}           { return FL_BOOL_CH; }
