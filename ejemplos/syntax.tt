@@ -3,7 +3,7 @@ BIENVENIDO {
         entero m_ent[5,5];
         real v_real[10];
         caracter m_car[2,2];
-        booleano v_bool[5];
+        booleano v_bool[5]
     .
 
     procedimiento foo(entero a, caracter b, booleano c){
@@ -40,7 +40,7 @@ BIENVENIDO {
 
 
     para i := 0 hasta 4 hacer {
-        si ((i + 8 || i - (i ** 4)) && !(i ^ 8)){
+        si ((i + 8 || i - (i ** 4)) && !(8)){
             imprimir m_ent[i,i];
             m_car[i,j] = 'g';
         } si_no {
