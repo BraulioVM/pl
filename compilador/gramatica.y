@@ -3,7 +3,7 @@
   // código C
   #define YYERROR_VERBOSE 1
   void yyerror(const char *s);
-  // int yydebug = 1;
+  int yydebug = 1;
 %}
 
 %token CABECERA_PROGRAMA
@@ -93,6 +93,7 @@ DECLARACION_SUBPROGRAMA : CABECERA_SUBPROGRAMA BLOQUE
 
 CABECERA_SUBPROGRAMA :
     TOKEN_SUBPROGRAMA NOMBRE PARENTESIS_IZQ LISTA_PARAMETROS PARENTESIS_DER
+        |       TOKEN_SUBPROGRAMA NOMBRE PARENTESIS_IZQ error PARENTESIS_DER { yyerror("error en los argumentos"); }
 ;
 
 INICIO_DE_BLOQUE : LLAVE_IZQ
