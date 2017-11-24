@@ -30,6 +30,7 @@ op_or                \|\|
 op_and               \&\&
 op_eq                (==)|(!=)
 op_cmp               <|>|(<=)|(>=)
+op_mult_mat          (\*\*)
 op_mult              \*|(\/)
 equals               =
 natural              [0-9]+
@@ -72,6 +73,7 @@ fin_declaracion_variables       \.
 {op_eq}                { return OP_EQ; }
 {op_cmp}               { return OP_CMP; }
 {op_mult}              { return OP_MULT; }
+{op_mult_mat}          { return OP_MULT_MAT; }
 {equals}               { return EQUALS; }
 {natural}              { return NATURAL; }
 {fl_bool_ch}           { return FL_BOOL_CH; }

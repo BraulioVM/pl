@@ -39,10 +39,10 @@
 %left OP_EQ
 %left OP_CMP
 %left PLUS_MINUS
+%left OP_MULT_MAT
 %left OP_MULT
 %right NOT
 %right COMA
-
 
 %start PROGRAMA
 
@@ -180,6 +180,7 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER
          | EXPR OP_EQ EXPR
          | EXPR OP_CMP EXPR
          | EXPR OP_MULT EXPR
+         | EXPR OP_MULT_MAT EXPR
          | IDENTIFICADOR_EXPR
          | FL_BOOL_CH
          | NATURAL
