@@ -1,5 +1,5 @@
 debug/*.c
-compilador/*.c
+compilador/tokenizador.c
 compilador/tokenizador
 compilador/tokenizador-mac
 debug/tokenizador
