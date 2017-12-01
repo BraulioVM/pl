@@ -25,11 +25,14 @@ grammarizer: $(BIN)/gramatizador
 $(BIN)/tokenizador: $(OBJ)/tokenizador.c
 	$(CC) $(CC_FLAGS) -I$(SRC) $^ -o $@ $(TOKENIZER_FLAGS)
 
-$(OBJ)/tokenizador.c: $(SRC)/tokenizador.l $(OBJ)/gramatica.h
+$(OBJ)/tokenizador.c: $(SRC)/tokenizador.l
 	$(LEXER) -o $@ $^
 
-$(BIN)/gramatizador: $(OBJ)/gramatica.c $(OBJ)/tokenizador.c
-	$(CC) $(CC_FLAGS) -I$(SRC) $(OBJ)/gramatica.c -o $@ $(TOKENIZER_FLAGS)
+$(OBJ)/tabla-simbolos.o: $(SRC)/tabla-simbolos.c $(SRC)/tabla-simbolos.h
+	gcc $(SRC)/tabla-simbolos.c -o $(OBJ)/tabla-simbolos.o
+
+$(BIN)/gramatizador: $(OBJ)/gramatica.c $(OBJ)/tokenizador.c $(OBJ)/tabla-simbolos.o
+	$(CC) $(CC_FLAGS) -I$(SRC) -I($OBJ) $(OBJ)/tabla-simbolos.o $(OBJ)/gramatica.c -o $@ $(TOKENIZER_FLAGS) 
 
 grammar: $(OBJ)/gramatica.c
 

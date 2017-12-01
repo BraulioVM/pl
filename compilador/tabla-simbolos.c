@@ -1,9 +1,10 @@
 #include "tabla-simbolos.h"
 
-
+#define true 1
+#define false 0
 void TS_ififitsisits(){
   if(tabla.tope == MAX_TS_SIZE - 1){
-    return 0;  //  BOOM
+
   }
 }
 

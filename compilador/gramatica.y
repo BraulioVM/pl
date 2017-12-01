@@ -1,7 +1,8 @@
 %{
-  #include "tokenizador.c"
+  #include "tabla-simbolos.h"
   // código C
   #define YYERROR_VERBOSE 1
+  int yylex(void);
   void yyerror(const char *s);
   int yydebug = 0;
 %}
@@ -89,7 +90,7 @@ IDENTIFICADOR : NOMBRE
   | NOMBRE CORCHETE_IZQ DIMENSIONES CORCHETE_DER
   ;
 
-DIMENSIONES : NATURAL    { TS_dimension($1) };
+DIMENSIONES : NATURAL    { TS_dimension($1); }
   | NATURAL COMA NATURAL { TS_dimension($1); TS_dimension($3); }
   ;
 
@@ -213,6 +214,8 @@ VECTOR : LLAVE_IZQ LISTA_EXPR LLAVE_DER
   ;
 
 %%
+
+#include "tokenizador.c"
 
 void yyerror(const char *s) {
     printf(

@@ -1,5 +1,6 @@
 #define MAX_TS_SIZE 500
 
+typedef unsigned int uint;
 
 typedef enum {
   marca,
@@ -42,10 +43,9 @@ typedef struct {
   t_dato tipo;
 } t_token;
 
-#define YYSTYPE t_token;
+#define YYSTYPE t_token
 
 Tabla tabla;
-tabla.tope = 0;  // 0th possition is gargabe
 
 void TS_insertar_marca();
 void TS_insertar_identificador(t_token identificador);
