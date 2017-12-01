@@ -1,3 +1,7 @@
+#ifndef _TABLA_SIMBOLOS_H
+#define _TABLA_SIMBOLOS_H
+
+
 #define MAX_TS_SIZE 500
 
 typedef unsigned int uint;
@@ -54,5 +58,12 @@ void TS_insertar_parametro(t_token parametro);
 void TS_fin_bloque();
 
 void TS_insertar_entrada(Entrada item);
-void TS_ififitsisits();
-void TS_identificador_libre(char* identificador);
+int TS_ififitsisits();
+void TS_nofits();
+int TS_identificador_libre(char* identificador);
+
+void TS_dimension_vector( t_token dimension );
+void TS_dimension_matriz( t_token dimension_1, t_token dimension_2 );
+
+
+#endif
