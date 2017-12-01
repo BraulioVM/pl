@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <string.h>
 #include "tabla-simbolos.h"
 
 #define true 1
@@ -9,19 +11,17 @@ void TS_ififitsisits(){
 }
 
 
-bool TS_identificador_libre(char* identificador){
+void TS_identificador_libre(char* identificador){
   uint curr = tabla.tope;
   while(tabla.pila[curr].tipoEntrada != marca){
     if((tabla.pila[curr].tipoEntrada == variable ||
         tabla.pila[curr].tipoEntrada == parametro_formal) &&
        strcmp(tabla.pila[curr].nombre, identificador) == 0){
-      return false;
     }
 
     --curr;
   }
 
-  return true;
 };
 
 
@@ -50,9 +50,8 @@ void TS_insertar_marca(){
 void TS_insertar_identificador(t_token identificador){
   TS_ififitsisits();
 
-  if(!TS_identificador_libre(identificador.lexema)){
-    return 0;  // BOOM
-  }
+  /* if(!TS_identificador_libre(identificador.lexema)){ */
+  /* } */
 
   Entrada ident = {
     variable,              // tipoEntrada
@@ -68,14 +67,14 @@ void TS_insertar_identificador(t_token identificador){
 }
 
 
-void TS_insertar_procedimiento(t_token procedimiento){
+void TS_insertar_procedimiento(t_token procedimiento_){
   TS_ififitsisits();
 
   Entrada proc = {
-    procedimiento,           // tipoEntrada
+    .tipoEntrada = procedimiento,           // tipoEntrada
     NA,                      // tipoDato
-    procedimiento.lexema,    // nombre
-    procedimiento.atributo,  // n_parametros
+    procedimiento_.lexema,    // nombre
+    procedimiento_.atributo,  // n_parametros
     0,                       // dimensiones
     0,                       // dimension_1
     0,                       // dimension_2
