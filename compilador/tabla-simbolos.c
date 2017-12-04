@@ -84,7 +84,14 @@ void TS_insertar_identificador(t_token identificador){
       0,                     // dimension_2
     };
 
-    TS_insertar_entrada(ident);
+    if (TS_identificador_libre(identificador.lexema)) {
+      TS_insertar_entrada(ident);
+    } else {
+      printf(
+             "Error semántico: redeclaración de la variable %s\n",
+             identificador.lexema
+             );
+    }
   }
   else{
     TS_nofits();
