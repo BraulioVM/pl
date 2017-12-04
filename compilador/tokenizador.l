@@ -86,7 +86,10 @@ fin_declaracion_variables       \.
 {natural}              { return NATURAL; }
 {fl_bool_ch}           { return FL_BOOL_CH; }
 {cadena}               { return CADENA; }
-{nombre}               { return NOMBRE; }
+{nombre}               {
+                       yylval.lexema = strdup(yytext);
+                       return NOMBRE;
+                       }
 [\ \t]                 { }
 [\n]                   { yylineno++; }
 .                      {
