@@ -16,7 +16,7 @@ ifeq ($(OS),Darwin)
 	TOKENIZER_FLAGS = -ll
 endif
 
-all: grammarizer tokenizer
+all: grammarizer #tokenizer
 
 tokenizer: $(BIN)/tokenizador
 
@@ -29,10 +29,10 @@ $(OBJ)/tokenizador.c: $(SRC)/tokenizador.l
 	$(LEXER) -o $@ $^
 
 $(OBJ)/tabla-simbolos.o: $(SRC)/tabla-simbolos.c $(SRC)/tabla-simbolos.h
-	gcc $(SRC)/tabla-simbolos.c -o $(OBJ)/tabla-simbolos.o
+	gcc -c $(SRC)/tabla-simbolos.c -o $(OBJ)/tabla-simbolos.o
 
 $(BIN)/gramatizador: $(OBJ)/gramatica.c $(OBJ)/tokenizador.c $(OBJ)/tabla-simbolos.o
-	$(CC) $(CC_FLAGS) -I$(SRC) -I($OBJ) $(OBJ)/tabla-simbolos.o $(OBJ)/gramatica.c -o $@ $(TOKENIZER_FLAGS) 
+	$(CC) $(CC_FLAGS) -I$(SRC) -I$(OBJ) $(OBJ)/tabla-simbolos.o $(OBJ)/gramatica.c -o $@ $(TOKENIZER_FLAGS) 
 
 grammar: $(OBJ)/gramatica.c
 
