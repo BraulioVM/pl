@@ -53,7 +53,15 @@ fin_declaracion_variables       \.
 {parentesis_izq}       { return PARENTESIS_IZQ; }
 {parentesis_der}       { return PARENTESIS_DER; }
 {token_subprograma}    { return TOKEN_SUBPROGRAMA; }
-{tipo}                 { return TIPO; }
+{tipo}                 {
+                       switch(yytext[0]) {
+                       case 'b': yylval.tipo = booleano; break;
+                       case 'c': yylval.tipo = caracter; break;
+                       case 'e': yylval.tipo = entero; break;
+                       case 'r': yylval.tipo = real; break;
+                       }
+                       return TIPO;
+                       }
 {coma}                 { return COMA; }
 {PYC}                  { return PYC; }
 {if}                   { return IF; }

@@ -5,8 +5,6 @@
 #define true 1
 #define false 0
 
-int marcas = 0;
-
 int TS_ififitsisits(){
 
   return ! ( tabla.tope == MAX_TS_SIZE - 1 );
@@ -76,12 +74,9 @@ void TS_insertar_identificador(t_token identificador){
   
   if ( TS_ififitsisits() ){
 
-    /* if(!TS_identificador_libre(identificador.lexema)){ */
-    /* } */
-
     Entrada ident = {
       variable,              // tipoEntrada
-      identificador.tipo,    // tipoDato
+      tipoTmp,    // tipoDato
       identificador.lexema,  // nombre
       0,                     // n_parametros
       0,                     // dimensiones

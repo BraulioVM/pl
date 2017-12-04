@@ -65,5 +65,6 @@ int TS_identificador_libre(char* identificador);
 void TS_dimension_vector( t_token dimension );
 void TS_dimension_matriz( t_token dimension_1, t_token dimension_2 );
 
+t_dato tipoTmp;
 
 #endif
