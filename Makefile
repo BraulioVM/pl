@@ -1,5 +1,5 @@
 CC = gcc
-CCFLAGS =  -Wall -g
+CCFLAGS = -g -Wall
 LEXER = lex
 BISON = yacc
 BIN = ./bin
@@ -23,16 +23,16 @@ tokenizer: $(BIN)/tokenizador
 grammarizer: $(BIN)/gramatizador
 
 $(BIN)/tokenizador: $(OBJ)/tokenizador.c
-	$(CC) $(CC_FLAGS) -I$(SRC) $^ -o $@ $(TOKENIZER_FLAGS)
+	$(CC) $(CCFLAGS) -I$(SRC) $^ -o $@ $(TOKENIZER_FLAGS)
 
 $(OBJ)/tokenizador.c: $(SRC)/tokenizador.l
 	$(LEXER) -o $@ $^
 
 $(OBJ)/tabla-simbolos.o: $(SRC)/tabla-simbolos.c $(SRC)/tabla-simbolos.h
-	gcc -c $(SRC)/tabla-simbolos.c -o $(OBJ)/tabla-simbolos.o
+	gcc  $(CCFLAGS) -c $(SRC)/tabla-simbolos.c -o $(OBJ)/tabla-simbolos.o
 
 $(BIN)/gramatizador: $(OBJ)/gramatica.c $(OBJ)/tokenizador.c $(OBJ)/tabla-simbolos.o
-	$(CC) $(CC_FLAGS) -I$(SRC) -I$(OBJ) $(OBJ)/tabla-simbolos.o $(OBJ)/gramatica.c -o $@ $(TOKENIZER_FLAGS) 
+	$(CC) $(CCFLAGS) -I$(SRC) -I$(OBJ) $(OBJ)/tabla-simbolos.o $(OBJ)/gramatica.c -o $@ $(TOKENIZER_FLAGS) 
 
 grammar: $(OBJ)/gramatica.c
 
@@ -42,7 +42,7 @@ $(OBJ)/gramatica.c: $(SRC)/gramatica.y
 debug: $(DEBUG)/tokenizador
 
 $(DEBUG)/tokenizador: $(DEBUG)/tokenizador.c
-	$(CC) $(CC_FLAGS) -I$(SRC) $^ -o $@ $(TOKENIZER_FLAGS)
+	$(CC) $(CCFLAGS) -I$(SRC) $^ -o $@ $(TOKENIZER_FLAGS)
 
 $(DEBUG)/tokenizador.c: $(DEBUG)/tokenizador.l
 	$(LEXER) $^ -o $@
