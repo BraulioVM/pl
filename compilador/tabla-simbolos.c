@@ -5,6 +5,7 @@
 #define true 1
 #define false 0
 
+int marcas = 0;
 
 int TS_ififitsisits(){
 
@@ -149,8 +150,6 @@ void TS_nofits(){
 void TS_fin_bloque(){
 
   while ( tabla.pila[ tabla.tope-- ].tipoEntrada != marca );
-  
-  --tabla.tope;  // elimina también la marca
 }
 
 
