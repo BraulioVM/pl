@@ -1,0 +1,22 @@
+BIENVENIDO {
+           sean booleano x;
+                entero y.
+
+           y = 3 + 4.0;
+
+           si (verdadero || falso) {
+             y = y;
+           }
+
+           y = -'c';
+
+
+           si (verdadero == 4) {
+              
+              si ('c' < 4) {
+                 y = 3 * verdadero;
+              }
+           }
+
+
+}

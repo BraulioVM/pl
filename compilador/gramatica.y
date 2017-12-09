@@ -180,23 +180,77 @@ LLAMADA_PROCED : NOMBRE PARENTESIS_IZQ ARGUMENTOS_PROCEDIMIENTO PARENTESIS_DER P
   ;
 
 EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER
-         | NOT EXPR
-         | PLUS_MINUS EXPR
-         | EXPR PLUS_MINUS EXPR
-         | EXPR OP_OR EXPR
-         | EXPR OP_AND EXPR
-         | EXPR OP_EQ EXPR
-         | EXPR OP_CMP EXPR
-         | EXPR OP_MULT EXPR
+         | NOT EXPR {
+               assert_tipo($2, booleano);
+               $$.tipo = booleano;
+         }
+         | PLUS_MINUS EXPR {
+           if ($2.tipo == entero || $2.tipo == real) {
+              $$.tipo = $2.tipo;
+           } else {
+             yyerror("error de tipos +/- debe ser usado con un numero");
+           }
+         }
+         | EXPR PLUS_MINUS EXPR {
+           if ($1.tipo == $3.tipo && ($1.tipo == entero || $1.tipo == real)) {
+              $$.tipo = $1.tipo;
+           } else {
+             yyerror("error de tipos +/- debe ser usado con numeros del mismo tipo");
+           }
+         }
+         | EXPR OP_OR EXPR {
+                assert_tipo($1, booleano);
+                assert_tipo($3, booleano);
+                $$.tipo = booleano;
+         }
+         | EXPR OP_AND EXPR {
+                assert_tipo($1, booleano);
+                assert_tipo($3, booleano);
+                $$.tipo = booleano;
+         }
+         | EXPR OP_EQ EXPR {
+                if ($1.tipo == $3.tipo) {
+                   $$.tipo = booleano;
+                } else {
+                   yyerror("en una comparacion ambos elementos deben ser del mismo tipo");
+                }
+         }
+         | EXPR OP_CMP EXPR {
+                if ($1.tipo == $3.tipo && ($1.tipo == entero || $1.tipo == real)) {
+                   $$.tipo = booleano;
+                } else {
+                  yyerror("un operador de orden compara numeros del mismo tipo");
+                }
+         }
+         | EXPR OP_MULT EXPR {
+               if ($1.tipo == $3.tipo && ($1.tipo == entero || $1.tipo == real)) {
+                   $$.tipo = $1.tipo;
+                } else {
+                  yyerror("en una multiplicación/división intervienen números del mismo tipo");
+                }
+         }
          | EXPR OP_MULT_MAT EXPR
          | IDENTIFICADOR_EXPR
-         | FL_BOOL_CH
-         | NATURAL
+         | FL_BOOL_CH {
+           char *lexema = $1.lexema;
+
+           switch(lexema[0]) {
+               case 'v': $$.tipo = booleano; break;
+               case 'f': $$.tipo = booleano; break;
+               case '\'': $$.tipo = caracter; break;
+               default: $$.tipo = real;
+           }
+         }
+         | NATURAL {
+               $$.tipo = entero;
+         }
          | VECTOR
          | error
   ;
 
-IDENTIFICADOR_EXPR : NOMBRE
+IDENTIFICADOR_EXPR : NOMBRE {
+                   asignar_identificador(&$$, $1.lexema);
+  }
   | NOMBRE CORCHETE_IZQ EXPR CORCHETE_DER
   | NOMBRE CORCHETE_IZQ EXPR COMA EXPR CORCHETE_DER
   ;

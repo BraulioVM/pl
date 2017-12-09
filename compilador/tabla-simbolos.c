@@ -84,7 +84,7 @@ void TS_insertar_identificador(t_token identificador){
       0,                     // dimension_2
     };
 
-    if (TS_identificador_libre(identificador.lexema)) {
+    if (true) { //(TS_identificador_libre(identificador.lexema)) {
       TS_insertar_entrada(ident);
     } else {
       printf(
@@ -167,4 +167,33 @@ void TS_dimension_matriz( t_token dimension_1, t_token dimension_2 ){
   tabla.pila[ tabla.tope ].dimensiones = 2;
   tabla.pila[ tabla.tope ].dimension_1 = dimension_1.atributo;
   tabla.pila[ tabla.tope ].dimension_2 = dimension_2.atributo;
+}
+
+void assert_tipo(t_token token, t_dato tipo) {
+  if (token.tipo != tipo) {
+    yyerror("Error semántico: tipos incorrectos");
+  }
+}
+
+void asignar_identificador(t_token *token, char *identificador) {
+
+  uint identificadorEncontrado = false;
+  int indicePila;
+  for (indicePila = tabla.tope; indicePila >= 0; indicePila--) {
+    
+    if (tabla.pila[indicePila].tipoEntrada == variable &&
+        strcmp(tabla.pila[indicePila].nombre, identificador) == 0) {
+
+      identificadorEncontrado = true;
+      break;
+    }
+  }
+
+  if (!identificadorEncontrado) {
+    yyerror("Identificador no encontrado");
+  } else {
+    token->tipo = tabla.pila[indicePila].tipoDato;
+    token->lexema = tabla.pila[indicePila].nombre;
+  }
+
 }

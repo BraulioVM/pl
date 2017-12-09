@@ -84,7 +84,10 @@ fin_declaracion_variables       \.
 {op_mult_mat}          { return OP_MULT_MAT; }
 {equals}               { return EQUALS; }
 {natural}              { return NATURAL; }
-{fl_bool_ch}           { return FL_BOOL_CH; }
+{fl_bool_ch}           {
+                       yylval.lexema = strdup(yytext);
+                       return FL_BOOL_CH;
+                       }
 {cadena}               { return CADENA; }
 {nombre}               {
                        yylval.lexema = strdup(yytext);
