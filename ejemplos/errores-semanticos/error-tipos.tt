@@ -18,5 +18,11 @@ BIENVENIDO {
               }
            }
 
+           si (4) {
+
+              mientras (3 + 5) {}
+
+           }
+
 
 }

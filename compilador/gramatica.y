@@ -142,14 +142,23 @@ SENTENCIA : BLOQUE
 SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR EQUALS EXPR PYC
   ;
 
-SENTENCIA_IF : IF PARENTESIS_IZQ EXPR PARENTESIS_DER SENTENCIA SENTENCIA_ELSE
+SENTENCIA_IF : IF PARENTESIS_IZQ EXPR {
+             if ($3.tipo != booleano) {
+                yyerror("el tipo de la expresion dentro del si debe ser booleano");
+                }
+  } PARENTESIS_DER SENTENCIA SENTENCIA_ELSE
+
   ;
 
 SENTENCIA_ELSE : ELSE SENTENCIA
   |
   ;
 
-SENTENCIA_WHILE : WHILE PARENTESIS_IZQ EXPR PARENTESIS_DER SENTENCIA
+SENTENCIA_WHILE : WHILE PARENTESIS_IZQ EXPR {
+             if ($3.tipo != booleano) {
+                yyerror("el tipo de la expresion dentro del mientras debe ser booleano");
+                }
+  } PARENTESIS_DER SENTENCIA
   ;
 
 SENTENCIA_FOR : FOR NOMBRE INIT_FOR EXPR DIRECCION_FOR EXPR DO SENTENCIA
