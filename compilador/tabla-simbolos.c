@@ -147,8 +147,8 @@ void TS_nofits(){
 
 
 void TS_fin_bloque(){
-
-  while ( tabla.pila[ tabla.tope-- ].tipoEntrada != marca );
+  tabla.tope = TS_ultima_marca();
+  while(tabla.pila[--tabla.tope].tipoEntrada == parametro_formal);
 }
 
 
