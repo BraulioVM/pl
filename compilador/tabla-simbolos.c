@@ -37,20 +37,16 @@ bool TS_identificador_libre(char* identificador){
   }
 
   return true;
-
 };
 
 
 void TS_insertar_entrada(Entrada item){
-
   tabla.pila[++tabla.tope] = item;
 }
 
 
 void TS_insertar_marca(){
-
-  if ( TS_ififitsisits() ){
-
+  if(TS_ififitsisits()){
     Entrada item = {
       marca,  // tipoEntrada
       NA,     // tipoDato
@@ -62,8 +58,7 @@ void TS_insertar_marca(){
     };
 
     TS_insertar_entrada(item);
-  }
-  else{
+  } else {
     TS_nofits();
   }
 }
@@ -89,39 +84,33 @@ void TS_insertar_identificador(t_token identificador){
              identificador.lexema
              );
     }
-  }
-  else{
+  } else {
     TS_nofits();
   }
 }
 
 
 void TS_insertar_procedimiento(t_token procedimiento_){
-
-  if ( TS_ififitsisits() ){
-
+  if(TS_ififitsisits()){
     Entrada proc = {
-      .tipoEntrada = procedimiento,           // tipoEntrada
-      procedimiento_.tipo,                      // tipoDato
-      procedimiento_.lexema,    // nombre
-      procedimiento_.atributo,  // n_parametros
-      0,                       // dimensiones
-      0,                       // dimension_1
-      0,                       // dimension_2
+      procedimiento,          // tipoEntrada
+      NA,                     // tipoDato
+      procedimiento_.lexema,  // nombre
+      0,                      // n_parametros
+      0,                      // dimensiones
+      0,                      // dimension_1
+      0,                      // dimension_2
     };
 
     TS_insertar_entrada(proc);
-  }
-  else{
+  } else {
     TS_nofits();
   }
 }
 
 
 void TS_insertar_parametro(t_token parametro){
-  
-  if ( TS_ififitsisits() ){
-
+  if (TS_ififitsisits()){
     Entrada param = {
       parametro_formal,  // tipoEntrada
       parametro.tipo,    // tipoDato
@@ -133,8 +122,7 @@ void TS_insertar_parametro(t_token parametro){
     };
 
     TS_insertar_entrada(param);
-  }
-  else{
+  } else {
     TS_nofits();
   }
 }
@@ -152,10 +140,9 @@ void TS_fin_bloque(){
 }
 
 
-void TS_dimension_vector( t_token dimension ){
-
-  tabla.pila[ tabla.tope ].dimensiones = 1;
-  tabla.pila[ tabla.tope ].dimension_1 = dimension.atributo;
+void TS_dimension_vector(t_token dimension){
+  tabla.pila[tabla.tope].dimensiones = 1;
+  tabla.pila[tabla.tope].dimension_1 = dimension.atributo;
 }
 
 
@@ -177,7 +164,7 @@ void asignar_identificador(t_token *token, char *identificador) {
   uint identificadorEncontrado = false;
   int indicePila;
   for (indicePila = tabla.tope; indicePila >= 0; indicePila--) {
-    
+
     if (tabla.pila[indicePila].tipoEntrada == variable &&
         strcmp(tabla.pila[indicePila].nombre, identificador) == 0) {
 
