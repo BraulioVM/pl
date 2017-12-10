@@ -10,26 +10,26 @@ int TS_ififitsisits(){
 }
 
 
-int TS_identificador_libre(char* identificador){
+bool TS_identificador_libre(char* identificador){
 
-  uint curr = tabla.tope;
+  t_posicion curr = tabla.tope;
 
-  // Buscar la variable dentro del bloque
-  while ( tabla.pila[curr].tipoEntrada != marca ){
-
-    if ( tabla.pila[curr].tipoEntrada == variable &&
-        strcmp( tabla.pila[curr].nombre, identificador ) == 0 ){
+  while(tabla.pila[curr].tipoEntrada != marca){
+    if(tabla.pila[curr].tipoEntrada == variable &&
+       strcmp(tabla.pila[curr].nombre, identificador) == 0){
       return false;
     }
 
     --curr;
   }
 
-  // Buscarla en los parámetros formales, por encima de la marca
-  while ( tabla.pila[curr].tipoEntrada != procedimiento ){
+  --curr;  // es una marca
 
-    if ( tabla.pila[curr].tipoEntrada == parametro_formal &&
-        strcmp( tabla.pila[curr].nombre, identificador ) == 0 ){
+  while(tabla.pila[curr].tipoEntrada == parametro_formal){
+    /* Estamos en el bloque de un subprograma/procedimiento,
+     * por lo que debemos comprobar también en sus parámetros formales
+     */
+    if(strcmp(tabla.pila[curr].nombre, identificador) == 0){
       return false;
     }
 

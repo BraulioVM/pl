@@ -48,6 +48,8 @@ typedef struct {
 } t_token;
 
 #define YYSTYPE t_token
+#define t_posicion uint
+#define bool unsigned short
 
 Tabla tabla;
 
@@ -60,7 +62,7 @@ void TS_fin_bloque();
 void TS_insertar_entrada(Entrada item);
 int TS_ififitsisits();
 void TS_nofits();
-int TS_identificador_libre(char* identificador);
+bool TS_identificador_libre(char* identificador);
 
 void TS_dimension_vector( t_token dimension );
 void TS_dimension_matriz( t_token dimension_1, t_token dimension_2 );
