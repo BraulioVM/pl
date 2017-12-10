@@ -70,20 +70,18 @@ void TS_insertar_marca(){
 
 
 void TS_insertar_identificador(t_token identificador){
-  
-  if ( TS_ififitsisits() ){
+  if(TS_ififitsisits()){
+    if(TS_identificador_libre(identificador.lexema)) {
+      Entrada ident = {
+        variable,              // tipoEntrada
+        tipoTmp,               // tipoDato
+        identificador.lexema,  // nombre
+        0,                     // n_parametros
+        0,                     // dimensiones
+        0,                     // dimension_1
+        0,                     // dimension_2
+      };
 
-    Entrada ident = {
-      variable,              // tipoEntrada
-      tipoTmp,    // tipoDato
-      identificador.lexema,  // nombre
-      0,                     // n_parametros
-      0,                     // dimensiones
-      0,                     // dimension_1
-      0,                     // dimension_2
-    };
-
-    if (true) { //(TS_identificador_libre(identificador.lexema)) {
       TS_insertar_entrada(ident);
     } else {
       printf(
