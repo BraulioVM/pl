@@ -6,8 +6,7 @@
 #define false 0
 
 int TS_ififitsisits(){
-
-  return ! ( tabla.tope == MAX_TS_SIZE - 1 );
+  return tabla.tope < MAX_TS_SIZE - 1;
 }
 
 
