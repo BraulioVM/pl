@@ -53,11 +53,7 @@ typedef struct {
 
 Tabla tabla;
 
-t_posicion TS_ultima_marca(){
-  t_posicion curr = tabla.tope;
-  while(tabla.pila[curr--].tipoEntrada != marca);
-  return curr + 1;
-}
+
 
 void TS_insertar_marca();
 void TS_insertar_identificador(t_token identificador);
@@ -75,6 +71,7 @@ void TS_dimension_matriz( t_token dimension_1, t_token dimension_2 );
 
 void assert_tipo(t_token,t_dato);
 void asignar_identificador(t_token*, char*);
+t_posicion TS_ultima_marca();
 t_dato tipoTmp;
 
 #endif
