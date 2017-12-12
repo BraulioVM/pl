@@ -79,9 +79,8 @@ void TS_insertar_identificador(t_token identificador){
 
       TS_insertar_entrada(ident);
     } else {
-      printf(
-             "Error semántico: redeclaración de la variable %s\n",
-             identificador.lexema
+      yyerror(
+             "Error semántico: redeclaración de la variable %s"
              );
     }
   } else {

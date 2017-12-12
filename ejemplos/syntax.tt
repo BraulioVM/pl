@@ -40,9 +40,9 @@ BIENVENIDO {
 
 
     para i := 0 hasta 4 hacer {
-        si ((i + 8 || i - (i ** 4)) && !(8)){
+        si ((i == i + 3) && (i + 3 < 4)){
             imprimir m_ent[i,i];
-            m_car[i,j] = 'g';
+            m_car[i,i] = 'g';
         } si_no {
             imprimir i ** (i + 10 / (2 - 1) * 3);
             imprimir 5 - m_ent[5-i,0];
