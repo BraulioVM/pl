@@ -198,14 +198,14 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
                $$.tipo = booleano;
          }
          | PLUS_MINUS EXPR {
-           if ($2.tipo == entero || $2.tipo == real) {
+           if (tipo_numerico($2)) {
               $$.tipo = $2.tipo;
            } else {
              yyerror("error de tipos +/- debe ser usado con un numero");
            }
          }
          | EXPR PLUS_MINUS EXPR {
-           if ($1.tipo == $3.tipo && ($1.tipo == entero || $1.tipo == real)) {
+           if (tipo_numerico($1) && igualdad_de_tipos($1, $3)) {
               $$.tipo = $1.tipo;
            } else {
              yyerror("error de tipos +/- debe ser usado con numeros del mismo tipo");
@@ -222,21 +222,21 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
                 $$.tipo = booleano;
          }
          | EXPR OP_EQ EXPR {
-                if ($1.tipo == $3.tipo) {
+                if (igualdad_de_tipos($1, $3)) {
                    $$.tipo = booleano;
                 } else {
                    yyerror("en una comparacion ambos elementos deben ser del mismo tipo");
                 }
          }
          | EXPR OP_CMP EXPR {
-                if ($1.tipo == $3.tipo && ($1.tipo == entero || $1.tipo == real)) {
+                if (igualdad_de_tipos($1, $3) && tipo_numerico($1)) {
                    $$.tipo = booleano;
                 } else {
                   yyerror("un operador de orden compara numeros del mismo tipo");
                 }
          }
          | EXPR OP_MULT EXPR {
-               if ($1.tipo == $3.tipo && ($1.tipo == entero || $1.tipo == real)) {
+               if (igualdad_de_tipos($1, $3) && tipo_numerico($1)) {
                    $$.tipo = $1.tipo;
                 } else {
                   yyerror("en una multiplicación/división intervienen números del mismo tipo");

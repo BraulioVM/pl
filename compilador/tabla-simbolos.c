@@ -186,3 +186,10 @@ t_posicion TS_ultima_marca(){
   while(tabla.pila[curr--].tipoEntrada != marca);
   return curr + 1;
 }
+
+bool tipo_numerico(t_token t) {
+  return t.tipo == real || t.tipo == entero;
+}
+bool igualdad_de_tipos(t_token t1, t_token t2) {
+  return t1.tipo == t2.tipo;
+}

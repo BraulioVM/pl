@@ -74,4 +74,7 @@ void asignar_identificador(t_token*, char*);
 t_posicion TS_ultima_marca();
 t_dato tipoTmp;
 
+bool tipo_numerico(t_token);
+bool igualdad_de_tipos(t_token, t_token);
+
 #endif
