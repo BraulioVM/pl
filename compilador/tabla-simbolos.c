@@ -181,10 +181,18 @@ void asignar_identificador(t_token *token, char *identificador) {
 
 }
 
+
 t_posicion TS_ultima_marca(){
-  t_posicion curr = tabla.tope;
-  while(tabla.pila[curr--].tipoEntrada != marca);
-  return curr + 1;
+  t_posicion curr = tabla.tope + 1;
+  while(tabla.pila[--curr].tipoEntrada != marca);
+  return curr;
+}
+
+
+t_posicion TS_ultimo_procedimiento(){
+  t_posicion curr = tabla.tope + 1;
+  while(tabla.pila[--curr].tipoEntrada != procedimiento);
+  return curr;
 }
 
 bool tipo_numerico(t_token t) {

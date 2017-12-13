@@ -72,6 +72,7 @@ void TS_dimension_matriz( t_token dimension_1, t_token dimension_2 );
 void assert_tipo(t_token,t_dato);
 void asignar_identificador(t_token*, char*);
 t_posicion TS_ultima_marca();
+t_posicion TS_ultimo_procedimiento();
 t_dato tipoTmp;
 
 bool tipo_numerico(t_token);
