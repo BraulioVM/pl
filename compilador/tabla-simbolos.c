@@ -149,11 +149,11 @@ void TS_dimension_vector(t_token dimension){
 
 
 void TS_dimension_matriz( t_token dimension_1, t_token dimension_2 ){
-
   tabla.pila[ tabla.tope ].dimensiones = 2;
   tabla.pila[ tabla.tope ].dimension_1 = dimension_1.atributo;
   tabla.pila[ tabla.tope ].dimension_2 = dimension_2.atributo;
 }
+
 
 void assert_tipo(t_token token, t_dato tipo) {
   if (token.tipo != tipo) {
@@ -161,8 +161,8 @@ void assert_tipo(t_token token, t_dato tipo) {
   }
 }
 
-void asignar_identificador(t_token *token, char *identificador) {
 
+void asignar_identificador(t_token *token, char *identificador) {
   uint identificadorEncontrado = false;
   int indicePila;
   for (indicePila = tabla.tope; indicePila >= 0; indicePila--) {
@@ -181,7 +181,6 @@ void asignar_identificador(t_token *token, char *identificador) {
     token->tipo = tabla.pila[indicePila].tipoDato;
     token->lexema = tabla.pila[indicePila].nombre;
   }
-
 }
 
 
@@ -198,9 +197,12 @@ t_posicion TS_ultimo_procedimiento(){
   return curr;
 }
 
-bool tipo_numerico(t_token t) {
+
+bool tipo_numerico(t_token t){
   return t.tipo == real || t.tipo == entero;
 }
-bool igualdad_de_tipos(t_token t1, t_token t2) {
+
+
+bool igualdad_de_tipos(t_token t1, t_token t2){
   return t1.tipo == t2.tipo;
 }
