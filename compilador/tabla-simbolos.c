@@ -121,6 +121,9 @@ void TS_insertar_parametro(t_token parametro){
     };
 
     TS_insertar_entrada(param);
+
+    t_posicion proc = TS_ultimo_procedimiento();
+    tabla.pila[proc].n_parametros += 1;  // incrementa el número de params
   } else {
     TS_nofits();
   }
