@@ -206,39 +206,39 @@ bool igualdad_de_tipos(t_token t1, t_token t2){
   return t1.tipo == t2.tipo;
 }
 
-uint elementos_leidos[2];
-int vector_depth = -1;
-t_dato tipo_elementos[2];
+uint elementos_leidos;
+bool leyendo_vector = false;
+t_dato tipo_elementos;
 
 void inicia_vector() {
-  vector_depth++;
-  elementos_leidos[vector_depth] = 0;
+  leyendo_vector = true;
+  elementos_leidos = 0;
 }
 
 void comprueba_elemento (t_token token) {
-  if (elementos_leidos[vector_depth] == 0) {
-    tipo_elementos[vector_depth] = token.tipo;
+  if (elementos_leidos == 0) {
+    tipo_elementos = token.tipo;
   } else {
 
-    if (token.tipo != tipo_elementos[vector_depth]) {
+    if (token.tipo != tipo_elementos) {
       yyerror("error de tipos en vector");
     }
   }
 
-  elementos_leidos[vector_depth]++;
+  elementos_leidos++;
 }
 
 TipoArray finaliza_vector() {
   TipoArray resultado = {
-    .tipoDato = tipo_elementos[vector_depth],
-    .dimension = elementos_leidos[vector_depth]
+    .tipoDato = tipo_elementos,
+    .dimension = elementos_leidos
   };
 
-  vector_depth--;
+  leyendo_vector = false;
 
   return resultado;
 }
 
 bool definiendo_vector() {
-  return vector_depth != -1;
+  return leyendo_vector;
 }
