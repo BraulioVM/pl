@@ -209,3 +209,10 @@ bool tipo_numerico(t_token t){
 bool igualdad_de_tipos(t_token t1, t_token t2){
   return t1.tipo == t2.tipo;
 }
+
+
+void TS_dump_table(){
+  for(uint i = 1; i <= tabla.tope; ++i){
+    printf("%d %s \n", tabla.pila[i].tipoEntrada, tabla.pila[i].nombre);
+  }
+}

@@ -64,6 +64,7 @@ void TS_fin_bloque();
 void TS_insertar_entrada(Entrada item);
 bool TS_ififitsisits();
 void TS_nofits();
+void TS_dump_table();
 bool TS_identificador_libre(char* identificador);
 
 void TS_dimension_vector( t_token dimension );
