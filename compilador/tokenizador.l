@@ -83,7 +83,8 @@ fin_declaracion_variables       \.
 {op_mult}              { return OP_MULT; }
 {op_mult_mat}          { return OP_MULT_MAT; }
 {equals}               { return EQUALS; }
-{natural}              { return NATURAL; }
+{natural}              { yylval.atributo = atoi(yytext);
+                         return NATURAL; }
 {fl_bool_ch}           {
                        yylval.lexema = strdup(yytext);
                        return FL_BOOL_CH;

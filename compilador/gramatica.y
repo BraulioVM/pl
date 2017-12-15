@@ -87,14 +87,25 @@ LISTA_IDENTIFICADOR : IDENTIFICADOR { TS_insertar_identificador($1); }
   | error
   ;
 
-IDENTIFICADOR : NOMBRE
+IDENTIFICADOR : NOMBRE {
+              $$.dimensiones = 0;
+              $$.dimension_1 = 0;
+              $$.dimension_2 = 0;
+  }
   | NOMBRE CORCHETE_IZQ DIMENSIONES CORCHETE_DER {
       $$.lexema = strdup($1.lexema);
+
+      $$.dimensiones = $3.dimensiones;
+      $$.dimension_1 = $3.dimension_1;
+      $$.dimension_2 = $3.dimension_2;
     }
   ;
 
-DIMENSIONES : NATURAL    { TS_dimension_vector($1); }
-  | NATURAL COMA NATURAL { TS_dimension_matriz($1, $3); }
+DIMENSIONES : NATURAL    {
+            $$.dimensiones = 1;
+            $$.dimension_1 = $1.atributo;
+  }
+  | NATURAL COMA NATURAL { $$.dimensiones = 2; $$.dimension_1 = $1.atributo; $$.dimension_2 = $3.atributo; }
   ;
 
 DECLARACION_SUBPROGRAMAS : DECLARACION_SUBPROGRAMAS DECLARACION_SUBPROGRAMA
@@ -217,7 +228,7 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
   }
   | PLUS_MINUS EXPR {
     if (tipo_numerico($2)) {
-       $$.tipo = $2.tipo;
+      $$.tipo = $2.tipo;
     } else {
       sprintf(
               mensaje,
@@ -230,6 +241,22 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
   | EXPR PLUS_MINUS EXPR {
     if (tipo_numerico($1) && igualdad_de_tipos($1, $3)) {
        $$.tipo = $1.tipo;
+
+       if ($1.dimensiones == 0) {
+          $$.dimensiones = $3.dimensiones;
+          $$.dimension_1 = $3.dimension_1;
+          $$.dimension_2 = $3.dimension_2;
+       } else {
+          $$.dimensiones = $1.dimensiones;
+          $$.dimension_1 = $1.dimension_1;
+          $$.dimension_2 = $1.dimension_2;
+
+          if ($3.dimensiones != 0) {
+             if ($3.dimensiones != $1.dimensiones || $3.dimension_1 != $1.dimension_1 || $3.dimension_2 != $1.dimension_2) {
+                yyerror("error de dimensiones en suma/resta");
+             }
+          }
+       }
     } else {
       sprintf(
               mensaje,
@@ -271,19 +298,27 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
          }
   }
   | EXPR OP_MULT_MAT EXPR   {
-        if(igualdad_de_tipos($1, $3)){
-          if ($1.dimension_2 == $3.dimension_1){
-            $$.tipo = $1.tipo;
-            $$.dimension_1 = $1.dimension_1;
-            $$.dimension_2 = $3.dimension_2
-          } else {
-            TS_error_dimensiones(
-                 "las dimensiones de las matrices no son compatibles para su multiplicación."
-                                 );
+    if(tipo_numerico($1) && igualdad_de_tipos($1, $3)){
+       if($1.dimensiones != 2 || $3.dimensiones != 2){
+          TS_error_tipos("alguno de los operandos no es una matriz");
+       } else {
+          uint dimensionA1 = $1.dimension_1,
+               dimensionA2 = $1.dimension_2,
+               dimensionB1 = $3.dimension_1,
+               dimensionB2 = $3.dimension_2;
+
+          if (dimensionA2 != dimensionB1) {
+             TS_error_dimensiones("las dimensiones de las matrices no son compatibles para su multiplicación");
           }
-        } else {
-          TS_error_tipos("los tipos de los elementos de las matrices deben coincidir.");
-        }
+
+          $$.tipo = $1.tipo;
+          $$.dimensiones = 2;
+          $$.dimension_1 = dimensionA1;
+          $$.dimension_2 = dimensionB2;
+      }
+   } else {
+     TS_error_tipos("los tipos de los elementos de las matrices deben coincidir y ser numéricos.");
+    }
   }
   | IDENTIFICADOR_EXPR
   | FL_BOOL_CH {
@@ -325,7 +360,8 @@ LISTA_EXPR : EXPR {
 VECTOR : LLAVE_IZQ { inicia_vector(); }  LISTA_EXPR LLAVE_DER {
        TipoArray v = finaliza_vector();
        $$.tipo = v.tipoDato;
-       $$.dimension = v.dimension;
+       $$.dimensiones = 1;
+       $$.dimension_1 = v.dimension;
   }
   ;
 

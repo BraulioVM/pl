@@ -51,7 +51,9 @@ typedef struct {
   int atributo;
   char* lexema;
   t_dato tipo;
-  int dimension;
+  uint dimensiones;
+  uint dimension_1;
+  uint dimension_2;
 } t_token;
 
 #define YYSTYPE t_token
