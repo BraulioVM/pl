@@ -106,7 +106,7 @@ DECLARACION_SUBPROGRAMA : CABECERA_SUBPROGRAMA BLOQUE
 
 CABECERA_SUBPROGRAMA : TOKEN_SUBPROGRAMA
                        NOMBRE { TS_insertar_procedimiento($2); }
-                       PARENTESIS_IZQ PARAMETROS_PROCEDIMIENTO PARENTESIS_DER 
+                       PARENTESIS_IZQ PARAMETROS_PROCEDIMIENTO PARENTESIS_DER
   ;
 
 INICIO_DE_BLOQUE : LLAVE_IZQ
@@ -200,16 +200,12 @@ ARGUMENTOS_PROCEDIMIENTO : LISTA_EXPR
   ;
 
 LLAMADA_PROCED : NOMBRE PARENTESIS_IZQ ARGUMENTOS_PROCEDIMIENTO PARENTESIS_DER PYC  {
-  
-      Entrada entrada= buscar_en_tabla( $1.lexema );
+      t_posicion pos = TS_encontrar_entrada($1.lexema);
 
-      if ( strcmp( entrada.nombre, nombre_no_valido ) != 0 ){
-
-      }
-      else{
-        char mensaje[80];
-        sprintf( mensaje, "procedimiento %s no definido.", entrada.nombre );
-        TS_error_referencia( mensaje );
+      if(pos != -1){
+        // éxitos
+      } else {
+        TS_error_referencia($1.lexema);
       }
 }
   ;
