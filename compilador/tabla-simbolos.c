@@ -5,6 +5,8 @@
 #define true 1
 #define false 0
 
+Tabla tabla = { .tope = 0 };
+
 bool TS_ififitsisits(){
   return tabla.tope < MAX_TS_SIZE - 1;
 }
