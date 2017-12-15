@@ -11,8 +11,6 @@ bool TS_ififitsisits(){
   return tabla.tope < MAX_TS_SIZE - 1;
 }
 
-const char * nombre_no_valido = "\0";
-
 bool TS_identificador_libre(char* identificador){
   t_posicion curr = tabla.tope;
 
