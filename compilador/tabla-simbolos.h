@@ -54,7 +54,6 @@ typedef struct {
 Tabla tabla;
 
 
-
 void TS_insertar_marca();
 void TS_insertar_identificador(t_token identificador);
 void TS_insertar_procedimiento(t_token procedimiento);

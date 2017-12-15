@@ -13,7 +13,6 @@ bool TS_ififitsisits(){
 
 
 bool TS_identificador_libre(char* identificador){
-
   t_posicion curr = tabla.tope;
 
   while(tabla.pila[curr].tipoEntrada != marca){
