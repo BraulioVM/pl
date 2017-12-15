@@ -6,6 +6,8 @@
 
 typedef unsigned int uint;
 
+const char * nombre_no_valido = "\0";
+
 typedef enum {
   marca,
   procedimiento,
@@ -87,5 +89,7 @@ void inicia_vector();
 TipoArray finaliza_vector();
 void comprueba_elemento(t_token);
 bool definiendo_vector();
+
+Entrada buscar_en_tabla( char * nombre );
 
 #endif

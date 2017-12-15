@@ -242,3 +242,15 @@ TipoArray finaliza_vector() {
 bool definiendo_vector() {
   return vector_depth != -1;
 }
+
+
+Entrada buscar_en_tabla( char * nombre ){
+
+  for ( int i = tabla.tope - 1; i >= 0; i-- )
+    if ( strcmp( tabla.pila[i].nombre, nombre ) == 0 )
+      return tabla.pila[i];
+
+  Entrada no_valida;
+  strcpy( nombre_no_valido, no_valida.nombre );
+  return no_valida;
+}
