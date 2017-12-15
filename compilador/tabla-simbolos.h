@@ -34,6 +34,10 @@ typedef struct {
   uint dimension_2;
 } Entrada;
 
+typedef struct {
+  t_dato tipoDato;
+  uint dimension;
+} TipoArray;
 
 typedef struct {
   Entrada pila[MAX_TS_SIZE];
@@ -45,6 +49,7 @@ typedef struct {
   int atributo;
   char* lexema;
   t_dato tipo;
+  int dimension;
 } t_token;
 
 #define YYSTYPE t_token
@@ -77,5 +82,10 @@ t_dato tipoTmp;
 
 bool tipo_numerico(t_token);
 bool igualdad_de_tipos(t_token, t_token);
+
+void inicia_vector();
+TipoArray finaliza_vector();
+void comprueba_elemento(t_token);
+bool definiendo_vector();
 
 #endif

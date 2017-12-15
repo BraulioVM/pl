@@ -202,7 +202,43 @@ bool tipo_numerico(t_token t){
   return t.tipo == real || t.tipo == entero;
 }
 
-
 bool igualdad_de_tipos(t_token t1, t_token t2){
   return t1.tipo == t2.tipo;
+}
+
+uint elementos_leidos[2];
+int vector_depth = -1;
+t_dato tipo_elementos[2];
+
+void inicia_vector() {
+  vector_depth++;
+  elementos_leidos[vector_depth] = 0;
+}
+
+void comprueba_elemento (t_token token) {
+  if (elementos_leidos[vector_depth] == 0) {
+    tipo_elementos[vector_depth] = token.tipo;
+  } else {
+
+    if (token.tipo != tipo_elementos[vector_depth]) {
+      yyerror("error de tipos en vector");
+    }
+  }
+
+  elementos_leidos[vector_depth]++;
+}
+
+TipoArray finaliza_vector() {
+  TipoArray resultado = {
+    .tipoDato = tipo_elementos[vector_depth],
+    .dimension = elementos_leidos[vector_depth]
+  };
+
+  vector_depth--;
+
+  return resultado;
+}
+
+bool definiendo_vector() {
+  return vector_depth != -1;
 }
