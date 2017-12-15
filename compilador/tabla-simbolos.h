@@ -6,6 +6,8 @@
 
 typedef unsigned int uint;
 
+const char * nombre_no_valido = "\0";
+
 typedef enum {
   marca,
   procedimiento,
@@ -59,7 +61,6 @@ typedef struct {
 Tabla tabla;
 
 
-
 void TS_insertar_marca();
 void TS_insertar_identificador(t_token identificador);
 void TS_insertar_procedimiento(t_token procedimiento);
@@ -67,9 +68,11 @@ void TS_insertar_parametro(t_token parametro);
 void TS_fin_bloque();
 
 void TS_insertar_entrada(Entrada item);
-int TS_ififitsisits();
+bool TS_ififitsisits();
 void TS_nofits();
+void TS_dump_table();
 bool TS_identificador_libre(char* identificador);
+bool TS_parametro_libre(char* parametro);
 
 void TS_dimension_vector( t_token dimension );
 void TS_dimension_matriz( t_token dimension_1, t_token dimension_2 );
@@ -87,5 +90,13 @@ void inicia_vector();
 TipoArray finaliza_vector();
 void comprueba_elemento(t_token);
 bool definiendo_vector();
+
+Entrada buscar_en_tabla( char * nombre );
+
+void TS_error(const char* mensaje);
+void TS_error_tipos(const char* mensaje);
+void TS_error_referencia(const char* mensaje);
+void TS_error_dimensiones(const char* mensaje);
+void TS_error_redeclaracion_parametro(char* parametro);
 
 #endif

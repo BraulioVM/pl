@@ -5,13 +5,14 @@
 #define true 1
 #define false 0
 
-int TS_ififitsisits(){
+Tabla tabla = { .tope = 0 };
+
+bool TS_ififitsisits(){
   return tabla.tope < MAX_TS_SIZE - 1;
 }
 
 
 bool TS_identificador_libre(char* identificador){
-
   t_posicion curr = tabla.tope;
 
   while(tabla.pila[curr].tipoEntrada != marca){
@@ -38,6 +39,18 @@ bool TS_identificador_libre(char* identificador){
 
   return true;
 };
+
+
+bool TS_parametro_libre(char* parametro){
+  t_posicion curr = tabla.tope + 1;
+  while(tabla.pila[--curr].tipoEntrada == parametro_formal){
+    if(strcmp(tabla.pila[curr].nombre, parametro) == 0){
+      return false;
+    }
+  }
+
+  return true;
+}
 
 
 void TS_insertar_entrada(Entrada item){
@@ -79,8 +92,9 @@ void TS_insertar_identificador(t_token identificador){
 
       TS_insertar_entrada(ident);
     } else {
-      yyerror(
-             "Error semántico: redeclaración de la variable %s"
+      printf(
+             "Error semántico: redeclaración de la variable %s\n",
+             identificador.lexema
              );
     }
   } else {
@@ -110,20 +124,24 @@ void TS_insertar_procedimiento(t_token procedimiento_){
 
 void TS_insertar_parametro(t_token parametro){
   if (TS_ififitsisits()){
-    Entrada param = {
-      parametro_formal,  // tipoEntrada
-      parametro.tipo,    // tipoDato
-      parametro.lexema,  // nombre
-      0,                 // n_parametros
-      0,                 // dimensiones
-      0,                 // dimension_1
-      0,                 // dimension_2
-    };
+    if(TS_parametro_libre(parametro.lexema)){
+      Entrada param = {
+        parametro_formal,  // tipoEntrada
+        parametro.tipo,    // tipoDato
+        parametro.lexema,  // nombre
+        0,                 // n_parametros
+        0,                 // dimensiones
+        0,                 // dimension_1
+        0,                 // dimension_2
+      };
 
-    TS_insertar_entrada(param);
+      TS_insertar_entrada(param);
 
-    t_posicion proc = TS_ultimo_procedimiento();
-    tabla.pila[proc].n_parametros += 1;  // incrementa el número de params
+      t_posicion proc = TS_ultimo_procedimiento();
+      tabla.pila[proc].n_parametros += 1;  // incrementa el número de params
+    } else {
+      TS_error_redeclaracion_parametro(parametro.lexema);
+    }
   } else {
     TS_nofits();
   }
@@ -206,6 +224,12 @@ bool igualdad_de_tipos(t_token t1, t_token t2){
   return t1.tipo == t2.tipo;
 }
 
+void TS_dump_table(){
+  for(uint i = 1; i <= tabla.tope; ++i){
+    printf("%d %s \n", tabla.pila[i].tipoEntrada, tabla.pila[i].nombre);
+  }
+}
+
 uint elementos_leidos;
 bool leyendo_vector = false;
 t_dato tipo_elementos;
@@ -215,11 +239,11 @@ void inicia_vector() {
   elementos_leidos = 0;
 }
 
+
 void comprueba_elemento (t_token token) {
   if (elementos_leidos == 0) {
     tipo_elementos = token.tipo;
   } else {
-
     if (token.tipo != tipo_elementos) {
       yyerror("error de tipos en vector");
     }
@@ -227,6 +251,7 @@ void comprueba_elemento (t_token token) {
 
   elementos_leidos++;
 }
+
 
 TipoArray finaliza_vector() {
   TipoArray resultado = {
@@ -239,6 +264,56 @@ TipoArray finaliza_vector() {
   return resultado;
 }
 
+
 bool definiendo_vector() {
   return leyendo_vector;
+}
+
+
+Entrada buscar_en_tabla(char* nombre){
+  for(int i = tabla.tope; i > 0; --i){
+    if(strcmp(tabla.pila[i].nombre, nombre) == 0){
+      return tabla.pila[i];
+    }
+  }
+
+  Entrada no_valida;
+  strcpy(nombre_no_valido, no_valida.nombre);
+  return no_valida;
+}
+
+
+void TS_error(const char* mensaje){
+  fprintf(stderr, "%s", mensaje);
+}
+
+
+void TS_error_redeclaracion_parametro(char *parametro){
+  char base[100] = "Error: Argumento '%s' duplicado en declaración de procedimiento";
+  sprintf(base, base, parametro);
+  TS_error(base);
+}
+
+
+void TS_error_tipos(const char* mensaje){
+  char tmp[100];
+  strcat(tmp, "Error de tipos: ");
+  strcat(tmp, mensaje);
+  TS_error(tmp);
+}
+
+
+void TS_error_referencia(const char* mensaje){  // variable o procedimiento no definido
+  char tmp[100];
+  strcat(tmp, "Variable no definida: ");
+  strcat(tmp, mensaje);
+  TS_error(tmp);
+}
+
+
+void TS_error_dimensiones(const char* mensaje){  // variable o procedimiento no definido
+  char tmp[100];
+  strcat(tmp, "Dimensiones no compatibles: ");
+  strcat(tmp, mensaje);
+  TS_error(tmp);
 }
