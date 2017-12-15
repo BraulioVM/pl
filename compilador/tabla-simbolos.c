@@ -271,16 +271,14 @@ bool definiendo_vector() {
 }
 
 
-Entrada buscar_en_tabla(char* nombre){
+t_posicion TS_encontrar_entrada(char* nombre){
   for(int i = tabla.tope; i > 0; --i){
     if(strcmp(tabla.pila[i].nombre, nombre) == 0){
-      return tabla.pila[i];
+      return i;
     }
   }
 
-  Entrada no_valida;
-  no_valida.nombre = strdup(nombre_no_valido);
-  return no_valida;
+  return -1;
 }
 
 

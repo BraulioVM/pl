@@ -91,7 +91,7 @@ TipoArray finaliza_vector();
 void comprueba_elemento(t_token);
 bool definiendo_vector();
 
-Entrada buscar_en_tabla( char * nombre );
+t_posicion TS_encontrar_entrada(char* nombre);
 
 void TS_error(const char* mensaje);
 void TS_error_tipos(const char* mensaje);
