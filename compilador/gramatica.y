@@ -81,13 +81,15 @@ VARIABLE_LOCAL : TIPO { tipoTmp = $1.tipo; } LISTA_IDENTIFICADOR
   | error
   ;
 
-LISTA_IDENTIFICADOR : IDENTIFICADOR        
-  | IDENTIFICADOR COMA LISTA_IDENTIFICADOR
+LISTA_IDENTIFICADOR : IDENTIFICADOR { TS_insertar_identificador($1); }
+  | IDENTIFICADOR COMA LISTA_IDENTIFICADOR { TS_insertar_identificador($1); }
   | error
   ;
 
-IDENTIFICADOR : NOMBRE { TS_insertar_identificador($1); }
-  | NOMBRE { TS_insertar_identificador($1); } CORCHETE_IZQ DIMENSIONES CORCHETE_DER 
+IDENTIFICADOR : NOMBRE
+  | NOMBRE CORCHETE_IZQ DIMENSIONES CORCHETE_DER {
+      $$.lexema = strdup($1.lexema);
+    }
   ;
 
 DIMENSIONES : NATURAL    { TS_dimension_vector($1); }
