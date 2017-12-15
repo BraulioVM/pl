@@ -288,7 +288,7 @@ void TS_error(const char* mensaje){
 
 
 void TS_error_redeclaracion_parametro(char *parametro){
-  char base[100] = "Error: Argumento '%s' duplicado en declaración de procedimiento";
+  char base[100] = "Error: argumento '%s' duplicado en declaración de procedimiento";
   sprintf(base, base, parametro);
   TS_error(base);
 }
@@ -302,15 +302,15 @@ void TS_error_tipos(const char* mensaje){
 }
 
 
-void TS_error_referencia(const char* mensaje){  // variable o procedimiento no definido
-  char tmp[100];
-  strcat(tmp, "Variable no definida: ");
-  strcat(tmp, mensaje);
+void TS_error_referencia(const char* referencia){
+  // variable o procedimiento no definido
+  char base[100] = "Error de referencia: el nombre '%s' no ha sido definido.";
+  sprintf(base, base, referencia);
   TS_error(tmp);
 }
 
 
-void TS_error_dimensiones(const char* mensaje){  // variable o procedimiento no definido
+void TS_error_dimensiones(const char* mensaje){
   char tmp[100];
   strcat(tmp, "Dimensiones no compatibles: ");
   strcat(tmp, mensaje);
