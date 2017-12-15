@@ -103,7 +103,7 @@ DECLARACION_SUBPROGRAMA : CABECERA_SUBPROGRAMA BLOQUE
 
 CABECERA_SUBPROGRAMA : TOKEN_SUBPROGRAMA
                        NOMBRE { TS_insertar_procedimiento($2); }
-                       PARENTESIS_IZQ PARAMETROS_PROCEDIMIENTO PARENTESIS_DER
+                       PARENTESIS_IZQ PARAMETROS_PROCEDIMIENTO PARENTESIS_DER 
   ;
 
 INICIO_DE_BLOQUE : LLAVE_IZQ
@@ -139,7 +139,14 @@ SENTENCIA : BLOQUE
   | SENTENCIA_RETURN
   ;
 
-SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR EQUALS EXPR PYC
+SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR EQUALS EXPR PYC {
+  
+    if ( $1.tipo != $3.tipo ){
+      char * mensaje;
+      sprintf( mensaje, "Error al intentar asignar tipo %s a un identificador de tipo %s.", $3.tipo, $1.tipo );
+      yyerror( mensaje );
+    }
+}
   ;
 
 SENTENCIA_IF : IF PARENTESIS_IZQ EXPR {
@@ -189,7 +196,19 @@ ARGUMENTOS_PROCEDIMIENTO : LISTA_EXPR
   |
   ;
 
-LLAMADA_PROCED : NOMBRE PARENTESIS_IZQ ARGUMENTOS_PROCEDIMIENTO PARENTESIS_DER PYC
+LLAMADA_PROCED : NOMBRE PARENTESIS_IZQ ARGUMENTOS_PROCEDIMIENTO PARENTESIS_DER PYC  {
+  
+      Entrada entrada= buscar_en_tabla( $1.lexema );
+
+      if ( strcmp( entrada.nombre, nombre_no_valido ) != 0 ){
+
+      }
+      else{
+        char * mensaje;
+        sprintf( mensaje, "Procedimiento %s no definido.", entrada.nombre );
+        yyerror( mensaje );
+      }
+}
   ;
 
 EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
