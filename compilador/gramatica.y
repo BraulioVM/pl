@@ -271,24 +271,18 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
          }
   }
   | EXPR OP_MULT_MAT EXPR   {
-
-        if ( igualdad_de_tipos( $1, $3 ) ){
-
-          Entrada matriz_1 = buscar_en_tabla( $1.lexema );
-          Entrada matriz_2 = buscar_en_tabla( $3.lexema );
-
-          if ( matriz_1.dimension_2 == matriz_2.dimension_1 ){
-
+        if(igualdad_de_tipos($1, $3)){
+          if ($1.dimension_2 == $3.dimension_1){
             $$.tipo = $1.tipo;
-
+            $$.dimension_1 = $1.dimension_1;
+            $$.dimension_2 = $3.dimension_2
+          } else {
+            TS_error_dimensiones(
+                 "las dimensiones de las matrices no son compatibles para su multiplicación."
+                                 );
           }
-          else{
-            TS_error_dimensiones( "las dimensiones de las matrices no son compatibles para su multiplicación. Debe especificarse una matriz de orden m*n y otra de orden n*p." );
-          }
-
-        }
-        else{
-          TS_error_tipos( "los tipos de los elementos de las matrices deben coincidir." );
+        } else {
+          TS_error_tipos("los tipos de los elementos de las matrices deben coincidir.");
         }
   }
   | IDENTIFICADOR_EXPR
