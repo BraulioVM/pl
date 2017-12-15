@@ -204,7 +204,6 @@ bool tipo_numerico(t_token t){
   return t.tipo == real || t.tipo == entero;
 }
 
-
 bool igualdad_de_tipos(t_token t1, t_token t2){
   return t1.tipo == t2.tipo;
 }
@@ -214,4 +213,57 @@ void TS_dump_table(){
   for(uint i = 1; i <= tabla.tope; ++i){
     printf("%d %s \n", tabla.pila[i].tipoEntrada, tabla.pila[i].nombre);
   }
+}
+
+uint elementos_leidos[2];
+int vector_depth = -1;
+t_dato tipo_elementos[2];
+
+
+void inicia_vector() {
+  vector_depth++;
+  elementos_leidos[vector_depth] = 0;
+}
+
+
+void comprueba_elemento (t_token token) {
+  if (elementos_leidos[vector_depth] == 0) {
+    tipo_elementos[vector_depth] = token.tipo;
+  } else {
+    if (token.tipo != tipo_elementos[vector_depth]) {
+      yyerror("error de tipos en vector");
+    }
+  }
+
+  elementos_leidos[vector_depth]++;
+}
+
+
+TipoArray finaliza_vector() {
+  TipoArray resultado = {
+    .tipoDato = tipo_elementos[vector_depth],
+    .dimension = elementos_leidos[vector_depth]
+  };
+
+  vector_depth--;
+
+  return resultado;
+}
+
+
+bool definiendo_vector() {
+  return vector_depth != -1;
+}
+
+
+Entrada buscar_en_tabla(char* nombre){
+  for(int i = tabla.tope; i > 0; --i){
+    if(strcmp(tabla.pila[i].nombre, nombre) == 0){
+      return tabla.pila[i];
+    }
+  }
+
+  Entrada no_valida;
+  strcpy(nombre_no_valido, no_valida.nombre);
+  return no_valida;
 }

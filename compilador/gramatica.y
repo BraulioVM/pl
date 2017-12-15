@@ -244,7 +244,27 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
            yyerror("en una multiplicación/división intervienen números del mismo tipo");
          }
   }
-  | EXPR OP_MULT_MAT EXPR
+  | EXPR OP_MULT_MAT EXPR   {
+
+        if ( igualdad_de_tipos( $1, $3 ) ){
+
+          Entrada matriz_1 = buscar_en_tabla( $1.lexema );
+          Entrada matriz_2 = buscar_en_tabla( $3.lexema );
+
+          if ( matriz_1.dimension_2 == matriz_2.dimension_1 ){
+
+            $$.tipo = $1.tipo;
+
+          }
+          else{
+            yyerror( "Las dimensiones de las matrices no son compatibles para su multiplicación. Debe especificarse una matriz de orden m*n y otra de orden n*p." );
+          }
+
+        }
+        else{
+          yyerror( "Los tipos de los elementos de las matrices deben coincidir." );
+        }
+  }
   | IDENTIFICADOR_EXPR
   | FL_BOOL_CH {
     char *lexema = $1.lexema;
@@ -259,7 +279,7 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
   | NATURAL {
         $$.tipo = entero;
   }
-  | VECTOR { $$.tipo = array }
+  | VECTOR
   | error
   ;
 
@@ -274,11 +294,19 @@ LISTA_IDENTIFICADOR_EXPR : IDENTIFICADOR_EXPR
   | IDENTIFICADOR_EXPR COMA LISTA_IDENTIFICADOR_EXPR
   ;
 
-LISTA_EXPR : EXPR COMA LISTA_EXPR
-  | EXPR
+LISTA_EXPR : EXPR {
+           if (definiendo_vector()) {
+              comprueba_elemento($1);
+           }
+  } COMA LISTA_EXPR
+  | EXPR { if (definiendo_vector()) { comprueba_elemento($1); } }
   ;
 
-VECTOR : LLAVE_IZQ LISTA_EXPR LLAVE_DER
+VECTOR : LLAVE_IZQ { inicia_vector(); }  LISTA_EXPR LLAVE_DER {
+       TipoArray v = finaliza_vector();
+       $$.tipo = v.tipoDato;
+       $$.dimension = v.dimension;
+  }
   ;
 
 %%
