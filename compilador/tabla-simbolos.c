@@ -86,9 +86,9 @@ void TS_insertar_identificador(t_token identificador){
         tipoTmp,               // tipoDato
         identificador.lexema,  // nombre
         0,                     // n_parametros
-        0,                     // dimensiones
-        0,                     // dimension_1
-        0,                     // dimension_2
+        .dimensiones = identificador.dimensiones,
+        .dimension_1 = identificador.dimension_1,
+        .dimension_2 = identificador.dimension_2
       };
 
       TS_insertar_entrada(ident);
@@ -199,6 +199,9 @@ void asignar_identificador(t_token *token, char *identificador) {
   } else {
     token->tipo = tabla.pila[indicePila].tipoDato;
     token->lexema = tabla.pila[indicePila].nombre;
+    token->dimensiones = tabla.pila[indicePila].dimensiones;
+    token->dimension_1 = tabla.pila[indicePila].dimension_1;
+    token->dimension_2 = tabla.pila[indicePila].dimension_2;
   }
 }
 
@@ -313,7 +316,7 @@ void TS_error_referencia(const char* mensaje){  // variable o procedimiento no d
 
 
 void TS_error_dimensiones(const char* mensaje){  // variable o procedimiento no definido
-  char tmp[100];
+  char tmp[1000];
   strcat(tmp, "Dimensiones no compatibles: ");
   strcat(tmp, mensaje);
   TS_error(tmp);

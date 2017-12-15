@@ -1,0 +1,9 @@
+BIENVENIDO {
+           sean entero x[4,3], y[3,2], d[2,  4], h[7, 7].
+
+
+           x = (x ** y) ** d;
+
+           x = y ** h;
+
+}

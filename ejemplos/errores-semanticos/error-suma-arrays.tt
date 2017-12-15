@@ -1,0 +1,9 @@
+BIENVENIDO {
+           sean entero x[3], y[3], z[4].
+
+           x = y + 3;
+           x = y + z; 
+           
+           x = x + {1,2,3,4};
+
+}
