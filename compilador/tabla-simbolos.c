@@ -41,6 +41,18 @@ bool TS_identificador_libre(char* identificador){
 };
 
 
+bool TS_parametro_libre(char* parametro){
+  t_posicion curr = tabla.tope + 1;
+  while(tabla.pila[--curr].tipoEntrada == parametro_formal){
+    if(strcmp(tabla.pila[curr].nombre, parametro) == 0){
+      return false;
+    }
+  }
+
+  return true;
+}
+
+
 void TS_insertar_entrada(Entrada item){
   tabla.pila[++tabla.tope] = item;
 }
@@ -112,20 +124,24 @@ void TS_insertar_procedimiento(t_token procedimiento_){
 
 void TS_insertar_parametro(t_token parametro){
   if (TS_ififitsisits()){
-    Entrada param = {
-      parametro_formal,  // tipoEntrada
-      parametro.tipo,    // tipoDato
-      parametro.lexema,  // nombre
-      0,                 // n_parametros
-      0,                 // dimensiones
-      0,                 // dimension_1
-      0,                 // dimension_2
-    };
+    if(TS_parametro_libre(parametro.lexema)){
+      Entrada param = {
+        parametro_formal,  // tipoEntrada
+        parametro.tipo,    // tipoDato
+        parametro.lexema,  // nombre
+        0,                 // n_parametros
+        0,                 // dimensiones
+        0,                 // dimension_1
+        0,                 // dimension_2
+      };
 
-    TS_insertar_entrada(param);
+      TS_insertar_entrada(param);
 
-    t_posicion proc = TS_ultimo_procedimiento();
-    tabla.pila[proc].n_parametros += 1;  // incrementa el número de params
+      t_posicion proc = TS_ultimo_procedimiento();
+      tabla.pila[proc].n_parametros += 1;  // incrementa el número de params
+    } else {
+      TS_error_redeclaracion_parametro(parametro.lexema);
+    }
   } else {
     TS_nofits();
   }
@@ -266,4 +282,16 @@ Entrada buscar_en_tabla(char* nombre){
   Entrada no_valida;
   strcpy(nombre_no_valido, no_valida.nombre);
   return no_valida;
+}
+
+
+void TS_error(char *mensaje){
+  fprintf(stderr, mensaje);
+}
+
+
+void TS_error_redeclaracion_parametro(char *parametro){
+  char base[100] = "Error: Argumento '%s' duplicado en declaración de procedimiento";
+  sprintf(base, base, parametro);
+  TS_error(base);
 }

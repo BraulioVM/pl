@@ -72,6 +72,7 @@ bool TS_ififitsisits();
 void TS_nofits();
 void TS_dump_table();
 bool TS_identificador_libre(char* identificador);
+bool TS_parametro_libre(char* parametro);
 
 void TS_dimension_vector( t_token dimension );
 void TS_dimension_matriz( t_token dimension_1, t_token dimension_2 );
