@@ -11,6 +11,7 @@ bool TS_ififitsisits(){
   return tabla.tope < MAX_TS_SIZE - 1;
 }
 
+const char * nombre_no_valido = "\0";
 
 bool TS_identificador_libre(char* identificador){
   t_posicion curr = tabla.tope;
@@ -278,7 +279,7 @@ Entrada buscar_en_tabla(char* nombre){
   }
 
   Entrada no_valida;
-  strcpy(nombre_no_valido, no_valida.nombre);
+  no_valida.nombre = strdup(nombre_no_valido);
   return no_valida;
 }
 

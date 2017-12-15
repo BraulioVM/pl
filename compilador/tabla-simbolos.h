@@ -6,7 +6,7 @@
 
 typedef unsigned int uint;
 
-const char * nombre_no_valido = "\0";
+const char * nombre_no_valido;
 
 typedef enum {
   marca,

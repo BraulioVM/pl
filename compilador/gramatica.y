@@ -1,5 +1,6 @@
 %{
   #include "tabla-simbolos.h"
+  #include <string.h>
   // código C
   #define YYERROR_VERBOSE 1
   int yylex(void);
@@ -144,8 +145,8 @@ SENTENCIA : BLOQUE
 SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR EQUALS EXPR PYC {
   if(!igualdad_de_tipos($1, $3)){
 
-      char * mensaje;
-      sprintf( mensaje, "error al intentar asignar tipo %s a un identificador de tipo %s.", $3.tipo, $1.tipo );
+      char mensaje[80];
+      sprintf( mensaje, "error al intentar asignar tipo %d a un identificador de tipo %d.", $3.tipo, $1.tipo );
       TS_error_tipos( mensaje );
     }
 }
@@ -206,7 +207,7 @@ LLAMADA_PROCED : NOMBRE PARENTESIS_IZQ ARGUMENTOS_PROCEDIMIENTO PARENTESIS_DER P
 
       }
       else{
-        char * mensaje;
+        char mensaje[80];
         sprintf( mensaje, "procedimiento %s no definido.", entrada.nombre );
         TS_error_referencia( mensaje );
       }
