@@ -93,4 +93,7 @@ bool definiendo_vector();
 
 Entrada buscar_en_tabla( char * nombre );
 
+void TS_error(char* mensaje);
+void TS_error_redeclaracion_parametro(char* parametro);
+
 #endif
