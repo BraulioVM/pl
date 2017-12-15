@@ -142,8 +142,8 @@ SENTENCIA : BLOQUE
   ;
 
 SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR EQUALS EXPR PYC {
-  
-    if ( $1.tipo != $3.tipo ){
+  if(!igualdad_de_tipos($1, $3)){
+
       char * mensaje;
       sprintf( mensaje, "Error al intentar asignar tipo %s a un identificador de tipo %s.", $3.tipo, $1.tipo );
       yyerror( mensaje );
