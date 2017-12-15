@@ -285,8 +285,8 @@ Entrada buscar_en_tabla(char* nombre){
 }
 
 
-void TS_error(char *mensaje){
-  fprintf(stderr, mensaje);
+void TS_error(const char* mensaje){
+  fprintf(stderr, "%s", mensaje);
 }
 
 
@@ -294,4 +294,28 @@ void TS_error_redeclaracion_parametro(char *parametro){
   char base[100] = "Error: Argumento '%s' duplicado en declaración de procedimiento";
   sprintf(base, base, parametro);
   TS_error(base);
+}
+
+
+void TS_error_tipos(const char* mensaje){
+  char tmp[100];
+  strcat(tmp, "Error de tipos: ");
+  strcat(tmp, mensaje);
+  TS_error(tmp);
+}
+
+
+void TS_error_referencia(const char* mensaje){  // variable o procedimiento no definido
+  char tmp[100];
+  strcat(tmp, "Variable no definida: ");
+  strcat(tmp, mensaje);
+  TS_error(tmp);
+}
+
+
+void TS_error_dimensiones(const char* mensaje){  // variable o procedimiento no definido
+  char tmp[100];
+  strcat(tmp, "Dimensiones no compatibles: ");
+  strcat(tmp, mensaje);
+  TS_error(tmp);
 }
