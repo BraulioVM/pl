@@ -61,7 +61,6 @@ typedef struct {
 Tabla tabla;
 
 
-
 void TS_insertar_marca();
 void TS_insertar_identificador(t_token identificador);
 void TS_insertar_procedimiento(t_token procedimiento);
@@ -69,8 +68,9 @@ void TS_insertar_parametro(t_token parametro);
 void TS_fin_bloque();
 
 void TS_insertar_entrada(Entrada item);
-int TS_ififitsisits();
+bool TS_ififitsisits();
 void TS_nofits();
+void TS_dump_table();
 bool TS_identificador_libre(char* identificador);
 
 void TS_dimension_vector( t_token dimension );
