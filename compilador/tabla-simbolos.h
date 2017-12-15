@@ -62,7 +62,7 @@ void TS_insertar_parametro(t_token parametro);
 void TS_fin_bloque();
 
 void TS_insertar_entrada(Entrada item);
-int TS_ififitsisits();
+bool TS_ififitsisits();
 void TS_nofits();
 bool TS_identificador_libre(char* identificador);
 
