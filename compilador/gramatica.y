@@ -143,15 +143,15 @@ SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR EQUALS EXPR PYC {
   
     if ( $1.tipo != $3.tipo ){
       char * mensaje;
-      sprintf( mensaje, "Error al intentar asignar tipo %s a un identificador de tipo %s.", $3.tipo, $1.tipo );
-      yyerror( mensaje );
+      sprintf( mensaje, "error al intentar asignar tipo %s a un identificador de tipo %s.", $3.tipo, $1.tipo );
+      TS_error_tipos( mensaje );
     }
 }
   ;
 
 SENTENCIA_IF : IF PARENTESIS_IZQ EXPR {
              if ($3.tipo != booleano) {
-                yyerror("el tipo de la expresion dentro del si debe ser booleano");
+                TS_error_tipos("el tipo de la expresion dentro del si debe ser booleano");
                 }
   } PARENTESIS_DER SENTENCIA SENTENCIA_ELSE
 
@@ -163,7 +163,7 @@ SENTENCIA_ELSE : ELSE SENTENCIA
 
 SENTENCIA_WHILE : WHILE PARENTESIS_IZQ EXPR {
              if ($3.tipo != booleano) {
-                yyerror("el tipo de la expresion dentro del mientras debe ser booleano");
+                TS_error_tipos("el tipo de la expresion dentro del mientras debe ser booleano");
                 }
   } PARENTESIS_DER SENTENCIA
   ;
@@ -205,8 +205,8 @@ LLAMADA_PROCED : NOMBRE PARENTESIS_IZQ ARGUMENTOS_PROCEDIMIENTO PARENTESIS_DER P
       }
       else{
         char * mensaje;
-        sprintf( mensaje, "Procedimiento %s no definido.", entrada.nombre );
-        yyerror( mensaje );
+        sprintf( mensaje, "procedimiento %s no definido.", entrada.nombre );
+        TS_error_referencia( mensaje );
       }
 }
   ;
@@ -220,14 +220,14 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
     if (tipo_numerico($2)) {
        $$.tipo = $2.tipo;
     } else {
-      yyerror("error de tipos +/- debe ser usado con un numero");
+      TS_error_tipos("error de tipos +/- debe ser usado con un numero");
     }
   }
   | EXPR PLUS_MINUS EXPR {
     if (tipo_numerico($1) && igualdad_de_tipos($1, $3)) {
        $$.tipo = $1.tipo;
     } else {
-      yyerror("error de tipos +/- debe ser usado con numeros del mismo tipo");
+      TS_error_tipos("error de tipos +/- debe ser usado con numeros del mismo tipo");
     }
   }
   | EXPR OP_OR EXPR {
@@ -244,21 +244,21 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
          if (igualdad_de_tipos($1, $3)) {
             $$.tipo = booleano;
          } else {
-            yyerror("en una comparacion ambos elementos deben ser del mismo tipo");
+            TS_error_tipos("en una comparacion ambos elementos deben ser del mismo tipo");
          }
   }
   | EXPR OP_CMP EXPR {
          if (igualdad_de_tipos($1, $3) && tipo_numerico($1)) {
             $$.tipo = booleano;
          } else {
-           yyerror("un operador de orden compara numeros del mismo tipo");
+           TS_error_tipos("un operador de orden compara numeros del mismo tipo");
          }
   }
   | EXPR OP_MULT EXPR {
        if (igualdad_de_tipos($1, $3) && tipo_numerico($1)) {
             $$.tipo = $1.tipo;
          } else {
-           yyerror("en una multiplicación/división intervienen números del mismo tipo");
+           TS_error_tipos("en una multiplicación/división intervienen números del mismo tipo");
          }
   }
   | EXPR OP_MULT_MAT EXPR   {
@@ -274,12 +274,12 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
 
           }
           else{
-            yyerror( "Las dimensiones de las matrices no son compatibles para su multiplicación. Debe especificarse una matriz de orden m*n y otra de orden n*p." );
+            TS_error_dimensiones( "las dimensiones de las matrices no son compatibles para su multiplicación. Debe especificarse una matriz de orden m*n y otra de orden n*p." );
           }
 
         }
         else{
-          yyerror( "Los tipos de los elementos de las matrices deben coincidir." );
+          TS_error_tipos( "los tipos de los elementos de las matrices deben coincidir." );
         }
   }
   | IDENTIFICADOR_EXPR

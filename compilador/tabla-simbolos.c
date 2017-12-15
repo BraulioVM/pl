@@ -254,3 +254,29 @@ Entrada buscar_en_tabla( char * nombre ){
   strcpy( nombre_no_valido, no_valida.nombre );
   return no_valida;
 }
+
+
+void TS_error(const char* mensaje){
+  fprintf(stderr, "%s", mensaje);
+}
+
+void TS_error_tipos(const char* mensaje){
+  char tmp[100];
+  strcat(tmp, "Error de tipos: ");
+  strcat(tmp, mensaje);
+  TS_error(tmp);
+}
+
+void TS_error_referencia(const char* mensaje){  // variable o procedimiento no definido
+  char tmp[100];
+  strcat(tmp, "Variable no definida: ");
+  strcat(tmp, mensaje);
+  TS_error(tmp);
+}
+
+void TS_error_dimensiones(const char* mensaje){  // variable o procedimiento no definido
+  char tmp[100];
+  strcat(tmp, "Dimensiones no compatibles: ");
+  strcat(tmp, mensaje);
+  TS_error(tmp);
+}
