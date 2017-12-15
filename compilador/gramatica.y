@@ -219,14 +219,24 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
     if (tipo_numerico($2)) {
        $$.tipo = $2.tipo;
     } else {
-      TS_error_tipos("error de tipos +/- debe ser usado con un numero");
+      sprintf(
+              mensaje,
+              "el operador %s no soporta el tipo '%s'",
+              $1.lexema, $2.tipo
+              );
+      TS_error_tipos(mensaje);
     }
   }
   | EXPR PLUS_MINUS EXPR {
     if (tipo_numerico($1) && igualdad_de_tipos($1, $3)) {
        $$.tipo = $1.tipo;
     } else {
-      TS_error_tipos("error de tipos +/- debe ser usado con numeros del mismo tipo");
+      sprintf(
+              mensaje,
+              "el operador %s no soporta los tipos '%s' y '%s'",
+              $1.tipo, $2.lexema, $3.tipo
+              );
+      TS_error_tipos(mensaje);
     }
   }
   | EXPR OP_OR EXPR {
