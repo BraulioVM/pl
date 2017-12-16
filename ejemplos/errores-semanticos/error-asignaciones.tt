@@ -1,0 +1,14 @@
+BIENVENIDO {
+           sean entero x[3], m[4, 4], n[4,3].
+
+           x = 3;
+           
+           x[3] = 3;
+
+           x = 'a';
+           x[3] = 'a';
+
+
+           n[0] = x;
+           m[0] = x;
+}

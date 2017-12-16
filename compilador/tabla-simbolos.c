@@ -203,6 +203,28 @@ void asignar_identificador(t_token *token, char *identificador) {
   }
 }
 
+void asignar_identificador_array(t_token *token, char *identificador) {
+  t_posicion var_pos = TS_encontrar_entrada(identificador);
+
+  if (var_pos != -1) {
+    Entrada var = tabla.pila[var_pos];
+    
+    if (var.dimensiones == 0) {
+      yyerror("no se puede utilizar el operador de corchete sobre una variable primitiva");
+    } else {
+      token->lexema = var.nombre;
+      token->tipo = var.tipoDato;
+      token->dimensiones = var.dimensiones - 1;
+      token->dimension_1 = var.dimensiones == 1? 0 : var.dimension_2;
+      token->dimension_2 = 0;
+    }
+
+  } else {
+    yyerror("no existe tal identificador");
+  }
+
+}
+
 
 t_posicion TS_ultima_marca(){
   t_posicion curr = tabla.tope + 1;
@@ -224,6 +246,10 @@ bool tipo_numerico(t_token t){
 
 bool igualdad_de_tipos(t_token t1, t_token t2){
   return t1.tipo == t2.tipo;
+}
+
+bool igualdad_de_tipos_y_dimensiones(t_token t1, t_token t2) {
+  return igualdad_de_tipos(t1, t2) && t1.dimensiones == t2.dimensiones && t1.dimension_1 == t2.dimension_1 && t1.dimension_2 == t2.dimension_2;
 }
 
 void TS_dump_table(){
@@ -307,12 +333,12 @@ void TS_error_referencia(const char* referencia){
   // variable o procedimiento no definido
   char base[100] = "Error de referencia: el nombre '%s' no ha sido definido.";
   sprintf(base, base, referencia);
-  TS_error(tmp);
+  TS_error(base);
 }
 
 
 void TS_error_dimensiones(const char* mensaje){
-  char tmp[100];
+  char tmp[400];
   strcat(tmp, "Dimensiones no compatibles: ");
   strcat(tmp, mensaje);
   TS_error(tmp);

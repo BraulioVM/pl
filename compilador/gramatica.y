@@ -154,11 +154,11 @@ SENTENCIA : BLOQUE
   ;
 
 SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR EQUALS EXPR PYC {
-  if(!igualdad_de_tipos($1, $3)){
+  if(!igualdad_de_tipos_y_dimensiones($1, $3)){
 
       char mensaje[80];
       sprintf( mensaje, "error al intentar asignar tipo %d a un identificador de tipo %d.", $3.tipo, $1.tipo );
-      TS_error_tipos( mensaje );
+      yyerror( mensaje );
     }
 }
   ;
@@ -227,12 +227,13 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
         $$.tipo = booleano;
   }
   | PLUS_MINUS EXPR {
+    char mensaje[100];
     if (tipo_numerico($2)) {
       $$.tipo = $2.tipo;
     } else {
       sprintf(
               mensaje,
-              "el operador %s no soporta el tipo '%s'",
+              "el operador %s no soporta el tipo '%d'",
               $1.lexema, $2.tipo
               );
       TS_error_tipos(mensaje);
@@ -258,9 +259,10 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
           }
        }
     } else {
+     char mensaje[100];
       sprintf(
               mensaje,
-              "el operador %s no soporta los tipos '%s' y '%s'",
+              "el operador %d no soporta los tipos '%s' y '%d'",
               $1.tipo, $2.lexema, $3.tipo
               );
       TS_error_tipos(mensaje);
@@ -341,7 +343,9 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
 IDENTIFICADOR_EXPR : NOMBRE {
                    asignar_identificador(&$$, $1.lexema);
   }
-  | NOMBRE CORCHETE_IZQ EXPR CORCHETE_DER
+  | NOMBRE CORCHETE_IZQ EXPR CORCHETE_DER {
+    asignar_identificador_array(&$$, $1.lexema);
+  }
   | NOMBRE CORCHETE_IZQ EXPR COMA EXPR CORCHETE_DER
   ;
 
