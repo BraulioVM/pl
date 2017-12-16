@@ -1,8 +1,9 @@
 BIENVENIDO {
-           sean entero x[3], m[4, 4], n[4,3].
+           sean entero a, x[3], m[4, 4], n[4,3].
 
            x = 3;
            
+           a[0] = 3;
            x[3] = 3;
 
            x = 'a';
