@@ -247,9 +247,21 @@ bool igualdad_de_tipos(t_token t1, t_token t2){
   return t1.tipo == t2.tipo;
 }
 
+
 bool igualdad_de_tipos_y_dimensiones(t_token t1, t_token t2) {
-  return igualdad_de_tipos(t1, t2) && t1.dimensiones == t2.dimensiones && t1.dimension_1 == t2.dimension_1 && t1.dimension_2 == t2.dimension_2;
+  bool eq = igualdad_de_tipos(t1, t2) && t1.dimensiones == t2.dimensiones;
+
+  if(eq && t1.dimensiones >= 1){
+    eq = eq && t1.dimension_1 == t2.dimension_1;
+  }
+
+  if(eq && t1.dimensiones == 2){
+    eq = eq && t1.dimension_2 == t2.dimension_2;
+  }
+
+  return eq;
 }
+
 
 void TS_dump_table(){
   for(uint i = 1; i <= tabla.tope; ++i){
