@@ -108,6 +108,16 @@ TipoArray finaliza_vector();
 void comprueba_elemento(t_token);
 bool definiendo_vector();
 
+bool llamando_procedimiento;
+char *nombre_procedimiento;
+uint parametro_actual;
+t_posicion procedimiento_actual;
+
+bool TS_existe_procedimiento(char *proc);
+void TS_iniciar_llamada(char *proc);
+void TS_comprobar_parametro(t_token param);
+void TS_finalizar_llamada();
+
 t_posicion TS_encontrar_entrada(char* nombre);
 
 void TS_error(const char* mensaje);

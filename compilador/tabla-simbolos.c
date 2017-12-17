@@ -320,6 +320,89 @@ t_posicion TS_encontrar_entrada(char* nombre){
 }
 
 
+bool TS_existe_procedimiento(char *proc){
+  return TS_encontrar_entrada(proc) != -1;
+}
+
+
+bool llamando_procedimiento = false;
+char *nombre_procedimiento = NULL;
+uint parametro_actual = 0;
+t_posicion procedimiento_actual = 0;
+
+
+void TS_iniciar_llamada(char *proc){
+  if(!TS_existe_procedimiento(proc)){
+    TS_error_referencia(proc);
+  } else {
+    llamando_procedimiento = true;
+    nombre_procedimiento = strdup(proc);
+    parametro_actual = 0;
+    procedimiento_actual = TS_encontrar_entrada(proc);
+  }
+}
+
+
+void TS_comprobar_parametro(t_token param){
+  ++parametro_actual;
+  Entrada entrada_parametro = tabla.pila[procedimiento_actual + parametro_actual];
+
+  if(tabla.pila[procedimiento_actual].n_parametros < parametro_actual){
+    TS_error_numero_parametros(
+      nombre_procedimiento,
+      tabla.pila[procedimiento_actual].n_parametros,
+      parametro_actual
+    );
+  } else if(entrada_parametro.tipoDato != param.tipo){
+    TS_error_tipos_argumento(
+        entrada_parametro.nombre,
+        nombre_procedimiento,
+        entrada_parametro.tipoDato,
+        param.tipo
+    );
+  } else if(entrada_parametro.dimensiones != param.dimensiones){
+    TS_error_dimensiones_argumento(
+        entrada_parametro.nombre,
+        nombre_procedimiento,
+        entrada_parametro.dimensiones,
+        param.dimensiones
+    );
+  } else if(param.dimensiones >= 1 &&
+            entrada_parametro.dimension_1 != param.dimension_1){
+    TS_error_dimensiones_dimension1_argumento(
+        entrada_parametro.nombre,
+        nombre_procedimiento,
+        entrada_parametro.dimension_1,
+        param.dimension_1
+    );
+  } else if(param.dimensiones >= 2 &&
+            entrada_parametro.dimension_2 != param.dimension_2){
+    TS_error_dimensiones_dimension2_argumento(
+        entrada_parametro.nombre,
+        nombre_procedimiento,
+        entrada_parametro.dimension_2,
+        param.dimension_2
+    );
+  } // else: todo ok
+}
+
+
+void TS_finalizar_llamada(){
+  if(parametro_actual < tabla.pila[procedimiento_actual].n_parametros){
+    TS_error_numero_parametros(
+        nombre_procedimiento,
+        tabla.pila[procedimiento_actual].n_parametros,
+        parametro_actual
+    );
+  }
+
+  llamando_procedimiento = 0;
+  nombre_procedimiento = NULL;
+  parametro_actual = 0;
+  procedimiento_actual = 0;
+}
+
+
 void TS_error(const char* mensaje){
   fprintf(stderr, "%s\n", mensaje);
 }
