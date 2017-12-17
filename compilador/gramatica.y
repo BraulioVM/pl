@@ -53,21 +53,21 @@
 %%
 
 
-PROGRAMA : CABECERA_PROGRAMA BLOQUE
+PROGRAMA : CABECERA_PROGRAMA { inicioDePrograma(); } BLOQUE { finDePrograma(); }
   ;
 
 BLOQUE :
-    INICIO_DE_BLOQUE               { TS_insertar_marca(); }
+    INICIO_DE_BLOQUE               { TS_insertar_marca(); printf("{\n"); }
     DECLARACION_VARIABLES_LOCALES
     DECLARACION_SUBPROGRAMAS
     SENTENCIAS
-    FIN_DE_BLOQUE                  { TS_fin_bloque(); }
+    FIN_DE_BLOQUE                  { TS_fin_bloque(); printf("}\n"); }
   ;
 
 DECLARACION_VARIABLES_LOCALES :
-    INICIO_DECLARACION_VARIABLES
+    INICIO_DECLARACION_VARIABLES { declarandoVariables = true; }
     VARIABLES_LOCALES
-    FIN_DECLARACION_VARIABLES
+    FIN_DECLARACION_VARIABLES { declarandoVariables = false; }
   |
   ;
 
@@ -83,8 +83,23 @@ VARIABLE_LOCAL : TIPO { tipoTmp = $1.tipo; } LISTA_IDENTIFICADOR
   | error
   ;
 
-LISTA_IDENTIFICADOR : IDENTIFICADOR { TS_insertar_identificador($1); }
-  | IDENTIFICADOR COMA LISTA_IDENTIFICADOR { TS_insertar_identificador($1); }
+LISTA_IDENTIFICADOR : IDENTIFICADOR {
+                    TS_insertar_identificador($1);
+
+                    if (declarandoVariables) {
+                       char tipo[10];
+                       tipoC(tipo, tipoTmp);
+                       printf("%s %s;\n", tipo, $1.lexema);
+                    }
+  }
+  | IDENTIFICADOR COMA LISTA_IDENTIFICADOR {
+    TS_insertar_identificador($1);
+    if (declarandoVariables) {
+       char tipo[10];
+       tipoC(tipo, tipoTmp);
+       printf("%s %s;\n", tipo, $1.lexema);
+    }
+  }
   | error
   ;
 
@@ -165,10 +180,15 @@ SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR  { iniciarAsignacion(); } EQUALS EXPR 
       yyerror( mensaje );
     } else {
       asignarNombre($1.lexema);
+      printf("{\n");
       generarAsignacion($4.nombreSint); // no se por que funciona
                                         // con $4 y no con $3
                                         // debe ser alguna movida de
                                         // manejo de la memoria
+
+                                        
+      printf("%s = %s;\n", $1.nombreSint, $4.nombreSint);
+      printf("}\n");
     }
     }
   ;
@@ -202,15 +222,22 @@ SENTENCIA_FOR : FOR NOMBRE INIT_FOR EXPR {
 SENTENCIA_ENTRADA : SCANF LISTA_IDENTIFICADOR_EXPR PYC
   ;
 
-SENTENCIA_SALIDA : PRINTF LISTA_EXPRESIONES_O_CADENA PYC
+SENTENCIA_SALIDA : PRINTF { iniciarSalida(); iniciarAsignacion(); } LISTA_EXPRESIONES_O_CADENA PYC {
+                 printf("{\n");
+
+                 generarAsignacion();
+                 imprimePrintf();
+
+                 printf("}\n");
+  }
   ;
 
 LISTA_EXPRESIONES_O_CADENA : EXPR_O_CADENA
   | EXPR_O_CADENA COMA LISTA_EXPRESIONES_O_CADENA
   ;
 
-EXPR_O_CADENA : EXPR
-  | CADENA
+EXPR_O_CADENA : EXPR { addVariable($1); }
+  | CADENA { addCadena($1.lexema); }
   ;
 
 SENTENCIA_RETURN : RETURN PYC

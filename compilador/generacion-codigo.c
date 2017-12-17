@@ -47,14 +47,11 @@ void addInstruccion(char *tipo, char *result, char *instr) {
   tmpAsignacion.instrucciones[tmpAsignacion.subexpresiones++] = strdup(finalResult);
 }
 
-void generarAsignacion(char *resultadoFinal) {
-  printf("{\n");
+void generarAsignacion() {
   int i;
   for(i = 0; i < tmpAsignacion.subexpresiones; i++) {
     printf("%s\n", tmpAsignacion.instrucciones[i]);
   }
-
-  printf("%s = %s;\n}\n", tmpAsignacion.variableAsignada, resultadoFinal);
 }
 
 void generarOperacionBasica(t_token *sint, char *op, t_token t1, t_token t2) {
@@ -95,4 +92,73 @@ void tipoC(char *tipo, t_dato tip) {
     strcpy(tipo, "double");
     break;
   }
+}
+
+Salida tmpSalida;
+
+void iniciarSalida() {
+   tmpSalida.cadenas = malloc(sizeof(char *) * 80);
+   tmpSalida.variables = malloc(sizeof(char *) * 80);
+
+   tmpSalida.nCadenas = 0;
+   tmpSalida.nVariables = 0;
+}
+
+void addCadena(char *cadena) {
+  tmpSalida.cadenas[tmpSalida.nCadenas++] = strdup(cadena);
+}
+
+void addVariable(t_token var) {
+  char cadena[80];
+  switch (var.tipo) {
+  case entero:
+    strcpy(cadena, " %d ");
+    break;
+  case caracter:
+    strcpy(cadena, " %c ");
+    break;
+  case booleano:
+    strcpy(cadena, " %d ");
+    break;
+  case real:
+    strcpy(cadena, " %f ");
+    break;
+  }
+
+  addCadena(cadena);
+  tmpSalida.variables[tmpSalida.nVariables++] = strdup(var.nombreSint);
+
+}
+
+void imprimePrintf() {
+  char codigo[1000];
+  strcpy(codigo, "printf(\"");
+  int i;
+
+  for (i = 0; i < tmpSalida.nCadenas; i++) {
+    tmpSalida.cadenas[i][strlen(tmpSalida.cadenas[i]) - 1] = 0x0;
+    strcat(codigo, tmpSalida.cadenas[i] + 1);
+  }
+  
+  strcat(codigo, "\"");
+
+  for( i = 0; i < tmpSalida.nVariables; i++) {
+    strcat(codigo, ", ");
+    strcat(codigo, tmpSalida.variables[i]);
+  }
+
+  strcat(codigo, ");\n");
+
+  printf("%s", codigo);
+}
+
+bool declarandoVariables = false;
+
+void inicioDePrograma() {
+  printf("#include <stdio.h>\n");
+  printf("int main()\n");
+}
+
+void finDePrograma() {
+  printf("\n");
 }

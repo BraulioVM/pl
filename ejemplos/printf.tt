@@ -1,0 +1,8 @@
+BIENVENIDO {
+           sean entero x, y.
+
+           x = 1;
+           y = 10;
+
+           imprimir x+y*y, " hola";
+}

@@ -104,7 +104,9 @@ fin_declaracion_variables       \.
                        yylval.lexema = strdup(yytext);
                        return FL_BOOL_CH;
                        }
-{cadena}               { return CADENA; }
+{cadena}               { 
+                       yylval.lexema = strdup(yytext);
+                       return CADENA; }
 {nombre}               {
                        yylval.lexema = strdup(yytext);
                        return NOMBRE;
