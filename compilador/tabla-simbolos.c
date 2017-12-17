@@ -346,8 +346,12 @@ void TS_error_tipos(const char* mensaje){
 
 void TS_error_referencia(const char* referencia){
   // variable o procedimiento no definido
-  char base[100] = "Error de referencia: el nombre '%s' no ha sido definido.";
-  sprintf(base, base, referencia);
+  char base[100];
+  sprintf(
+          base,
+          "Error de referencia: el nombre '%s' no ha sido definido.",
+          referencia
+          );
   TS_error(base);
 }
 
