@@ -156,6 +156,9 @@ bool declarandoVariables = false;
 
 void inicioDePrograma() {
   printf("#include <stdio.h>\n");
+  printf("typedef int bool;\n");
+  printf("#define true 1\n");
+  printf("#define false 0\n");
   printf("int main()\n");
 }
 
