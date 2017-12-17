@@ -114,6 +114,11 @@ void TS_error(const char* mensaje);
 void TS_error_tipos(const char* mensaje);
 void TS_error_referencia(const char* mensaje);
 void TS_error_dimensiones(const char* mensaje);
-void TS_error_redeclaracion_parametro(char* parametro);
+void TS_error_redeclaracion_parametro(const char* parametro);
+void TS_error_numero_parametros(const char* proc, uint esperados, uint recibidos);
+void TS_error_tipos_argumento(const char* param, const char* proc, t_dato esperado, t_dato recibido);
+void TS_error_dimensiones_argumento(const char* param, const char* proc, uint esperadas, uint recibidas);
+void TS_error_dimensiones_dimension1_argumento(const char* param, const char* proc, uint esperado, uint recibido);
+void TS_error_dimensiones_dimension2_argumento(const char* param, const char* proc, uint esperado, uint recibido);
 
 #endif

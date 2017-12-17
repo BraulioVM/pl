@@ -354,3 +354,71 @@ void TS_error_dimensiones(const char* mensaje){
   strcat(tmp, mensaje);
   TS_error(tmp);
 }
+
+void TS_error_numero_parametros(const char* proc, uint esperados, uint recibidos){
+  char base[200];
+  sprintf(
+          base,
+           "el procedimiento '%s' esperaba %d parámetros pero recibió %d.",
+          proc,
+          esperados,
+          recibidos
+          );
+  TS_error_tipos(base);
+}
+
+
+void TS_error_tipos_argumento(const char* param, const char* proc, t_dato esperado, t_dato recibido){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "el parámetro '%s' del procedimiento '%s' debe ser de tipo '%s'. En su lugar se encontró un valor de tipo '%s'.",
+          param,
+          proc,
+          TS_nombre_tipo(esperado),
+          TS_nombre_tipo(recibido)
+          );
+  TS_error_tipos(mensaje);
+}
+
+
+void TS_error_dimensiones_argumento(const char* param, const char* proc, uint esperadas, uint recibidas){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "el parámetro '%s' del procedimiento '%s' debe tener %d dimensiones. En su lugar se encontró un valor con %d dimensiones.",
+          param,
+          proc,
+          esperadas,
+          recibidas
+          );
+  TS_error_dimensiones(mensaje);
+}
+
+
+void TS_error_dimensiones_dimension1_argumento(const char* param, const char* proc, uint esperado, uint recibido){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "en el procedimiento '%s', la primera dimensión del parámetro '%s' debe ser de tamaño %d. En su lugar se encontró un valor de tamaño %d.",
+          proc,
+          param,
+          esperado,
+          recibido
+          );
+  TS_error_dimensiones(mensaje);
+}
+
+
+void TS_error_dimensiones_dimension2_argumento(const char* param, const char* proc, uint esperado, uint recibido){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "en el procedimiento '%s', la segunda dimensión del parámetro '%s' debe ser de tamaño %d. En su lugar se encontró un valor de tamaño %d.",
+          proc,
+          param,
+          esperado,
+          recibido
+          );
+  TS_error_dimensiones(mensaje);
+}
