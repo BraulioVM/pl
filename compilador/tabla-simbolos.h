@@ -120,6 +120,8 @@ void TS_finalizar_llamada();
 
 t_posicion TS_encontrar_entrada(char* nombre);
 
+bool stringeq(const char *str1, const char *str2);
+
 void TS_error(const char* mensaje);
 void TS_error_tipos(const char* mensaje);
 void TS_error_referencia(const char* mensaje);

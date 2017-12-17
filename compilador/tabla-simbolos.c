@@ -309,9 +309,18 @@ bool definiendo_vector() {
 }
 
 
+bool stringeq(const char *str1, const char *str2){
+  if(str1 == NULL || str2 == NULL){
+    return str1 == str2;
+  } else {
+    return strcmp(str1, str2) == 0;
+  }
+}
+
+
 t_posicion TS_encontrar_entrada(char* nombre){
   for(int i = tabla.tope; i > 0; --i){
-    if(strcmp(tabla.pila[i].nombre, nombre) == 0){
+    if(stringeq(tabla.pila[i].nombre, nombre)){
       return i;
     }
   }
