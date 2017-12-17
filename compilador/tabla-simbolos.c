@@ -207,7 +207,7 @@ void asignar_identificador_array(t_token *token, char *identificador) {
 
   if (var_pos != -1) {
     Entrada var = tabla.pila[var_pos];
-    
+
     if (var.dimensiones == 0) {
       yyerror("no se puede utilizar el operador de corchete sobre una variable primitiva");
     } else {
@@ -445,6 +445,7 @@ void TS_error_dimensiones(const char* mensaje){
   strcat(tmp, mensaje);
   TS_error(tmp);
 }
+
 
 void TS_error_numero_parametros(const char* proc, uint esperados, uint recibidos){
   char base[200];

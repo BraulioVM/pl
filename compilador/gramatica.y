@@ -337,7 +337,7 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
   ;
 
 IDENTIFICADOR_EXPR : NOMBRE {
-                   asignar_identificador(&$$, $1.lexema);
+    asignar_identificador(&$$, $1.lexema);
   }
   | NOMBRE CORCHETE_IZQ EXPR CORCHETE_DER {
     asignar_identificador_array(&$$, $1.lexema);
@@ -365,7 +365,7 @@ LISTA_EXPR : EXPR COMA LISTA_EXPR {
   }
   ;
 
-VECTOR : LLAVE_IZQ { inicia_vector(); }  LISTA_EXPR LLAVE_DER {
+VECTOR : LLAVE_IZQ { inicia_vector(); } LISTA_EXPR LLAVE_DER {
        TipoArray v = finaliza_vector();
        $$.tipo = v.tipoDato;
        $$.dimensiones = 1;
