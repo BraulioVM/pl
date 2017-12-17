@@ -229,7 +229,7 @@ void asignar_identificador_matriz(t_token *token, char *nombre) {
 
   if (var_pos != -1) {
     Entrada var = tabla.pila[var_pos];
-    
+
     if (var.dimensiones == 2) {
       token->lexema = var.nombre;
       token->tipo = var.tipoDato;
@@ -427,7 +427,7 @@ void TS_finalizar_llamada(){
   }
 
   llamando_procedimiento = 0;
-  nombre_procedimiento = NULL;
+  free(nombre_procedimiento);
   parametro_actual = 0;
   procedimiento_actual = 0;
 }
