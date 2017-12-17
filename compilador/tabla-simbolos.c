@@ -321,7 +321,7 @@ t_posicion TS_encontrar_entrada(char* nombre){
 
 
 void TS_error(const char* mensaje){
-  fprintf(stderr, "%s", mensaje);
+  fprintf(stderr, "%s\n", mensaje);
 }
 
 
