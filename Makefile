@@ -31,7 +31,10 @@ $(OBJ)/tokenizador.c: $(SRC)/tokenizador.l
 $(OBJ)/tabla-simbolos.o: $(SRC)/tabla-simbolos.c $(SRC)/tabla-simbolos.h
 	gcc  $(CCFLAGS) -c $(SRC)/tabla-simbolos.c -o $(OBJ)/tabla-simbolos.o
 
-$(BIN)/gramatizador: $(OBJ)/gramatica.c $(OBJ)/tokenizador.c $(OBJ)/tabla-simbolos.o
+$(OBJ)/generacion-codigo.o: $(SRC)/generacion-codigo.c $(SRC)/generacion-codigo.h
+	gcc  $(CCFLAGS) -c $(SRC)/generacion-codigo.c -o $(OBJ)/generacion-codigo.o
+
+$(BIN)/gramatizador: $(OBJ)/gramatica.c $(OBJ)/tokenizador.c $(OBJ)/tabla-simbolos.o $(OBJ)/generacion-codigo.o
 	$(CC) $(CCFLAGS) -I$(SRC) -I$(OBJ) $(OBJ)/tabla-simbolos.o $(OBJ)/gramatica.c -o $@ $(TOKENIZER_FLAGS) 
 
 grammar: $(OBJ)/gramatica.c
