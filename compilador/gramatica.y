@@ -210,15 +210,11 @@ ARGUMENTOS_PROCEDIMIENTO : LISTA_EXPR
   |
   ;
 
-LLAMADA_PROCED : NOMBRE PARENTESIS_IZQ ARGUMENTOS_PROCEDIMIENTO PARENTESIS_DER PYC  {
-      t_posicion pos = TS_encontrar_entrada($1.lexema);
-
-      if(pos != -1){
-        // éxitos
-      } else {
-        TS_error_referencia($1.lexema);
-      }
-}
+LLAMADA_PROCED : NOMBRE PARENTESIS_IZQ {
+    TS_iniciar_llamada($1.lexema);
+  } ARGUMENTOS_PROCEDIMIENTO PARENTESIS_DER {
+    TS_finalizar_llamada();
+  } PYC
   ;
 
 EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
@@ -353,12 +349,20 @@ LISTA_IDENTIFICADOR_EXPR : IDENTIFICADOR_EXPR
   | IDENTIFICADOR_EXPR COMA LISTA_IDENTIFICADOR_EXPR
   ;
 
-LISTA_EXPR : EXPR {
-           if (definiendo_vector()) {
-              comprueba_elemento($1);
-           }
-  } COMA LISTA_EXPR
-  | EXPR { if (definiendo_vector()) { comprueba_elemento($1); } }
+LISTA_EXPR : EXPR COMA LISTA_EXPR {
+    if(definiendo_vector()){
+      comprueba_elemento($1);
+    } else if(llamando_procedimiento){
+      TS_comprobar_parametro($1);
+    }
+  }
+  | EXPR {
+    if(definiendo_vector()){
+      comprueba_elemento($1);
+    } else if(llamando_procedimiento){
+      TS_comprobar_parametro($1);
+    }
+  }
   ;
 
 VECTOR : LLAVE_IZQ { inicia_vector(); }  LISTA_EXPR LLAVE_DER {
