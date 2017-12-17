@@ -325,7 +325,11 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
          if (igualdad_de_tipos($1, $3)) {
             $$.tipo = booleano;
             
-            generarOperacionBasicaConTipo(&$$, "bool", "==", $1, $3);
+            if ($2.atributo == 1) {
+               generarOperacionBasicaConTipo(&$$, "bool", "!=", $1, $3);
+            } else {
+               generarOperacionBasicaConTipo(&$$, "bool", "==", $1, $3);
+            }
 
          } else {
             TS_error_tipos("en una comparacion ambos elementos deben ser del mismo tipo");
@@ -334,6 +338,23 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
   | EXPR OP_CMP EXPR {
          if (igualdad_de_tipos($1, $3) && tipo_numerico($1)) {
             $$.tipo = booleano;
+
+            switch ($2.atributo) {
+            case 0:
+                 generarOperacionBasicaConTipo(&$$, "bool", "<=", $1, $3);
+                 break;
+            case 1:
+                 generarOperacionBasicaConTipo(&$$, "bool", "<", $1, $3);
+                 break;
+            case 2:
+                 generarOperacionBasicaConTipo(&$$, "bool", ">=", $1, $3);
+                 break;
+            case 3:
+                 generarOperacionBasicaConTipo(&$$, "bool", ">", $1, $3);
+                 break;
+            }
+
+            
          } else {
            TS_error_tipos("un operador de orden compara numeros del mismo tipo");
          }

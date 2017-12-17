@@ -81,8 +81,16 @@ fin_declaracion_variables       \.
 {not}                  { return NOT; }
 {op_or}                { return OP_OR; }
 {op_and}               { return OP_AND; }
-{op_eq}                { return OP_EQ; }
-{op_cmp}               { return OP_CMP; }
+{op_eq}                {
+                       if (yytext[0] == '!') yylval.atributo = 1;
+                       else yylval.atributo = 0;
+                       return OP_EQ; }
+{op_cmp}               {
+                       if (strcmp(yytext, "<=") == 0) yylval.atributo = 0;
+                       if (strcmp(yytext, "<") == 0) yylval.atributo = 1;
+                       if (strcmp(yytext, ">=") == 0) yylval.atributo = 2;
+                       if (strcmp(yytext, ">") == 0) yylval.atributo = 3;
+                       return OP_CMP; }
 {op_mult}              {
                        if (yytext[0] == '*') yylval.atributo = 0;
                        else yylval.atributo = 1;
