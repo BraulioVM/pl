@@ -333,7 +333,7 @@ void TS_error_redeclaracion_parametro(char *parametro){
 
 
 void TS_error_tipos(const char* mensaje){
-  char tmp[100];
+  char tmp[400];
   strcat(tmp, "Error de tipos: ");
   strcat(tmp, mensaje);
   TS_error(tmp);
