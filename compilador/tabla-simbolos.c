@@ -325,9 +325,13 @@ void TS_error(const char* mensaje){
 }
 
 
-void TS_error_redeclaracion_parametro(char *parametro){
-  char base[100] = "Error: argumento '%s' duplicado en declaración de procedimiento";
-  sprintf(base, base, parametro);
+void TS_error_redeclaracion_parametro(const char *parametro){
+  char base[100];
+  sprintf(
+          base,
+          "Error: argumento '%s' duplicado en declaración de procedimiento",
+          parametro
+          );
   TS_error(base);
 }
 
