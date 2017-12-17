@@ -16,7 +16,6 @@ typedef enum {
 
 typedef enum {
   NA = 0,
-  array,
   booleano,
   caracter,
   entero,
@@ -89,7 +88,6 @@ t_dato tipoTmp;
 static inline const char* TS_nombre_tipo(t_dato tipo){
   static const char* nombres[] = {
     "NA",
-    "array",
     "booleano",
     "caracter",
     "entero",
