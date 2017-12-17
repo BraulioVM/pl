@@ -342,7 +342,9 @@ IDENTIFICADOR_EXPR : NOMBRE {
   | NOMBRE CORCHETE_IZQ EXPR CORCHETE_DER {
     asignar_identificador_array(&$$, $1.lexema);
   }
-  | NOMBRE CORCHETE_IZQ EXPR COMA EXPR CORCHETE_DER
+  | NOMBRE CORCHETE_IZQ EXPR COMA EXPR CORCHETE_DER {
+    asignar_identificador_matriz(&$$, $1.lexema);
+  }
   ;
 
 LISTA_IDENTIFICADOR_EXPR : IDENTIFICADOR_EXPR
