@@ -350,7 +350,7 @@ void TS_error_referencia(const char* referencia){
 
 void TS_error_dimensiones(const char* mensaje){
   char tmp[400];
-  strcat(tmp, "Dimensiones no compatibles: ");
+  strcat(tmp, "Error de dimensiones: ");
   strcat(tmp, mensaje);
   TS_error(tmp);
 }
