@@ -35,7 +35,7 @@ $(OBJ)/generacion-codigo.o: $(SRC)/generacion-codigo.c $(SRC)/generacion-codigo.
 	gcc  $(CCFLAGS) -c $(SRC)/generacion-codigo.c -o $(OBJ)/generacion-codigo.o
 
 $(BIN)/gramatizador: $(OBJ)/gramatica.c $(OBJ)/tokenizador.c $(OBJ)/tabla-simbolos.o $(OBJ)/generacion-codigo.o
-	$(CC) $(CCFLAGS) -I$(SRC) -I$(OBJ) $(OBJ)/tabla-simbolos.o $(OBJ)/gramatica.c -o $@ $(TOKENIZER_FLAGS) 
+	$(CC) $(CCFLAGS) -I$(SRC) -I$(OBJ) $(OBJ)/generacion-codigo.o $(OBJ)/tabla-simbolos.o $(OBJ)/gramatica.c -o $@ $(TOKENIZER_FLAGS) 
 
 grammar: $(OBJ)/gramatica.c
 

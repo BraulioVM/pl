@@ -1,0 +1,15 @@
+BIENVENIDO {
+           sean entero a, b;
+                booleano c, d;
+                real x, y, z.
+
+           b = a + 3;
+           b = a + 3 + 4 * b + 5 /6;
+           b = -a + 3;
+           
+           c = !(!c || d) && (b == a);
+
+
+           x = (y + z - 3.0) / 4.0;
+
+}

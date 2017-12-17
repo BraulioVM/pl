@@ -52,6 +52,7 @@ typedef struct {
   uint dimensiones;
   uint dimension_1;
   uint dimension_2;
+  char *nombreSint;
 } t_token;
 
 #define YYSTYPE t_token
