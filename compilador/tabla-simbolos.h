@@ -84,6 +84,21 @@ t_posicion TS_ultima_marca();
 t_posicion TS_ultimo_procedimiento();
 t_dato tipoTmp;
 
+
+static inline const char* TS_nombre_tipo(t_dato tipo){
+  static const char* nombres[] = {
+    "NA",
+    "array",
+    "booleano",
+    "caracter",
+    "entero",
+    "real"
+  };
+
+  return nombres[tipo];
+}
+
+
 bool tipo_numerico(t_token);
 bool igualdad_de_tipos(t_token, t_token);
 bool igualdad_de_tipos_y_dimensiones(t_token, t_token);
