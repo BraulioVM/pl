@@ -381,16 +381,32 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
     }
   }
   | EXPR OP_MULT EXPR {
-       if (igualdad_de_tipos($1, $3) && tipo_numerico($1)) {
-            $$.tipo = $1.tipo;
-            char op[1];
-            if ($2.atributo == 0) {
-               op[0] = '*'; op[1] = 0;
-            } else { op[0] = '/'; op[1] = 0; }
-            generarOperacionBasica(&$$, op, $1, $3);
-         } else {
-           TS_error_tipos("en una multiplicación/división intervienen números del mismo tipo");
-         }
+    if(!(igualdad_de_tipos($1, $3) && tipo_numerico($1))){
+      TS_error_tipos_producto($2.lexema, $1.tipo, $3.tipo);
+    } else if((
+               $1.dimensiones != 0 && $3.dimensiones != 0
+               && !igualdad_de_tipos_y_dimensiones($1, $3))){
+      TS_error_dimensiones_producto($2.lexema, $1, $3);
+    } else {  // todo ok
+      $$.tipo = $1.tipo;
+      $$.dimensiones = $1.dimensiones > $3.dimensiones ? $1.dimensiones : $3.dimensiones;  // max
+
+      if($1.dimensiones >= 1){
+        $$.dimension_1 = $1.dimension_1;
+
+        if($1.dimensiones == 2){
+          $$.dimension_2 = $1.dimension_2;
+        }
+      } else if($3.dimensiones >= 1){
+        $$.dimension_1 = $3.dimension_1;
+
+        if($3.dimensiones == 2){
+          $$.dimension_2 = $3.dimension_2;
+        }
+      } else {  // dimensiones = 0 -> escalares
+        generarOperacionBasica(&$$, $2.lexema, $1, $3);
+      }
+    }
   }
   | EXPR OP_MULT_MAT EXPR   {
     if(tipo_numerico($1) && igualdad_de_tipos($1, $3)){
