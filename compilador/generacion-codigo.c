@@ -181,3 +181,58 @@ void ccat(t_token *t, char *c) {
     strcat(t->codigoSint, c);
   }
 }
+
+typedef struct {
+  char *cuantificadores;
+  char **variables;
+  uint nVariables;
+} SEntrada;
+
+SEntrada tmpEntrada;
+
+void iniciarEntrada() {
+  tmpEntrada.cuantificadores = malloc(sizeof(char) * 100);
+  tmpEntrada.variables = malloc(sizeof(char*) * 100);
+  tmpEntrada.nVariables = 0;
+}
+
+void recibirAVariable(t_token t) {
+  char *variable = strdup(t.nombreSint), cuantificador;
+  switch(t.tipo) {
+  case caracter:
+    cuantificador = 'c';
+    break;
+  case entero:
+  case booleano:
+    cuantificador = 'd';
+    break;
+  case real:
+    cuantificador = 'f';
+    break;
+  }
+
+  tmpEntrada.cuantificadores[tmpEntrada.nVariables] = cuantificador;
+  tmpEntrada.variables[tmpEntrada.nVariables++] = variable;
+}
+
+void imprimeScanf(t_token *t) {
+  char c[100];
+  sprintf(c, "%%%c", tmpEntrada.cuantificadores[0]);
+  ccat(t, "scanf(\"");
+  ccat(t, c);
+  int i;
+  for (i = 1; i < tmpEntrada.nVariables; i++) {
+    char codigo[100];
+    sprintf(codigo, " %%%c ", tmpEntrada.cuantificadores[i]);
+    ccat(t, codigo);
+  }
+  
+  ccat(t, "\"");
+
+  for (i = 0; i < tmpEntrada.nVariables; i++) {
+    ccat(t, ", &");
+    ccat(t, tmpEntrada.variables[i]);
+  }
+
+  ccat(t, ");\n");
+}
