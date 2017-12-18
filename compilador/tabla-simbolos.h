@@ -99,6 +99,7 @@ static inline const char* TS_nombre_tipo(t_dato tipo){
   return nombres[tipo];
 }
 
+char* TS_dimensiones(t_token token);
 
 bool tipo_numerico(t_token);
 bool igualdad_de_tipos(t_token, t_token);
@@ -125,13 +126,15 @@ bool stringeq(const char *str1, const char *str2);
 
 void TS_error(const char* mensaje);
 void TS_error_tipos(const char* mensaje);
-void TS_error_referencia(const char* mensaje);
-void TS_error_dimensiones(const char* mensaje);
-void TS_error_redeclaracion_parametro(const char* parametro);
-void TS_error_numero_parametros(const char* proc, uint esperados, uint recibidos);
 void TS_error_tipos_argumento(const char* param, const char* proc, t_dato esperado, t_dato recibido);
+void TS_error_tipos_producto(const char* op, const t_dato tipoA, const t_dato tipoB);
+void TS_error_dimensiones(const char* mensaje);
 void TS_error_dimensiones_argumento(const char* param, const char* proc, uint esperadas, uint recibidas);
 void TS_error_dimensiones_dimension1_argumento(const char* param, const char* proc, uint esperado, uint recibido);
 void TS_error_dimensiones_dimension2_argumento(const char* param, const char* proc, uint esperado, uint recibido);
+void TS_error_dimensiones_producto(const char* op, const t_token left, const t_token right);
+void TS_error_referencia(const char* mensaje);
+void TS_error_redeclaracion_parametro(const char* parametro);
+void TS_error_numero_parametros(const char* proc, uint esperados, uint recibidos);
 
 #endif

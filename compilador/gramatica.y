@@ -64,19 +64,18 @@ PROGRAMA : CABECERA_PROGRAMA BLOQUE {
   ;
 
 BLOQUE :
-    INICIO_DE_BLOQUE {
-                      TS_insertar_marca();
-    }
-    DECLARACION_VARIABLES_LOCALES 
-    DECLARACION_SUBPROGRAMAS
-    SENTENCIAS
-    FIN_DE_BLOQUE                  { TS_fin_bloque(); 
-                                   iniciarCodigo(&$$);
-                                   strcpy($$.codigoSint, "{\n");
-                                   strcat($$.codigoSint, $3.codigoSint);
-                                   strcat($$.codigoSint, $5.codigoSint);
-                                   strcat($$.codigoSint, "}\n");
-    }
+  INICIO_DE_BLOQUE { TS_insertar_marca(); }
+  DECLARACION_VARIABLES_LOCALES
+  DECLARACION_SUBPROGRAMAS
+  SENTENCIAS
+  FIN_DE_BLOQUE {
+    TS_fin_bloque();
+    iniciarCodigo(&$$);
+    strcpy($$.codigoSint, "{\n");
+    strcat($$.codigoSint, $3.codigoSint);
+    strcat($$.codigoSint, $5.codigoSint);
+    strcat($$.codigoSint, "}\n");
+  }
   ;
 
 DECLARACION_VARIABLES_LOCALES :
@@ -85,7 +84,7 @@ DECLARACION_VARIABLES_LOCALES :
     FIN_DECLARACION_VARIABLES {
                               declarandoVariables = false;
                               $$.codigoSint = $3.codigoSint;
-  } 
+  }
   | { $$.codigoSint = ""; }
   ;
 
@@ -108,7 +107,7 @@ VARIABLE_LOCAL : TIPO { tipoTmp = $1.tipo; } LISTA_IDENTIFICADOR {
 
 LISTA_IDENTIFICADOR : IDENTIFICADOR {
                     TS_insertar_identificador($1);
-                    
+
                     if (declarandoVariables) {
                        iniciarCodigo(&$$);
                        char tipo[10], codigo[500];
@@ -209,25 +208,25 @@ SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR  { iniciarAsignacion(); } EQUALS EXPR 
   // y $3 tiene un valor que no se
   // de donde viene no se por que (por ahora funciona)
   if(!igualdad_de_tipos_y_dimensiones($1, $4)){
-      char mensaje[80];
-      sprintf( mensaje, "error al intentar asignar tipo %d a un identificador de tipo %d.", $4.tipo, $1.tipo );
-      yyerror( mensaje );
-    } else {
-      asignarNombre($1.lexema);
-      iniciarCodigo(&$$);
-      strcpy($$.codigoSint, "{\n");
-      generarAsignacion(&$$); // no se por que funciona
-                                        // con $4 y no con $3
-                                        // debe ser alguna movida de
-                                        // manejo de la memoria
+    char mensaje[80];
+    sprintf( mensaje, "error al intentar asignar tipo %d a un identificador de tipo %d.", $4.tipo, $1.tipo );
+    TS_error( mensaje );
+  } else {
+    asignarNombre($1.lexema);
+    iniciarCodigo(&$$);
+    strcpy($$.codigoSint, "{\n");
+    generarAsignacion(&$$); // no se por que funciona
+                                      // con $4 y no con $3
+                                      // debe ser alguna movida de
+                                      // manejo de la memoria
 
-      char codigoO[10000];
-      sprintf(codigoO, "%s = %s;\n", $1.nombreSint, $4.nombreSint);
-      strcat($$.codigoSint, codigoO);
-      strcat($$.codigoSint, "}\n");
-    }
-    }
-  ;
+    char codigoO[10000];
+    sprintf(codigoO, "%s = %s;\n", $1.nombreSint, $4.nombreSint);
+    strcat($$.codigoSint, codigoO);
+    strcat($$.codigoSint, "}\n");
+  }
+}
+;
 
 SENTENCIA_IF : IF { iniciarAsignacion(); } PARENTESIS_IZQ EXPR {
              if ($4.tipo != booleano) {
@@ -416,40 +415,54 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
          }
   }
   | EXPR OP_CMP EXPR {
-         if (igualdad_de_tipos($1, $3) && tipo_numerico($1)) {
-            $$.tipo = booleano;
+    if (igualdad_de_tipos($1, $3) && tipo_numerico($1)) {
+       $$.tipo = booleano;
 
-            switch ($2.atributo) {
-            case 0:
-                 generarOperacionBasicaConTipo(&$$, "bool", "<=", $1, $3);
-                 break;
-            case 1:
-                 generarOperacionBasicaConTipo(&$$, "bool", "<", $1, $3);
-                 break;
-            case 2:
-                 generarOperacionBasicaConTipo(&$$, "bool", ">=", $1, $3);
-                 break;
-            case 3:
-                 generarOperacionBasicaConTipo(&$$, "bool", ">", $1, $3);
-                 break;
-            }
-
-
-         } else {
-           TS_error_tipos("un operador de orden compara numeros del mismo tipo");
-         }
+       switch ($2.atributo) {
+       case 0:
+            generarOperacionBasicaConTipo(&$$, "bool", "<=", $1, $3);
+            break;
+       case 1:
+            generarOperacionBasicaConTipo(&$$, "bool", "<", $1, $3);
+            break;
+       case 2:
+            generarOperacionBasicaConTipo(&$$, "bool", ">=", $1, $3);
+            break;
+       case 3:
+            generarOperacionBasicaConTipo(&$$, "bool", ">", $1, $3);
+            break;
+       }
+    } else {
+      TS_error_tipos("un operador de orden compara numeros del mismo tipo");
+    }
   }
   | EXPR OP_MULT EXPR {
-       if (igualdad_de_tipos($1, $3) && tipo_numerico($1)) {
-            $$.tipo = $1.tipo;
-            char op[1];
-            if ($2.atributo == 0) {
-               op[0] = '*'; op[1] = 0;
-            } else { op[0] = '/'; op[1] = 0; }
-            generarOperacionBasica(&$$, op, $1, $3);
-         } else {
-           TS_error_tipos("en una multiplicación/división intervienen números del mismo tipo");
-         }
+    if(!(igualdad_de_tipos($1, $3) && tipo_numerico($1))){
+      TS_error_tipos_producto($2.lexema, $1.tipo, $3.tipo);
+    } else if((
+               $1.dimensiones != 0 && $3.dimensiones != 0
+               && !igualdad_de_tipos_y_dimensiones($1, $3))){
+      TS_error_dimensiones_producto($2.lexema, $1, $3);
+    } else {  // todo ok
+      $$.tipo = $1.tipo;
+      $$.dimensiones = $1.dimensiones > $3.dimensiones ? $1.dimensiones : $3.dimensiones;  // max
+
+      if($1.dimensiones >= 1){
+        $$.dimension_1 = $1.dimension_1;
+
+        if($1.dimensiones == 2){
+          $$.dimension_2 = $1.dimension_2;
+        }
+      } else if($3.dimensiones >= 1){
+        $$.dimension_1 = $3.dimension_1;
+
+        if($3.dimensiones == 2){
+          $$.dimension_2 = $3.dimension_2;
+        }
+      } else {  // dimensiones = 0 -> escalares
+        generarOperacionBasica(&$$, $2.lexema, $1, $3);
+      }
+    }
   }
   | EXPR OP_MULT_MAT EXPR   {
     if(tipo_numerico($1) && igualdad_de_tipos($1, $3)){
