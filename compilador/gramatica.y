@@ -195,7 +195,7 @@ SENTENCIAS : SENTENCIAS SENTENCIA {
 
 SENTENCIA : BLOQUE
   | SENTENCIA_ASIGNACION 
-  | SENTENCIA_IF { $$.codigoSint = strdup(""); }
+  | SENTENCIA_IF
   | SENTENCIA_WHILE { $$.codigoSint = strdup(""); }
   | SENTENCIA_ENTRADA { $$.codigoSint = strdup(""); }
   | SENTENCIA_SALIDA
@@ -229,16 +229,36 @@ SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR  { iniciarAsignacion(); } EQUALS EXPR 
     }
   ;
 
-SENTENCIA_IF : IF PARENTESIS_IZQ EXPR {
-             if ($3.tipo != booleano) {
+SENTENCIA_IF : IF { iniciarAsignacion(); } PARENTESIS_IZQ EXPR {
+             if ($4.tipo != booleano) {
                 TS_error_tipos("el tipo de la expresion dentro del si debe ser booleano");
                 }
-  } PARENTESIS_DER SENTENCIA SENTENCIA_ELSE
+                iniciarCodigo(&$$);
+                generarAsignacion(&$$);
+  } PARENTESIS_DER SENTENCIA SENTENCIA_ELSE {
+    iniciarCodigo(&$$);
+    char codigoIf[1000], saltoSalida[1000];
+    char *etiquetaElse = temporal();
+    char *etiquetaSalida = temporal();
+    sprintf(codigoIf, "if (!%s) goto %s;\n", $4.nombreSint, etiquetaElse);
+    sprintf(saltoSalida, "goto %s;\n", etiquetaSalida);
+
+    strcpy($$.codigoSint, "{\n");
+    strcat($$.codigoSint, $5.codigoSint);
+    strcat($$.codigoSint, codigoIf);
+    strcat($$.codigoSint, $7.codigoSint);
+    strcat($$.codigoSint, saltoSalida);
+    strcat($$.codigoSint, etiquetaElse);
+    strcat($$.codigoSint, ":\n");
+    strcat($$.codigoSint, $8.codigoSint);
+    strcat($$.codigoSint, etiquetaSalida);
+    strcat($$.codigoSint, ":\nasm(\"nop\");\n}\n");
+  }
 
   ;
 
-SENTENCIA_ELSE : ELSE SENTENCIA
-  |
+SENTENCIA_ELSE : ELSE SENTENCIA { $$.codigoSint = $2.codigoSint; }
+  | { $$.codigoSint = ""; }
   ;
 
 SENTENCIA_WHILE : WHILE PARENTESIS_IZQ EXPR {
