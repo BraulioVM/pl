@@ -221,7 +221,6 @@ SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR  { iniciarAsignacion(); } EQUALS EXPR 
                                         // debe ser alguna movida de
                                         // manejo de la memoria
 
-       
       char codigoO[10000];
       sprintf(codigoO, "%s = %s;\n", $1.nombreSint, $4.nombreSint);
       strcat($$.codigoSint, codigoO);
@@ -285,15 +284,11 @@ ARGUMENTOS_PROCEDIMIENTO : LISTA_EXPR
   |
   ;
 
-LLAMADA_PROCED : NOMBRE PARENTESIS_IZQ ARGUMENTOS_PROCEDIMIENTO PARENTESIS_DER PYC  {
-      t_posicion pos = TS_encontrar_entrada($1.lexema);
-
-      if(pos != -1){
-        // éxitos
-      } else {
-        TS_error_referencia($1.lexema);
-      }
-}
+LLAMADA_PROCED : NOMBRE PARENTESIS_IZQ {
+    TS_iniciar_llamada($1.lexema);
+  } ARGUMENTOS_PROCEDIMIENTO PARENTESIS_DER {
+    TS_finalizar_llamada();
+  } PYC
   ;
 
 EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
@@ -315,7 +310,7 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
       char *tempVar = temporal();
       char instruccion[80];
       char tipo[80];
-      
+
       tipoC(tipo, $$.tipo);
 
       if ($1.atributo == 1) { // si es un menos
@@ -346,7 +341,7 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
           $$.dimension_2 = $3.dimension_2;
 
           if ($2.atributo == 1) {
-            generarOperacionBasica(&$$, "-", $1, $3); 
+            generarOperacionBasica(&$$, "-", $1, $3);
           } else {
             generarOperacionBasica(&$$, "+", $1, $3);
           }
@@ -383,13 +378,13 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
          assert_tipo($1, booleano);
          assert_tipo($3, booleano);
          $$.tipo = booleano;
-         
+
          generarOperacionBasica(&$$, "&&", $1, $3);
   }
   | EXPR OP_EQ EXPR {
          if (igualdad_de_tipos($1, $3)) {
             $$.tipo = booleano;
-            
+
             if ($2.atributo == 1) {
                generarOperacionBasicaConTipo(&$$, "bool", "!=", $1, $3);
             } else {
@@ -419,7 +414,7 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
                  break;
             }
 
-            
+
          } else {
            TS_error_tipos("un operador de orden compara numeros del mismo tipo");
          }
@@ -480,8 +475,8 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
   ;
 
 IDENTIFICADOR_EXPR : NOMBRE {
-                   $$.nombreSint = $1.lexema;
-                   asignar_identificador(&$$, $1.lexema);
+    $$.nombreSint = $1.lexema;
+    asignar_identificador(&$$, $1.lexema);
   }
   | NOMBRE CORCHETE_IZQ EXPR CORCHETE_DER {
     asignar_identificador_array(&$$, $1.lexema);
@@ -495,15 +490,23 @@ LISTA_IDENTIFICADOR_EXPR : IDENTIFICADOR_EXPR
   | IDENTIFICADOR_EXPR COMA LISTA_IDENTIFICADOR_EXPR
   ;
 
-LISTA_EXPR : EXPR {
-           if (definiendo_vector()) {
-              comprueba_elemento($1);
-           }
-  } COMA LISTA_EXPR
-  | EXPR { if (definiendo_vector()) { comprueba_elemento($1); } }
+LISTA_EXPR : EXPR COMA LISTA_EXPR {
+    if(definiendo_vector()){
+      comprueba_elemento($1);
+    } else if(llamando_procedimiento){
+      TS_comprobar_parametro($1);
+    }
+  }
+  | EXPR {
+    if(definiendo_vector()){
+      comprueba_elemento($1);
+    } else if(llamando_procedimiento){
+      TS_comprobar_parametro($1);
+    }
+  }
   ;
 
-VECTOR : LLAVE_IZQ { inicia_vector(); }  LISTA_EXPR LLAVE_DER {
+VECTOR : LLAVE_IZQ { inicia_vector(); } LISTA_EXPR LLAVE_DER {
        TipoArray v = finaliza_vector();
        $$.tipo = v.tipoDato;
        $$.dimensiones = 1;

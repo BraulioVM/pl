@@ -75,9 +75,14 @@ fin_declaracion_variables       \.
 {printf}               { return PRINTF; }
 {return}               { return RETURN; }
 {plus_minus}           {
-                       if (yytext[0] == '-') yylval.atributo = 1;
-                       else yylval.atributo = 0;
-                       return PLUS_MINUS; }
+                         if(yytext[0] == '-'){
+                           yylval.atributo = 1;
+                         } else {
+                            yylval.atributo = 0;
+                         }
+                         yylval.lexema = strdup(yytext);
+                         return PLUS_MINUS;
+                       }
 {not}                  { return NOT; }
 {op_or}                { return OP_OR; }
 {op_and}               { return OP_AND; }
@@ -92,9 +97,14 @@ fin_declaracion_variables       \.
                        if (strcmp(yytext, ">") == 0) yylval.atributo = 3;
                        return OP_CMP; }
 {op_mult}              {
-                       if (yytext[0] == '*') yylval.atributo = 0;
-                       else yylval.atributo = 1;
-                       return OP_MULT; }
+                         if(yytext[0] == '*'){
+                           yylval.atributo = 0;
+                         } else {
+                            yylval.atributo = 1;
+                         }
+                         yylval.lexema = strdup(yytext);
+                         return OP_MULT;
+                       }
 {op_mult_mat}          { return OP_MULT_MAT; }
 {equals}               { return EQUALS; }
 {natural}              { yylval.atributo = atoi(yytext);

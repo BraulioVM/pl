@@ -154,8 +154,7 @@ void TS_nofits(){
 
 
 void TS_fin_bloque(){
-  tabla.tope = TS_ultima_marca();
-  while(tabla.pila[--tabla.tope].tipoEntrada == parametro_formal);
+  tabla.tope = TS_ultima_marca() - 1;
 }
 
 
@@ -208,7 +207,7 @@ void asignar_identificador_array(t_token *token, char *identificador) {
 
   if (var_pos != -1) {
     Entrada var = tabla.pila[var_pos];
-    
+
     if (var.dimensiones == 0) {
       yyerror("no se puede utilizar el operador de corchete sobre una variable primitiva");
     } else {
@@ -230,7 +229,7 @@ void asignar_identificador_matriz(t_token *token, char *nombre) {
 
   if (var_pos != -1) {
     Entrada var = tabla.pila[var_pos];
-    
+
     if (var.dimensiones == 2) {
       token->lexema = var.nombre;
       token->tipo = var.tipoDato;
@@ -269,9 +268,21 @@ bool igualdad_de_tipos(t_token t1, t_token t2){
   return t1.tipo == t2.tipo;
 }
 
+
 bool igualdad_de_tipos_y_dimensiones(t_token t1, t_token t2) {
-  return igualdad_de_tipos(t1, t2) && t1.dimensiones == t2.dimensiones && t1.dimension_1 == t2.dimension_1 && t1.dimension_2 == t2.dimension_2;
+  bool eq = igualdad_de_tipos(t1, t2) && t1.dimensiones == t2.dimensiones;
+
+  if(eq && t1.dimensiones >= 1){
+    eq = eq && t1.dimension_1 == t2.dimension_1;
+  }
+
+  if(eq && t1.dimensiones == 2){
+    eq = eq && t1.dimension_2 == t2.dimension_2;
+  }
+
+  return eq;
 }
+
 
 void TS_dump_table(){
   for(uint i = 1; i <= tabla.tope; ++i){
@@ -319,9 +330,18 @@ bool definiendo_vector() {
 }
 
 
+bool stringeq(const char *str1, const char *str2){
+  if(str1 == NULL || str2 == NULL){
+    return str1 == str2;
+  } else {
+    return strcmp(str1, str2) == 0;
+  }
+}
+
+
 t_posicion TS_encontrar_entrada(char* nombre){
   for(int i = tabla.tope; i > 0; --i){
-    if(strcmp(tabla.pila[i].nombre, nombre) == 0){
+    if(stringeq(tabla.pila[i].nombre, nombre)){
       return i;
     }
   }
@@ -330,20 +350,107 @@ t_posicion TS_encontrar_entrada(char* nombre){
 }
 
 
-void TS_error(const char* mensaje){
-  fprintf(stderr, "%s", mensaje);
+bool TS_existe_procedimiento(char *proc){
+  return TS_encontrar_entrada(proc) != -1;
 }
 
 
-void TS_error_redeclaracion_parametro(char *parametro){
-  char base[100] = "Error: argumento '%s' duplicado en declaración de procedimiento";
-  sprintf(base, base, parametro);
+bool llamando_procedimiento = false;
+char *nombre_procedimiento = NULL;
+uint parametro_actual = 0;
+t_posicion procedimiento_actual = 0;
+
+
+void TS_iniciar_llamada(char *proc){
+  if(!TS_existe_procedimiento(proc)){
+    TS_error_referencia(proc);
+  } else {
+    llamando_procedimiento = true;
+    nombre_procedimiento = strdup(proc);
+    parametro_actual = 0;
+    procedimiento_actual = TS_encontrar_entrada(proc);
+  }
+}
+
+
+void TS_comprobar_parametro(t_token param){
+  ++parametro_actual;
+  Entrada entrada_parametro = tabla.pila[procedimiento_actual + parametro_actual];
+
+  if(tabla.pila[procedimiento_actual].n_parametros < parametro_actual){
+    TS_error_numero_parametros(
+      nombre_procedimiento,
+      tabla.pila[procedimiento_actual].n_parametros,
+      parametro_actual
+    );
+  } else if(entrada_parametro.tipoDato != param.tipo){
+    TS_error_tipos_argumento(
+        entrada_parametro.nombre,
+        nombre_procedimiento,
+        entrada_parametro.tipoDato,
+        param.tipo
+    );
+  } else if(entrada_parametro.dimensiones != param.dimensiones){
+    TS_error_dimensiones_argumento(
+        entrada_parametro.nombre,
+        nombre_procedimiento,
+        entrada_parametro.dimensiones,
+        param.dimensiones
+    );
+  } else if(param.dimensiones >= 1 &&
+            entrada_parametro.dimension_1 != param.dimension_1){
+    TS_error_dimensiones_dimension1_argumento(
+        entrada_parametro.nombre,
+        nombre_procedimiento,
+        entrada_parametro.dimension_1,
+        param.dimension_1
+    );
+  } else if(param.dimensiones >= 2 &&
+            entrada_parametro.dimension_2 != param.dimension_2){
+    TS_error_dimensiones_dimension2_argumento(
+        entrada_parametro.nombre,
+        nombre_procedimiento,
+        entrada_parametro.dimension_2,
+        param.dimension_2
+    );
+  } // else: todo ok
+}
+
+
+void TS_finalizar_llamada(){
+  if(parametro_actual < tabla.pila[procedimiento_actual].n_parametros){
+    TS_error_numero_parametros(
+        nombre_procedimiento,
+        tabla.pila[procedimiento_actual].n_parametros,
+        parametro_actual
+    );
+  }
+
+  llamando_procedimiento = 0;
+  free(nombre_procedimiento);
+  parametro_actual = 0;
+  procedimiento_actual = 0;
+}
+
+
+void TS_error(const char* mensaje){
+  fprintf(stderr, "%s\n", mensaje);
+}
+
+
+void TS_error_redeclaracion_parametro(const char *parametro){
+  char base[100];
+  sprintf(
+          base,
+          "Error: argumento '%s' duplicado en declaración de procedimiento",
+          parametro
+          );
   TS_error(base);
 }
 
 
 void TS_error_tipos(const char* mensaje){
-  char tmp[100];
+  char tmp[400];
   strcat(tmp, "Error de tipos: ");
   strcat(tmp, mensaje);
   TS_error(tmp);
@@ -352,15 +459,88 @@ void TS_error_tipos(const char* mensaje){
 
 void TS_error_referencia(const char* referencia){
   // variable o procedimiento no definido
-  char base[100] = "Error de referencia: el nombre '%s' no ha sido definido.";
-  sprintf(base, base, referencia);
+  char base[100];
+  sprintf(
+          base,
+          "Error de referencia: el nombre '%s' no ha sido definido.",
+          referencia
+          );
   TS_error(base);
 }
 
 
 void TS_error_dimensiones(const char* mensaje){
   char tmp[400];
-  strcat(tmp, "Dimensiones no compatibles: ");
+  strcat(tmp, "Error de dimensiones: ");
   strcat(tmp, mensaje);
   TS_error(tmp);
+}
+
+
+void TS_error_numero_parametros(const char* proc, uint esperados, uint recibidos){
+  char base[200];
+  sprintf(
+          base,
+           "el procedimiento '%s' esperaba %d parámetros pero recibió %d.",
+          proc,
+          esperados,
+          recibidos
+          );
+  TS_error_tipos(base);
+}
+
+
+void TS_error_tipos_argumento(const char* param, const char* proc, t_dato esperado, t_dato recibido){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "el parámetro '%s' del procedimiento '%s' debe ser de tipo '%s'. En su lugar se encontró un valor de tipo '%s'.",
+          param,
+          proc,
+          TS_nombre_tipo(esperado),
+          TS_nombre_tipo(recibido)
+          );
+  TS_error_tipos(mensaje);
+}
+
+
+void TS_error_dimensiones_argumento(const char* param, const char* proc, uint esperadas, uint recibidas){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "el parámetro '%s' del procedimiento '%s' debe tener %d dimensiones. En su lugar se encontró un valor con %d dimensiones.",
+          param,
+          proc,
+          esperadas,
+          recibidas
+          );
+  TS_error_dimensiones(mensaje);
+}
+
+
+void TS_error_dimensiones_dimension1_argumento(const char* param, const char* proc, uint esperado, uint recibido){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "en el procedimiento '%s', la primera dimensión del parámetro '%s' debe ser de tamaño %d. En su lugar se encontró un valor de tamaño %d.",
+          proc,
+          param,
+          esperado,
+          recibido
+          );
+  TS_error_dimensiones(mensaje);
+}
+
+
+void TS_error_dimensiones_dimension2_argumento(const char* param, const char* proc, uint esperado, uint recibido){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "en el procedimiento '%s', la segunda dimensión del parámetro '%s' debe ser de tamaño %d. En su lugar se encontró un valor de tamaño %d.",
+          proc,
+          param,
+          esperado,
+          recibido
+          );
+  TS_error_dimensiones(mensaje);
 }

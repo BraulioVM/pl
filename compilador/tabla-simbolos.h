@@ -16,7 +16,6 @@ typedef enum {
 
 typedef enum {
   NA = 0,
-  array,
   booleano,
   caracter,
   entero,
@@ -79,13 +78,27 @@ bool TS_parametro_libre(char* parametro);
 void TS_dimension_vector( t_token dimension );
 void TS_dimension_matriz( t_token dimension_1, t_token dimension_2 );
 
-void assert_tipo(t_token,t_dato);
+void assert_tipo(t_token, t_dato);
 void asignar_identificador(t_token*, char*);
 void asignar_identificador_array(t_token*, char*);
 void asignar_identificador_matriz(t_token*, char*);
 t_posicion TS_ultima_marca();
 t_posicion TS_ultimo_procedimiento();
 t_dato tipoTmp;
+
+
+static inline const char* TS_nombre_tipo(t_dato tipo){
+  static const char* nombres[] = {
+    "NA",
+    "booleano",
+    "caracter",
+    "entero",
+    "real"
+  };
+
+  return nombres[tipo];
+}
+
 
 bool tipo_numerico(t_token);
 bool igualdad_de_tipos(t_token, t_token);
@@ -96,12 +109,29 @@ TipoArray finaliza_vector();
 void comprueba_elemento(t_token);
 bool definiendo_vector();
 
+bool llamando_procedimiento;
+char *nombre_procedimiento;
+uint parametro_actual;
+t_posicion procedimiento_actual;
+
+bool TS_existe_procedimiento(char *proc);
+void TS_iniciar_llamada(char *proc);
+void TS_comprobar_parametro(t_token param);
+void TS_finalizar_llamada();
+
 t_posicion TS_encontrar_entrada(char* nombre);
+
+bool stringeq(const char *str1, const char *str2);
 
 void TS_error(const char* mensaje);
 void TS_error_tipos(const char* mensaje);
 void TS_error_referencia(const char* mensaje);
 void TS_error_dimensiones(const char* mensaje);
-void TS_error_redeclaracion_parametro(char* parametro);
+void TS_error_redeclaracion_parametro(const char* parametro);
+void TS_error_numero_parametros(const char* proc, uint esperados, uint recibidos);
+void TS_error_tipos_argumento(const char* param, const char* proc, t_dato esperado, t_dato recibido);
+void TS_error_dimensiones_argumento(const char* param, const char* proc, uint esperadas, uint recibidas);
+void TS_error_dimensiones_dimension1_argumento(const char* param, const char* proc, uint esperado, uint recibido);
+void TS_error_dimensiones_dimension2_argumento(const char* param, const char* proc, uint esperado, uint recibido);
 
 #endif

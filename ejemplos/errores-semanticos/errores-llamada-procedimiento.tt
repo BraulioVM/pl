@@ -1,0 +1,16 @@
+BIENVENIDO {
+           sea entero x[2, 2].
+
+           procedimiento foo(caracter a){}
+           procedimiento bar(entero b){}
+           procedimiento baz(entero c[1, 2]){}
+           procedimiento candy(entero d[2, 3]){}
+
+           foo(x);
+           bar(x);
+           baz(x);
+           candy(x);
+           foo();
+           foo('a', 'a');
+           flooz(0);
+}
