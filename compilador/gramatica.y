@@ -191,7 +191,7 @@ SENTENCIAS : SENTENCIAS SENTENCIA {
 SENTENCIA : BLOQUE
   | SENTENCIA_ASIGNACION 
   | SENTENCIA_IF
-  | SENTENCIA_WHILE { $$.codigoSint = strdup(""); }
+  | SENTENCIA_WHILE
   | SENTENCIA_ENTRADA { $$.codigoSint = strdup(""); }
   | SENTENCIA_SALIDA
   | LLAMADA_PROCED { $$.codigoSint = strdup(""); }
@@ -253,11 +253,36 @@ SENTENCIA_ELSE : ELSE SENTENCIA { $$.codigoSint = $2.codigoSint; }
   | { $$.codigoSint = ""; }
   ;
 
-SENTENCIA_WHILE : WHILE PARENTESIS_IZQ EXPR {
-             if ($3.tipo != booleano) {
+SENTENCIA_WHILE : WHILE { iniciarAsignacion(); } PARENTESIS_IZQ EXPR {
+             if ($4.tipo != booleano) {
                 TS_error_tipos("el tipo de la expresion dentro del mientras debe ser booleano");
+                } else {
+                  iniciarCodigo(&$$, "");
+                  generarAsignacion(&$$);
                 }
-  } PARENTESIS_DER SENTENCIA
+  } PARENTESIS_DER SENTENCIA {
+    char *etiquetaEntrada = etiqueta(), *etiquetaSalida = etiqueta();
+    iniciarCodigo(&$$, "{\n");
+    char codigoEntrada[1000], codigoInterior[10000];
+    sprintf(
+        codigoEntrada,
+        "%s: {\n%s\n if (!%s) goto %s;}\n",
+        etiquetaEntrada,
+        $5.codigoSint,
+        $4.nombreSint,
+        etiquetaSalida
+    );
+    sprintf(
+        codigoInterior,
+        "%s\n goto %s; %s: asm(\"nop\");\n}\n",
+        $7.codigoSint,
+        etiquetaEntrada,
+        etiquetaSalida
+    );
+
+    ccat(&$$, codigoEntrada);
+    ccat(&$$, codigoInterior);
+  }
   ;
 
 SENTENCIA_FOR : FOR NOMBRE INIT_FOR EXPR {
