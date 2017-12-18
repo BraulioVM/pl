@@ -1,0 +1,56 @@
+BIENVENIDO {
+           sean entero n, curr, ultim, cuenta, primero.
+
+           curr = 2;
+           ultim = 0;
+           cuenta = 0;
+           primero = 1;
+
+           imprimir "introduce numero:";
+           captar n;
+
+           imprimir "los factores de ", n, " son: ";
+
+           mientras (curr <= n) {
+                    sea entero d.
+
+                    d = n/curr;
+
+                    si (d * curr == n) {
+                       si (curr != ultim) {
+                          ultim = curr;
+                          cuenta = 1;
+                       } si_no {
+                          cuenta = cuenta + 1;
+                       }
+                       
+                       n = n/curr;
+                    } si_no {
+                      si (cuenta > 0) {
+                         primero = 0;
+                         
+                         si (cuenta > 1) {
+                            imprimir curr, "^", cuenta;
+                         } si_no {
+                            imprimir curr;
+                         }
+                      }
+
+                      curr = curr + 1;
+                      cuenta = 0;
+                    }
+                    
+           }
+
+           si (cuenta > 0) {
+              si (primero == 0) {
+
+                 si (cuenta > 1) {
+                    imprimir curr, "^", cuenta;
+                 } si_no {
+                    imprimir curr;
+                 }
+              }
+              
+           }
+}
