@@ -4,8 +4,8 @@
 #include "tabla-simbolos.h"
 
 typedef unsigned int uint;
-typedef int bool;
 
+#define bool unsigned short
 #define false 0
 #define true 1
 
