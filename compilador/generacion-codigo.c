@@ -142,7 +142,7 @@ void imprimePrintf(t_token *t) {
     strcat(codigo, tmpSalida.cadenas[i] + 1);
   }
   
-  strcat(codigo, "\"");
+  strcat(codigo, "\\n\"");
 
   for( i = 0; i < tmpSalida.nVariables; i++) {
     strcat(codigo, ", ");
