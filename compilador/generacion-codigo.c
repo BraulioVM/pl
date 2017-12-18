@@ -47,10 +47,12 @@ void addInstruccion(char *tipo, char *result, char *instr) {
   tmpAsignacion.instrucciones[tmpAsignacion.subexpresiones++] = strdup(finalResult);
 }
 
-void generarAsignacion() {
+void generarAsignacion(t_token *t) {
   int i;
   for(i = 0; i < tmpAsignacion.subexpresiones; i++) {
-    printf("%s\n", tmpAsignacion.instrucciones[i]);
+    char nuevaInfo[1000];
+    sprintf(nuevaInfo, "%s\n", tmpAsignacion.instrucciones[i]);
+    strcat(t->codigoSint, nuevaInfo);
   }
 }
 
@@ -130,7 +132,7 @@ void addVariable(t_token var) {
 
 }
 
-void imprimePrintf() {
+void imprimePrintf(t_token *t) {
   char codigo[1000];
   strcpy(codigo, "printf(\"");
   int i;
@@ -149,19 +151,23 @@ void imprimePrintf() {
 
   strcat(codigo, ");\n");
 
-  printf("%s", codigo);
+  strcat(t->codigoSint, codigo);
 }
 
 bool declarandoVariables = false;
 
-void inicioDePrograma() {
-  printf("#include <stdio.h>\n");
-  printf("typedef int bool;\n");
-  printf("#define true 1\n");
-  printf("#define false 0\n");
-  printf("int main()\n");
+void inicioDePrograma(t_token *t) {
+  strcat(t->codigoSint, "#include <stdio.h>\n");
+  strcat(t->codigoSint, "typedef int bool;\n");
+  strcat(t->codigoSint, "#define true 1\n");
+  strcat(t->codigoSint, "#define false 0\n");
+  strcat(t->codigoSint, "int main()\n");
 }
 
 void finDePrograma() {
   printf("\n");
+}
+
+void iniciarCodigo(t_token *c) {
+  c->codigoSint = malloc(sizeof(char) * 100000);
 }
