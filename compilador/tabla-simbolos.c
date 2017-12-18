@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
 #include "tabla-simbolos.h"
 
 #define true 1
