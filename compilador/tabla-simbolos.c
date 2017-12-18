@@ -522,6 +522,19 @@ void TS_error_tipos_argumento(const char* param, const char* proc, t_dato espera
 }
 
 
+void TS_error_tipos_producto(const char* op, const t_dato tipoA, const t_dato tipoB){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "tipos no soportados por el operador '%s': '%s' y '%s'.",
+          op,
+          TS_nombre_tipo(tipoA),
+          TS_nombre_tipo(tipoB)
+          );
+  TS_error_tipos(mensaje);
+}
+
+
 void TS_error_dimensiones_argumento(const char* param, const char* proc, uint esperadas, uint recibidas){
   char mensaje[200];
   sprintf(
@@ -561,4 +574,21 @@ void TS_error_dimensiones_dimension2_argumento(const char* param, const char* pr
           recibido
           );
   TS_error_dimensiones(mensaje);
+}
+
+
+void TS_error_dimensiones_producto(const char* op, const t_token left, const t_token right){
+  char mensaje[200], *dim_left, *dim_right;
+  dim_left = TS_dimensiones(left);
+  dim_right = TS_dimensiones(right);
+  sprintf(
+          mensaje,
+          "%s %s %s no soportado",
+          dim_left,
+          op,
+          dim_right
+          );
+  TS_error_dimensiones(mensaje);
+  free(dim_left);
+  free(dim_right);
 }
