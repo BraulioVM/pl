@@ -24,7 +24,7 @@ void iniciarAsignacion();
 void asignarNombre(char *variableAsignada);
 void addInstruccion(char*, char*, char *instr);
 
-void generarAsignacion();
+void generarAsignacion(t_token *t);
 void generarOperacionBasica(t_token*, char*, t_token, t_token);
 void generarOperacionBasicaConTipo(t_token *sint, char *tipo,  char *op, t_token t1, t_token t2);
 
@@ -41,12 +41,15 @@ typedef struct {
 void iniciarSalida();
 void addCadena(char*);
 void addVariable(t_token);
-void imprimePrintf();
+void imprimePrintf(t_token *t);
 
 
 bool declarandoVariables;
 
-void inicioDePrograma();
+void inicioDePrograma(t_token*);
 void finDePrograma();
+
+void iniciarCodigo(t_token *c);
+
 
 #endif

@@ -53,33 +53,55 @@
 %%
 
 
-PROGRAMA : CABECERA_PROGRAMA { inicioDePrograma(); } BLOQUE { finDePrograma(); }
+PROGRAMA : CABECERA_PROGRAMA BLOQUE {
+         iniciarCodigo(&$$);
+         $$.codigoSint[0] = 0;
+         inicioDePrograma(&$$);
+         strcat($$.codigoSint, $2.codigoSint);
+         printf("%s", $$.codigoSint);
+         finDePrograma();
+  }
   ;
 
 BLOQUE :
-    INICIO_DE_BLOQUE               { TS_insertar_marca(); printf("{\n"); }
-    DECLARACION_VARIABLES_LOCALES
-    DECLARACION_SUBPROGRAMAS
-    SENTENCIAS
-    FIN_DE_BLOQUE                  { TS_fin_bloque(); printf("}\n"); }
+  INICIO_DE_BLOQUE { TS_insertar_marca(); }
+  DECLARACION_VARIABLES_LOCALES
+  DECLARACION_SUBPROGRAMAS
+  SENTENCIAS
+  FIN_DE_BLOQUE {
+    TS_fin_bloque();
+    iniciarCodigo(&$$);
+    strcpy($$.codigoSint, "{\n");
+    strcat($$.codigoSint, $3.codigoSint);
+    strcat($$.codigoSint, $5.codigoSint);
+    strcat($$.codigoSint, "}\n");
+  }
   ;
 
 DECLARACION_VARIABLES_LOCALES :
     INICIO_DECLARACION_VARIABLES { declarandoVariables = true; }
     VARIABLES_LOCALES
-    FIN_DECLARACION_VARIABLES { declarandoVariables = false; }
-  |
+    FIN_DECLARACION_VARIABLES {
+                              declarandoVariables = false;
+                              $$.codigoSint = $3.codigoSint;
+  }
+  | { $$.codigoSint = ""; }
   ;
 
-VARIABLE_PYC : VARIABLE_LOCAL PYC
+VARIABLE_PYC : VARIABLE_LOCAL PYC { $$.codigoSint = $1.codigoSint; }
   | error
   ;
 
-VARIABLES_LOCALES : VARIABLE_PYC VARIABLES_LOCALES
-  | VARIABLE_LOCAL
+VARIABLES_LOCALES : VARIABLE_PYC VARIABLES_LOCALES {
+                  iniciarCodigo(&$$);
+                  strcpy($$.codigoSint, $1.codigoSint);
+                  strcat($$.codigoSint, $2.codigoSint);
+  } | VARIABLE_LOCAL
   ;
 
-VARIABLE_LOCAL : TIPO { tipoTmp = $1.tipo; } LISTA_IDENTIFICADOR
+VARIABLE_LOCAL : TIPO { tipoTmp = $1.tipo; } LISTA_IDENTIFICADOR {
+               $$.codigoSint = $3.codigoSint;
+  }
   | error
   ;
 
@@ -87,17 +109,22 @@ LISTA_IDENTIFICADOR : IDENTIFICADOR {
                     TS_insertar_identificador($1);
 
                     if (declarandoVariables) {
-                       char tipo[10];
+                       iniciarCodigo(&$$);
+                       char tipo[10], codigo[500];
                        tipoC(tipo, tipoTmp);
-                       printf("%s %s;\n", tipo, $1.lexema);
+                       sprintf(codigo, "%s %s;\n", tipo, $1.lexema);
+                       $$.codigoSint = strdup(codigo);
                     }
   }
   | IDENTIFICADOR COMA LISTA_IDENTIFICADOR {
     TS_insertar_identificador($1);
+    iniciarCodigo(&$$);
     if (declarandoVariables) {
-       char tipo[10];
+       char tipo[10], codigo[500];
        tipoC(tipo, tipoTmp);
-       printf("%s %s;\n", tipo, $1.lexema);
+       sprintf(codigo, "%s %s;\n", tipo, $1.lexema);
+       strcpy($$.codigoSint, codigo);
+       strcat($$.codigoSint, $3.codigoSint);
     }
   }
   | error
@@ -128,7 +155,9 @@ DECLARACION_SUBPROGRAMAS : DECLARACION_SUBPROGRAMAS DECLARACION_SUBPROGRAMA
   |
   ;
 
-DECLARACION_SUBPROGRAMA : CABECERA_SUBPROGRAMA BLOQUE
+DECLARACION_SUBPROGRAMA : CABECERA_SUBPROGRAMA BLOQUE {
+
+  }
   ;
 
 CABECERA_SUBPROGRAMA : TOKEN_SUBPROGRAMA
@@ -154,19 +183,24 @@ PARAMETROS_PROCEDIMIENTO : LISTA_PARAMETROS
   |
   ;
 
-SENTENCIAS : SENTENCIAS SENTENCIA
-  |
+SENTENCIAS : SENTENCIAS SENTENCIA {
+           iniciarCodigo(&$$);
+           strcpy($$.codigoSint, $1.codigoSint);
+           strcat($$.codigoSint, "\n");
+           strcat($$.codigoSint, $2.codigoSint);
+  }
+  | { $$.codigoSint = strdup(""); }
   ;
 
 SENTENCIA : BLOQUE
   | SENTENCIA_ASIGNACION
-  | SENTENCIA_IF
-  | SENTENCIA_WHILE
-  | SENTENCIA_ENTRADA
+  | SENTENCIA_IF { $$.codigoSint = strdup(""); }
+  | SENTENCIA_WHILE { $$.codigoSint = strdup(""); }
+  | SENTENCIA_ENTRADA { $$.codigoSint = strdup(""); }
   | SENTENCIA_SALIDA
-  | LLAMADA_PROCED
-  | SENTENCIA_FOR
-  | SENTENCIA_RETURN
+  | LLAMADA_PROCED { $$.codigoSint = strdup(""); }
+  | SENTENCIA_FOR { $$.codigoSint = strdup(""); }
+  | SENTENCIA_RETURN { $$.codigoSint = strdup(""); }
   ;
 
 SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR  { iniciarAsignacion(); } EQUALS EXPR PYC {
@@ -174,21 +208,22 @@ SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR  { iniciarAsignacion(); } EQUALS EXPR 
   // y $3 tiene un valor que no se
   // de donde viene no se por que (por ahora funciona)
   if(!igualdad_de_tipos_y_dimensiones($1, $4)){
-    t_token t1 = $1, t2 = $3, t3= $4;
     char mensaje[80];
     sprintf( mensaje, "error al intentar asignar tipo %d a un identificador de tipo %d.", $4.tipo, $1.tipo );
     TS_error( mensaje );
   } else {
     asignarNombre($1.lexema);
-    printf("{\n");
-    generarAsignacion($4.nombreSint); // no se por que funciona
+    iniciarCodigo(&$$);
+    strcpy($$.codigoSint, "{\n");
+    generarAsignacion(&$$); // no se por que funciona
                                       // con $4 y no con $3
                                       // debe ser alguna movida de
                                       // manejo de la memoria
 
-
-    printf("%s = %s;\n", $1.nombreSint, $4.nombreSint);
-    printf("}\n");
+    char codigoO[10000];
+    sprintf(codigoO, "%s = %s;\n", $1.nombreSint, $4.nombreSint);
+    strcat($$.codigoSint, codigoO);
+    strcat($$.codigoSint, "}\n");
   }
 }
 ;
@@ -223,12 +258,13 @@ SENTENCIA_ENTRADA : SCANF LISTA_IDENTIFICADOR_EXPR PYC
   ;
 
 SENTENCIA_SALIDA : PRINTF { iniciarSalida(); iniciarAsignacion(); } LISTA_EXPRESIONES_O_CADENA PYC {
-                 printf("{\n");
+                 iniciarCodigo(&$$);
+                 strcpy($$.codigoSint, "{\n");
 
-                 generarAsignacion();
-                 imprimePrintf();
+                 generarAsignacion(&$$);
+                 imprimePrintf(&$$);
 
-                 printf("}\n");
+                 strcat($$.codigoSint, "}\n");
   }
   ;
 
