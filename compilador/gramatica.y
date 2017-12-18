@@ -174,24 +174,24 @@ SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR  { iniciarAsignacion(); } EQUALS EXPR 
   // y $3 tiene un valor que no se
   // de donde viene no se por que (por ahora funciona)
   if(!igualdad_de_tipos_y_dimensiones($1, $4)){
-      t_token t1 = $1, t2 = $3, t3= $4;
-      char mensaje[80];
-      sprintf( mensaje, "error al intentar asignar tipo %d a un identificador de tipo %d.", $4.tipo, $1.tipo );
-      yyerror( mensaje );
-    } else {
-      asignarNombre($1.lexema);
-      printf("{\n");
-      generarAsignacion($4.nombreSint); // no se por que funciona
-                                        // con $4 y no con $3
-                                        // debe ser alguna movida de
-                                        // manejo de la memoria
+    t_token t1 = $1, t2 = $3, t3= $4;
+    char mensaje[80];
+    sprintf( mensaje, "error al intentar asignar tipo %d a un identificador de tipo %d.", $4.tipo, $1.tipo );
+    TS_error( mensaje );
+  } else {
+    asignarNombre($1.lexema);
+    printf("{\n");
+    generarAsignacion($4.nombreSint); // no se por que funciona
+                                      // con $4 y no con $3
+                                      // debe ser alguna movida de
+                                      // manejo de la memoria
 
 
-      printf("%s = %s;\n", $1.nombreSint, $4.nombreSint);
-      printf("}\n");
-    }
-    }
-  ;
+    printf("%s = %s;\n", $1.nombreSint, $4.nombreSint);
+    printf("}\n");
+  }
+}
+;
 
 SENTENCIA_IF : IF PARENTESIS_IZQ EXPR {
              if ($3.tipo != booleano) {
