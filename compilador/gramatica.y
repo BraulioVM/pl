@@ -227,12 +227,13 @@ SENTENCIA_IF : IF { iniciarAsignacion(); } PARENTESIS_IZQ EXPR {
              if ($4.tipo != booleano) {
                 TS_error_tipos("el tipo de la expresion dentro del si debe ser booleano");
                 }
+                iniciarCodigo(&$$, "");
                 generarAsignacion(&$$);
   } PARENTESIS_DER SENTENCIA SENTENCIA_ELSE {
     iniciarCodigo(&$$, "{\n");
     char codigoIf[1000], saltoSalida[1000];
-    char *etiquetaElse = temporal();
-    char *etiquetaSalida = temporal();
+    char *etiquetaElse = etiqueta();
+    char *etiquetaSalida = etiqueta();
     sprintf(codigoIf, "if (!%s) goto %s;\n", $4.nombreSint, etiquetaElse);
     sprintf(saltoSalida, "goto %s;\n", etiquetaSalida);
 
