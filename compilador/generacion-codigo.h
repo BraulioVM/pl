@@ -49,7 +49,7 @@ bool declarandoVariables;
 void inicioDePrograma(t_token*);
 void finDePrograma();
 
-void iniciarCodigo(t_token *c);
-
+void iniciarCodigo(t_token *c, char*);
+void ccat(t_token*, char*);
 
 #endif
