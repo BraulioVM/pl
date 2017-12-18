@@ -261,6 +261,22 @@ t_posicion TS_ultimo_procedimiento(){
   return curr;
 }
 
+char* TS_dimensiones(t_token token){
+  char format[10], tmp[100];
+  format[0] = '\0';  // evita reutilización de memoria basura
+
+  if(token.dimensiones == 0){
+    strcat(format, "[]");
+  } else if(token.dimensiones == 1){
+    strcat(format, "[%d]");
+  } else if(token.dimensiones == 2){
+    strcat(format, "[%d, %d]");
+  }
+
+  sprintf(tmp, format, token.dimension_1, token.dimension_2);
+  char *ptr = strdup(tmp);
+  return ptr;
+}
 
 bool tipo_numerico(t_token t){
   return t.tipo == real || t.tipo == entero;

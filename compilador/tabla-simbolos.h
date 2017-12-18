@@ -98,6 +98,7 @@ static inline const char* TS_nombre_tipo(t_dato tipo){
   return nombres[tipo];
 }
 
+char* TS_dimensiones(t_token token);
 
 bool tipo_numerico(t_token);
 bool igualdad_de_tipos(t_token, t_token);
