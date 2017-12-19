@@ -194,26 +194,24 @@ void asignar_identificador(t_token *token, char *identificador) {
   }
 }
 
-void asignar_identificador_array(t_token *token, char *identificador) {
+void asignar_identificador_array(t_token *token, char *identificador){
   t_posicion var_pos = TS_encontrar_entrada(identificador);
 
-  if (var_pos != -1) {
+  if(var_pos == -1){
+    TS_error_referencia(identificador);
+  } else {
     Entrada var = tabla.pila[var_pos];
 
-    if (var.dimensiones == 0) {
-      yyerror("no se puede utilizar el operador de corchete sobre una variable primitiva");
+    if(var.dimensiones == 0){
+      TS_error_dimensiones_acceso(1, var.dimensiones);
     } else {
       token->lexema = var.nombre;
       token->tipo = var.tipoDato;
       token->dimensiones = var.dimensiones - 1;
-      token->dimension_1 = var.dimensiones == 1? 0 : var.dimension_2;
+      token->dimension_1 = var.dimensiones == 1 ? 0 : var.dimension_2;
       token->dimension_2 = 0;
     }
-
-  } else {
-    yyerror("no existe tal identificador");
   }
-
 }
 
 void asignar_identificador_matriz(t_token *token, char *nombre) {
