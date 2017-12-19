@@ -204,9 +204,6 @@ SENTENCIA : BLOQUE
   ;
 
 SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR  { iniciarAsignacion(); } EQUALS EXPR PYC {
-  // parece ser que $4 tiene el valor que esperaria en $3 aqui
-  // y $3 tiene un valor que no se
-  // de donde viene no se por que (por ahora funciona)
   if(!igualdad_de_tipos_y_dimensiones($1, $4)){
     char mensaje[80];
     sprintf( mensaje, "error al intentar asignar tipo %d a un identificador de tipo %d.", $4.tipo, $1.tipo );
@@ -215,10 +212,7 @@ SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR  { iniciarAsignacion(); } EQUALS EXPR 
     asignarNombre($1.lexema);
     iniciarCodigo(&$$);
     strcpy($$.codigoSint, "{\n");
-    generarAsignacion(&$$); // no se por que funciona
-                                      // con $4 y no con $3
-                                      // debe ser alguna movida de
-                                      // manejo de la memoria
+    generarAsignacion(&$$);
 
     char codigoO[10000];
     sprintf(codigoO, "%s = %s;\n", $1.nombreSint, $4.nombreSint);
