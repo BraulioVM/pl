@@ -175,10 +175,8 @@ void TS_dimension_matriz( t_token dimension_1, t_token dimension_2 ){
 }
 
 
-void assert_tipo(t_token token, t_dato tipo) {
-  if (token.tipo != tipo) {
-    yyerror("Error semántico: tipos incorrectos");
-  }
+bool assert_tipo(t_token token, t_dato tipo) {
+  return token.tipo == tipo;
 }
 
 
