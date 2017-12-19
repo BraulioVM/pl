@@ -475,6 +475,18 @@ void TS_error_tipos(const char* mensaje){
 }
 
 
+void TS_error_tipos_vector(const t_dato esperado, const t_dato recibido){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "se esperaba un valor de tipo '%s' en la inicialización del vector. En su lugar se encontró un valor de tipo '%s'.",
+          TS_nombre_tipo(esperado),
+          TS_nombre_tipo(recibido)
+          );
+  TS_error_tipos(mensaje);
+}
+
+
 void TS_error_referencia(const char* referencia){
   // variable o procedimiento no definido
   char base[100];
@@ -522,6 +534,19 @@ void TS_error_tipos_argumento(const char* param, const char* proc, t_dato espera
 }
 
 
+void TS_error_tipos_asignacion(const t_token lhs, const t_token rhs){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "no se pudo asignar un valor de tipo '%s' al identificador '%s' de tipo '%s'.",
+          TS_nombre_tipo(recibido),
+          lhs.lexema,
+          TS_nombre_tipo(esperado)
+          );
+  TS_error_tipos(mensaje);
+}
+
+
 void TS_error_tipos_operacion(const char* op, const t_dato tipoA, const t_dato tipoB){
   char mensaje[200];
   sprintf(
@@ -530,6 +555,28 @@ void TS_error_tipos_operacion(const char* op, const t_dato tipoA, const t_dato t
           op,
           TS_nombre_tipo(tipoA),
           TS_nombre_tipo(tipoB)
+          );
+  TS_error_tipos(mensaje);
+}
+
+
+void TS_error_tipos_for_init(const t_dato recibido){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "la variable iteradora debe ser de tipo entero. En su lugar se encontró un valor de tipo '%s'.",
+          TS_nombre_tipo(recibido)
+          );
+  TS_error_tipos(mensaje);
+}
+
+
+void TS_error_tipos_condicion(const t_dato recibido){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "la condición debe ser de tipo booleano. En su lugar se encontró un valor de tipo '%s'.",
+          TS_nombre_tipo(recibido)
           );
   TS_error_tipos(mensaje);
 }
@@ -591,4 +638,32 @@ void TS_error_dimensiones_operacion(const char* op, const t_token left, const t_
   TS_error_dimensiones(mensaje);
   free(dim_left);
   free(dim_right);
+}
+
+
+void TS_error_dimensiones_producto_matrices(const t_token left, const t_token right){
+  char mensaje[200], *dim_left, *dim_right;
+  dim_left = TS_dimensiones(left);
+  dim_right = TS_dimensiones(right);
+  sprintf(
+          mensaje,
+          "%s ** %s no soportado. Las dimensiones de las matrices no son compatibles para su producto.",
+          dim_left,
+          dim_right
+          );
+  TS_error_dimensiones(mensaje);
+  free(dim_left);
+  free(dim_right);
+}
+
+
+void TS_error_dimensiones_acceso(uint esperadas, uint recibidas){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "se esperaba un valor de %d dimensiones pero en su lugar se encontró uno de %d.",
+          esperadas,
+          recibidas
+          );
+  TS_error_dimensiones(mensaje);
 }
