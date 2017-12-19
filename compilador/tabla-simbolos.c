@@ -522,7 +522,7 @@ void TS_error_tipos_argumento(const char* param, const char* proc, t_dato espera
 }
 
 
-void TS_error_tipos_producto(const char* op, const t_dato tipoA, const t_dato tipoB){
+void TS_error_tipos_operacion(const char* op, const t_dato tipoA, const t_dato tipoB){
   char mensaje[200];
   sprintf(
           mensaje,
@@ -577,7 +577,7 @@ void TS_error_dimensiones_dimension2_argumento(const char* param, const char* pr
 }
 
 
-void TS_error_dimensiones_producto(const char* op, const t_token left, const t_token right){
+void TS_error_dimensiones_operacion(const char* op, const t_token left, const t_token right){
   char mensaje[200], *dim_left, *dim_right;
   dim_left = TS_dimensiones(left);
   dim_right = TS_dimensiones(right);
