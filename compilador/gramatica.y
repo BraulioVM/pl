@@ -205,9 +205,7 @@ SENTENCIA : BLOQUE
 
 SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR  { iniciarAsignacion(); } EQUALS EXPR PYC {
   if(!igualdad_de_tipos_y_dimensiones($1, $4)){
-    char mensaje[80];
-    sprintf( mensaje, "error al intentar asignar tipo %d a un identificador de tipo %d.", $4.tipo, $1.tipo );
-    TS_error( mensaje );
+    TS_error_tipos_asignacion($1, $4);
   } else {
     asignarNombre($1.lexema);
     iniciarCodigo(&$$);
@@ -223,11 +221,10 @@ SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR  { iniciarAsignacion(); } EQUALS EXPR 
 ;
 
 SENTENCIA_IF : IF PARENTESIS_IZQ EXPR {
-             if ($3.tipo != booleano) {
-                TS_error_tipos("el tipo de la expresion dentro del si debe ser booleano");
-                }
+    if(!assert_tipo($3.tipo, booleano)) {
+      TS_error_tipos_condicion($3.tipo);
+    }
   } PARENTESIS_DER SENTENCIA SENTENCIA_ELSE
-
   ;
 
 SENTENCIA_ELSE : ELSE SENTENCIA
@@ -235,16 +232,19 @@ SENTENCIA_ELSE : ELSE SENTENCIA
   ;
 
 SENTENCIA_WHILE : WHILE PARENTESIS_IZQ EXPR {
-             if ($3.tipo != booleano) {
-                TS_error_tipos("el tipo de la expresion dentro del mientras debe ser booleano");
-                }
+    if(!assert_tipo($3.tipo, booleano)){
+      TS_error_tipos_condicion($3.tipo);
+    }
   } PARENTESIS_DER SENTENCIA
   ;
 
 SENTENCIA_FOR : FOR NOMBRE INIT_FOR EXPR {
-              $2.tipo = entero;
-              TS_insertar_identificador($2);
-              assert_tipo($4, entero);
+    asignar_identificador($2);
+    if(!assert_tipo($2, entero)){
+      TS_error_tipos_for_init($2);
+    } else if(!assert_tipo($4, entero)){
+      TS_error_tipos_for_init($4);
+    }
   } DIRECCION_FOR EXPR DO SENTENCIA
   ;
 
@@ -252,13 +252,13 @@ SENTENCIA_ENTRADA : SCANF LISTA_IDENTIFICADOR_EXPR PYC
   ;
 
 SENTENCIA_SALIDA : PRINTF { iniciarSalida(); iniciarAsignacion(); } LISTA_EXPRESIONES_O_CADENA PYC {
-                 iniciarCodigo(&$$);
-                 strcpy($$.codigoSint, "{\n");
+    iniciarCodigo(&$$);
+    strcpy($$.codigoSint, "{\n");
 
-                 generarAsignacion(&$$);
-                 imprimePrintf(&$$);
+    generarAsignacion(&$$);
+    imprimePrintf(&$$);
 
-                 strcat($$.codigoSint, "}\n");
+    strcat($$.codigoSint, "}\n");
   }
   ;
 
@@ -325,98 +325,76 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
     }
   }
   | EXPR PLUS_MINUS EXPR {
-    if (tipo_numerico($1) && igualdad_de_tipos($1, $3)) {
-       $$.tipo = $1.tipo;
+    if(!(igualdad_de_tipos($1, $3) && tipo_numerico($1))){
+      TS_error_tipos_operacion($2.lexema, $1.tipo, $3.tipo);
+    } else if((
+               $1.dimensiones != 0 && $3.dimensiones != 0
+               && !igualdad_de_tipos_y_dimensiones($1, $3))){
+      TS_error_dimensiones_operacion($2.lexema, $1, $3);
+    } else {  // todo ok
+      $$.tipo = $1.tipo;
+      $$.dimensiones = $1.dimensiones > $3.dimensiones ? $1.dimensiones : $3.dimensiones;  // max
 
-       if ($1.dimensiones == 0) {
-          $$.dimensiones = $3.dimensiones;
-          $$.dimension_1 = $3.dimension_1;
-          $$.dimension_2 = $3.dimension_2;
+      if($1.dimensiones >= 1){
+        $$.dimension_1 = $1.dimension_1;
 
-          if ($2.atributo == 1) {
-            generarOperacionBasica(&$$, "-", $1, $3);
-          } else {
-            generarOperacionBasica(&$$, "+", $1, $3);
-          }
-       } else {
-          $$.dimensiones = $1.dimensiones;
-          $$.dimension_1 = $1.dimension_1;
+        if($1.dimensiones == 2){
           $$.dimension_2 = $1.dimension_2;
+        }
+      } else if($3.dimensiones >= 1){
+        $$.dimension_1 = $3.dimension_1;
 
-          if ($3.dimensiones != 0) {
-             if ($3.dimensiones != $1.dimensiones || $3.dimension_1 != $1.dimension_1 || $3.dimension_2 != $1.dimension_2) {
-                yyerror("error de dimensiones en suma/resta");
-             }
-          }
-       }
-    } else {
-     char mensaje[100];
-      sprintf(
-              mensaje,
-              "el operador %d no soporta los tipos '%s' y '%d'",
-              $1.tipo, $2.lexema, $3.tipo
-              );
-      TS_error_tipos(mensaje);
+        if($3.dimensiones == 2){
+          $$.dimension_2 = $3.dimension_2;
+        }
+      } else {  // dimensiones = 0 -> escalares
+        generarOperacionBasica(&$$, $2.lexema, $1, $3);
+      }
     }
   }
   | EXPR OP_OR EXPR {
-         assert_tipo($1, booleano);
-         assert_tipo($3, booleano);
-         $$.tipo = booleano;
+    if(!(assert_tipo($1, booleano) && assert_tipo($3, booleano)){
+      TS_error_tipos_operacion($2.lexema, $1, $3);
+    }
 
-         generarOperacionBasica(&$$, "||", $1, $3);
+    $$.tipo = booleano;
 
+    generarOperacionBasica(&$$, $2.lexema, $1, $3);
   }
   | EXPR OP_AND EXPR {
-         assert_tipo($1, booleano);
-         assert_tipo($3, booleano);
-         $$.tipo = booleano;
+    if(!(assert_tipo($1, booleano) && assert_tipo($3, booleano)){
+      TS_error_tipos_operacion($2.lexema, $1, $3);
+    }
 
-         generarOperacionBasica(&$$, "&&", $1, $3);
+    $$.tipo = booleano;
+
+    generarOperacionBasica(&$$, $2.lexema, $1, $3);
   }
   | EXPR OP_EQ EXPR {
-         if (igualdad_de_tipos($1, $3)) {
-            $$.tipo = booleano;
+    if(!(assert_tipo($1, booleano) && assert_tipo($3, booleano))){
+      TS_error_tipos_operacion($2.lexema, $1, $3);
+    } else {
+      $$.tipo = booleano;
 
-            if ($2.atributo == 1) {
-               generarOperacionBasicaConTipo(&$$, "bool", "!=", $1, $3);
-            } else {
-               generarOperacionBasicaConTipo(&$$, "bool", "==", $1, $3);
-            }
-
-         } else {
-            TS_error_tipos("en una comparacion ambos elementos deben ser del mismo tipo");
-         }
+      generarOperacionBasicaConTipo(&$$, "bool", $2.lexema, $1, $3);
+    }
   }
   | EXPR OP_CMP EXPR {
-    if (igualdad_de_tipos($1, $3) && tipo_numerico($1)) {
-       $$.tipo = booleano;
-
-       switch ($2.atributo) {
-       case 0:
-            generarOperacionBasicaConTipo(&$$, "bool", "<=", $1, $3);
-            break;
-       case 1:
-            generarOperacionBasicaConTipo(&$$, "bool", "<", $1, $3);
-            break;
-       case 2:
-            generarOperacionBasicaConTipo(&$$, "bool", ">=", $1, $3);
-            break;
-       case 3:
-            generarOperacionBasicaConTipo(&$$, "bool", ">", $1, $3);
-            break;
-       }
+    if(!(igualdad_de_tipos($1, $3) && tipo_numerico($1))){
+      TS_error_tipos_operacion($2.lexema, $1, $3);
     } else {
-      TS_error_tipos("un operador de orden compara numeros del mismo tipo");
+      $$.tipo = booleano;
+
+      generarOperacionBasicaConTipo(&$$, "bool", $2.lexema, $1, $3);
     }
   }
   | EXPR OP_MULT EXPR {
     if(!(igualdad_de_tipos($1, $3) && tipo_numerico($1))){
-      TS_error_tipos_producto($2.lexema, $1.tipo, $3.tipo);
+      TS_error_tipos_operacion($2.lexema, $1.tipo, $3.tipo);
     } else if((
                $1.dimensiones != 0 && $3.dimensiones != 0
                && !igualdad_de_tipos_y_dimensiones($1, $3))){
-      TS_error_dimensiones_producto($2.lexema, $1, $3);
+      TS_error_dimensiones_operacion($2.lexema, $1, $3);
     } else {  // todo ok
       $$.tipo = $1.tipo;
       $$.dimensiones = $1.dimensiones > $3.dimensiones ? $1.dimensiones : $3.dimensiones;  // max
@@ -439,26 +417,24 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
     }
   }
   | EXPR OP_MULT_MAT EXPR   {
-    if(tipo_numerico($1) && igualdad_de_tipos($1, $3)){
-       if($1.dimensiones != 2 || $3.dimensiones != 2){
-          TS_error_tipos("alguno de los operandos no es una matriz");
-       } else {
-          uint dimensionA1 = $1.dimension_1,
-               dimensionA2 = $1.dimension_2,
-               dimensionB1 = $3.dimension_1,
-               dimensionB2 = $3.dimension_2;
+    if(!(tipo_numerico($1) && igualdad_de_tipos($1, $3))){
+      TS_error_tipos_operacion($2.lexema, $1, $3);
+    } else if(!($1.dimensiones == 2 && $3.dimensiones == 2)){
+      TS_error_dimensiones("alguno de los operandos no es una matriz");
+    } else {
+      uint dimensionA1 = $1.dimension_1,
+        dimensionA2 = $1.dimension_2,
+        dimensionB1 = $3.dimension_1,
+        dimensionB2 = $3.dimension_2;
 
-          if (dimensionA2 != dimensionB1) {
-             TS_error_dimensiones("las dimensiones de las matrices no son compatibles para su multiplicación");
-          }
-
-          $$.tipo = $1.tipo;
-          $$.dimensiones = 2;
-          $$.dimension_1 = dimensionA1;
-          $$.dimension_2 = dimensionB2;
+      if(dimensionA2 != dimensionB1){
+        TS_error_dimensiones_producto_matrices($1, $3);
       }
-   } else {
-     TS_error_tipos("los tipos de los elementos de las matrices deben coincidir y ser numéricos.");
+
+      $$.tipo = $1.tipo;
+      $$.dimensiones = 2;
+      $$.dimension_1 = dimensionA1;
+      $$.dimension_2 = dimensionB2;
     }
   }
   | IDENTIFICADOR_EXPR
