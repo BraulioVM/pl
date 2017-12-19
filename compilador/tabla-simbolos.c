@@ -20,7 +20,7 @@ bool TS_identificador_libre(char* identificador){
 
   while(tabla.pila[curr].tipoEntrada != marca){
     if(tabla.pila[curr].tipoEntrada == variable &&
-       strcmp(tabla.pila[curr].nombre, identificador) == 0){
+       stringeq(tabla.pila[curr].nombre, identificador)){
       return false;
     }
 
@@ -33,7 +33,7 @@ bool TS_identificador_libre(char* identificador){
     /* Estamos en el bloque de un subprograma/procedimiento,
      * por lo que debemos comprobar también en sus parámetros formales
      */
-    if(strcmp(tabla.pila[curr].nombre, identificador) == 0){
+    if(stringeq(tabla.pila[curr].nombre, identificador)){
       return false;
     }
 
@@ -47,7 +47,7 @@ bool TS_identificador_libre(char* identificador){
 bool TS_parametro_libre(char* parametro){
   t_posicion curr = tabla.tope + 1;
   while(tabla.pila[--curr].tipoEntrada == parametro_formal){
-    if(strcmp(tabla.pila[curr].nombre, parametro) == 0){
+    if(stringeq(tabla.pila[curr].nombre, parametro)){
       return false;
     }
   }
