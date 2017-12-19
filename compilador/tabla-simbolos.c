@@ -181,26 +181,16 @@ bool assert_tipo(t_token token, t_dato tipo) {
 
 
 void asignar_identificador(t_token *token, char *identificador) {
-  uint identificadorEncontrado = false;
-  int indicePila;
-  for (indicePila = tabla.tope; indicePila >= 0; indicePila--) {
+  t_posicion pos = TS_encontrar_entrada(identificador);
 
-    if (tabla.pila[indicePila].tipoEntrada == variable &&
-        strcmp(tabla.pila[indicePila].nombre, identificador) == 0) {
-
-      identificadorEncontrado = true;
-      break;
-    }
-  }
-
-  if (!identificadorEncontrado) {
-    yyerror("Identificador no encontrado");
+  if(pos == -1) {
+    TS_error_referencia(identificador);
   } else {
-    token->tipo = tabla.pila[indicePila].tipoDato;
-    token->lexema = tabla.pila[indicePila].nombre;
-    token->dimensiones = tabla.pila[indicePila].dimensiones;
-    token->dimension_1 = tabla.pila[indicePila].dimension_1;
-    token->dimension_2 = tabla.pila[indicePila].dimension_2;
+    token->tipo = tabla.pila[pos].tipoDato;
+    token->lexema = tabla.pila[pos].nombre;
+    token->dimensiones = tabla.pila[pos].dimensiones;
+    token->dimension_1 = tabla.pila[pos].dimension_1;
+    token->dimension_2 = tabla.pila[pos].dimension_2;
   }
 }
 
