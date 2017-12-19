@@ -217,21 +217,20 @@ void asignar_identificador_array(t_token *token, char *identificador){
 void asignar_identificador_matriz(t_token *token, char *nombre) {
   t_posicion var_pos = TS_encontrar_entrada(nombre);
 
-  if (var_pos != -1) {
+  if(var_pos == -1){
+    TS_error_referencia(identificador);
+  } else {
     Entrada var = tabla.pila[var_pos];
 
-    if (var.dimensiones == 2) {
+    if(var.dimensiones == 2){
       token->lexema = var.nombre;
       token->tipo = var.tipoDato;
       token->dimensiones = 0;
       token->dimension_1 = 0;
       token->dimension_2 = 0;
     } else {
-      yyerror("la variable debe ser una matriz");
+      TS_error_dimensiones_acceso(2, var.dimensiones);
     }
-
-  } else {
-    yyerror("no existe tal identificador");
   }
 }
 
