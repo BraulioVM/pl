@@ -305,12 +305,12 @@ void inicia_vector() {
 }
 
 
-void comprueba_elemento (t_token token) {
-  if (elementos_leidos == 0) {
+void comprueba_elemento(t_token token) {
+  if(elementos_leidos == 0){
     tipo_elementos = token.tipo;
   } else {
-    if (token.tipo != tipo_elementos) {
-      yyerror("error de tipos en vector");
+    if(token.tipo != tipo_elementos){
+      TS_error_tipos_vector(tipo_elementos, token.tipo);
     }
   }
 
