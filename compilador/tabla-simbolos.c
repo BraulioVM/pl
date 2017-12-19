@@ -4,6 +4,8 @@
 
 #include "tabla-simbolos.h"
 
+int yylineno;  // viene del tokenizador con un extern
+
 #define true 1
 #define false 0
 
@@ -450,9 +452,8 @@ void TS_finalizar_llamada(){
   procedimiento_actual = 0;
 }
 
-
 void TS_error(const char* mensaje){
-  fprintf(stderr, "%s\n", mensaje);
+  fprintf(stderr, "L%d: %s\n", yylineno, mensaje);
 }
 
 
