@@ -54,10 +54,10 @@
 
 
 PROGRAMA : CABECERA_PROGRAMA BLOQUE {
-         iniciarCodigo(&$$);
+         iniciarCodigo(&$$, "");
          $$.codigoSint[0] = 0;
          inicioDePrograma(&$$);
-         strcat($$.codigoSint, $2.codigoSint);
+         ccat(&$$, $2.codigoSint);
          printf("%s", $$.codigoSint);
          finDePrograma();
   }
@@ -70,11 +70,10 @@ BLOQUE :
   SENTENCIAS
   FIN_DE_BLOQUE {
     TS_fin_bloque();
-    iniciarCodigo(&$$);
-    strcpy($$.codigoSint, "{\n");
-    strcat($$.codigoSint, $3.codigoSint);
-    strcat($$.codigoSint, $5.codigoSint);
-    strcat($$.codigoSint, "}\n");
+    iniciarCodigo(&$$, "{\n");
+    ccat(&$$, $3.codigoSint);
+    ccat(&$$, $5.codigoSint);
+    ccat(&$$, "}\n");
   }
   ;
 
@@ -93,9 +92,8 @@ VARIABLE_PYC : VARIABLE_LOCAL PYC { $$.codigoSint = $1.codigoSint; }
   ;
 
 VARIABLES_LOCALES : VARIABLE_PYC VARIABLES_LOCALES {
-                  iniciarCodigo(&$$);
-                  strcpy($$.codigoSint, $1.codigoSint);
-                  strcat($$.codigoSint, $2.codigoSint);
+                  iniciarCodigo(&$$, $1.codigoSint);
+                  ccat(&$$, $2.codigoSint);
   } | VARIABLE_LOCAL
   ;
 
@@ -109,22 +107,21 @@ LISTA_IDENTIFICADOR : IDENTIFICADOR {
                     TS_insertar_identificador($1);
 
                     if (declarandoVariables) {
-                       iniciarCodigo(&$$);
                        char tipo[10], codigo[500];
                        tipoC(tipo, tipoTmp);
                        sprintf(codigo, "%s %s;\n", tipo, $1.lexema);
-                       $$.codigoSint = strdup(codigo);
+                       iniciarCodigo(&$$, codigo);
                     }
   }
   | IDENTIFICADOR COMA LISTA_IDENTIFICADOR {
     TS_insertar_identificador($1);
-    iniciarCodigo(&$$);
+
     if (declarandoVariables) {
        char tipo[10], codigo[500];
        tipoC(tipo, tipoTmp);
        sprintf(codigo, "%s %s;\n", tipo, $1.lexema);
-       strcpy($$.codigoSint, codigo);
-       strcat($$.codigoSint, $3.codigoSint);
+       iniciarCodigo(&$$, codigo);
+       ccat(&$$, $3.codigoSint);
     }
   }
   | error
@@ -184,19 +181,18 @@ PARAMETROS_PROCEDIMIENTO : LISTA_PARAMETROS
   ;
 
 SENTENCIAS : SENTENCIAS SENTENCIA {
-           iniciarCodigo(&$$);
-           strcpy($$.codigoSint, $1.codigoSint);
-           strcat($$.codigoSint, "\n");
-           strcat($$.codigoSint, $2.codigoSint);
+           iniciarCodigo(&$$, $1.codigoSint);
+           ccat(&$$, "\n");
+           ccat(&$$, $2.codigoSint);
   }
   | { $$.codigoSint = strdup(""); }
   ;
 
 SENTENCIA : BLOQUE
   | SENTENCIA_ASIGNACION
-  | SENTENCIA_IF { $$.codigoSint = strdup(""); }
-  | SENTENCIA_WHILE { $$.codigoSint = strdup(""); }
-  | SENTENCIA_ENTRADA { $$.codigoSint = strdup(""); }
+  | SENTENCIA_IF
+  | SENTENCIA_WHILE
+  | SENTENCIA_ENTRADA
   | SENTENCIA_SALIDA
   | LLAMADA_PROCED { $$.codigoSint = strdup(""); }
   | SENTENCIA_FOR { $$.codigoSint = strdup(""); }
@@ -209,33 +205,76 @@ SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR  { iniciarAsignacion(); } EQUALS EXPR 
   } else {
     asignarNombre($1.lexema);
     iniciarCodigo(&$$);
-    strcpy($$.codigoSint, "{\n");
     generarAsignacion(&$$);
 
     char codigoO[10000];
     sprintf(codigoO, "%s = %s;\n", $1.nombreSint, $4.nombreSint);
-    strcat($$.codigoSint, codigoO);
-    strcat($$.codigoSint, "}\n");
+    ccat(&$$, codigoO);
+    ccat(&$$, "}\n");
   }
 }
 ;
 
-SENTENCIA_IF : IF PARENTESIS_IZQ EXPR {
+SENTENCIA_IF : IF { iniciarAsignacion(); } PARENTESIS_IZQ EXPR {
     if(!assert_tipo($3.tipo, booleano)) {
       TS_error_tipos_condicion($3.tipo);
     }
-  } PARENTESIS_DER SENTENCIA SENTENCIA_ELSE
+    iniciarCodigo(&$$, "");
+    generarAsignacion(&$$);
+  } PARENTESIS_DER SENTENCIA SENTENCIA_ELSE {
+    iniciarCodigo(&$$, "{\n");
+    char codigoIf[1000], saltoSalida[1000];
+    char *etiquetaElse = etiqueta();
+    char *etiquetaSalida = etiqueta();
+    sprintf(codigoIf, "if (!%s) goto %s;\n", $4.nombreSint, etiquetaElse);
+    sprintf(saltoSalida, "goto %s;\n", etiquetaSalida);
+
+    ccat(&$$, $5.codigoSint);
+    ccat(&$$, codigoIf);
+    ccat(&$$, $7.codigoSint);
+    ccat(&$$, saltoSalida);
+    ccat(&$$, etiquetaElse);
+    ccat(&$$, ":\n");
+    ccat(&$$, $8.codigoSint);
+    ccat(&$$, etiquetaSalida);
+    ccat(&$$, ":\nasm(\"nop\");\n}\n");
+  }
   ;
 
-SENTENCIA_ELSE : ELSE SENTENCIA
-  |
+SENTENCIA_ELSE : ELSE SENTENCIA { $$.codigoSint = $2.codigoSint; }
+  | { $$.codigoSint = ""; }
   ;
 
-SENTENCIA_WHILE : WHILE PARENTESIS_IZQ EXPR {
+SENTENCIA_WHILE : WHILE { iniciarAsignacion(); } PARENTESIS_IZQ EXPR {
     if(!assert_tipo($3.tipo, booleano)){
       TS_error_tipos_condicion($3.tipo);
+    } else {
+      iniciarCodigo(&$$, "");
+      generarAsignacion(&$$);
     }
-  } PARENTESIS_DER SENTENCIA
+  } PARENTESIS_DER SENTENCIA {
+    char *etiquetaEntrada = etiqueta(), *etiquetaSalida = etiqueta();
+    iniciarCodigo(&$$, "{\n");
+    char codigoEntrada[1000], codigoInterior[10000];
+    sprintf(
+        codigoEntrada,
+        "%s: {\n%s\n if (!%s) goto %s;}\n",
+        etiquetaEntrada,
+        $5.codigoSint,
+        $4.nombreSint,
+        etiquetaSalida
+    );
+    sprintf(
+        codigoInterior,
+        "%s\n goto %s; %s: asm(\"nop\");\n}\n",
+        $7.codigoSint,
+        etiquetaEntrada,
+        etiquetaSalida
+    );
+
+    ccat(&$$, codigoEntrada);
+    ccat(&$$, codigoInterior);
+  }
   ;
 
 SENTENCIA_FOR : FOR NOMBRE INIT_FOR EXPR {
@@ -248,17 +287,19 @@ SENTENCIA_FOR : FOR NOMBRE INIT_FOR EXPR {
   } DIRECCION_FOR EXPR DO SENTENCIA
   ;
 
-SENTENCIA_ENTRADA : SCANF LISTA_IDENTIFICADOR_EXPR PYC
+SENTENCIA_ENTRADA : SCANF { iniciarEntrada(); } LISTA_IDENTIFICADOR_EXPR PYC {
+                  iniciarCodigo(&$$, "{\n");
+                  imprimeScanf(&$$);
+                  ccat(&$$, "}\n");
+}
   ;
 
 SENTENCIA_SALIDA : PRINTF { iniciarSalida(); iniciarAsignacion(); } LISTA_EXPRESIONES_O_CADENA PYC {
-    iniciarCodigo(&$$);
-    strcpy($$.codigoSint, "{\n");
-
+    iniciarCodigo(&$$, "{\n");
     generarAsignacion(&$$);
     imprimePrintf(&$$);
 
-    strcat($$.codigoSint, "}\n");
+    ccat(&$$, "}\n");
   }
   ;
 
@@ -469,8 +510,8 @@ IDENTIFICADOR_EXPR : NOMBRE {
   }
   ;
 
-LISTA_IDENTIFICADOR_EXPR : IDENTIFICADOR_EXPR
-  | IDENTIFICADOR_EXPR COMA LISTA_IDENTIFICADOR_EXPR
+LISTA_IDENTIFICADOR_EXPR : IDENTIFICADOR_EXPR { recibirAVariable($1); }
+  | IDENTIFICADOR_EXPR COMA LISTA_IDENTIFICADOR_EXPR { recibirAVariable($1); }
   ;
 
 LISTA_EXPR : EXPR COMA LISTA_EXPR {

@@ -43,13 +43,16 @@ void addCadena(char*);
 void addVariable(t_token);
 void imprimePrintf(t_token *t);
 
+void iniciarEntrada();
+void recibirAVariable(t_token);
+void imprimeScanf(t_token*);
 
 bool declarandoVariables;
 
 void inicioDePrograma(t_token*);
 void finDePrograma();
 
-void iniciarCodigo(t_token *c);
-
+void iniciarCodigo(t_token *c, char*);
+void ccat(t_token*, char*);
 
 #endif

@@ -1,0 +1,9 @@
+BIENVENIDO {
+           sea entero x, y.
+
+           imprimir "introduce dos numeros separados por un espacio y C-d";
+
+           captar x, y;
+           
+           imprimir "el producto es ", x*y;
+}

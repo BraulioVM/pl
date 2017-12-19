@@ -1,0 +1,25 @@
+BIENVENIDO {
+           sean entero n, curr.
+
+           curr = 2;
+
+           imprimir "introduce numero: ";
+           captar n;
+
+           imprimir "los factores primos de ", n, " son";
+
+           mientras (curr <= n) {
+                    sea entero d.
+
+                    d = n / curr;
+
+                    si (d * curr == n) {
+                       imprimir curr;
+                       n = n / curr;
+                    } si_no {
+                       curr = curr + 1;
+                    }
+                    
+           }
+
+}

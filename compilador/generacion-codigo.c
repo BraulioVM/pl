@@ -52,7 +52,7 @@ void generarAsignacion(t_token *t) {
   for(i = 0; i < tmpAsignacion.subexpresiones; i++) {
     char nuevaInfo[1000];
     sprintf(nuevaInfo, "%s\n", tmpAsignacion.instrucciones[i]);
-    strcat(t->codigoSint, nuevaInfo);
+    ccat(t, nuevaInfo);
   }
 }
 
@@ -128,7 +128,9 @@ void addVariable(t_token var) {
   }
 
   addCadena(cadena);
-  tmpSalida.variables[tmpSalida.nVariables++] = strdup(var.nombreSint);
+  if (var.nombreSint != 0x0) {
+    tmpSalida.variables[tmpSalida.nVariables++] = strdup(var.nombreSint);
+  }
 
 }
 
@@ -142,7 +144,7 @@ void imprimePrintf(t_token *t) {
     strcat(codigo, tmpSalida.cadenas[i] + 1);
   }
   
-  strcat(codigo, "\"");
+  strcat(codigo, "\\n\"");
 
   for( i = 0; i < tmpSalida.nVariables; i++) {
     strcat(codigo, ", ");
@@ -151,23 +153,86 @@ void imprimePrintf(t_token *t) {
 
   strcat(codigo, ");\n");
 
-  strcat(t->codigoSint, codigo);
+  ccat(t, codigo);
 }
 
 bool declarandoVariables = false;
 
 void inicioDePrograma(t_token *t) {
-  strcat(t->codigoSint, "#include <stdio.h>\n");
-  strcat(t->codigoSint, "typedef int bool;\n");
-  strcat(t->codigoSint, "#define true 1\n");
-  strcat(t->codigoSint, "#define false 0\n");
-  strcat(t->codigoSint, "int main()\n");
+  ccat(t, "#include <stdio.h>\n");
+  ccat(t, "typedef int bool;\n");
+  ccat(t, "#define true 1\n");
+  ccat(t, "#define false 0\n");
+  ccat(t, "int main()\n");
 }
 
 void finDePrograma() {
   printf("\n");
 }
 
-void iniciarCodigo(t_token *c) {
+void iniciarCodigo(t_token *c, char* d) {
   c->codigoSint = malloc(sizeof(char) * 100000);
+  if (d != 0x0)
+    strcpy(c->codigoSint, d);
+}
+
+void ccat(t_token *t, char *c) {
+  if (c != 0x0 && t->codigoSint != 0x0) {
+    strcat(t->codigoSint, c);
+  }
+}
+
+typedef struct {
+  char *cuantificadores;
+  char **variables;
+  uint nVariables;
+} SEntrada;
+
+SEntrada tmpEntrada;
+
+void iniciarEntrada() {
+  tmpEntrada.cuantificadores = malloc(sizeof(char) * 100);
+  tmpEntrada.variables = malloc(sizeof(char*) * 100);
+  tmpEntrada.nVariables = 0;
+}
+
+void recibirAVariable(t_token t) {
+  char *variable = strdup(t.nombreSint), cuantificador;
+  switch(t.tipo) {
+  case caracter:
+    cuantificador = 'c';
+    break;
+  case entero:
+  case booleano:
+    cuantificador = 'd';
+    break;
+  case real:
+    cuantificador = 'f';
+    break;
+  }
+
+  tmpEntrada.cuantificadores[tmpEntrada.nVariables] = cuantificador;
+  tmpEntrada.variables[tmpEntrada.nVariables++] = variable;
+}
+
+void imprimeScanf(t_token *t) {
+  char c[100];
+  sprintf(c, "%%%c", tmpEntrada.cuantificadores[0]);
+  ccat(t, "scanf(\"");
+  ccat(t, c);
+  int i;
+  for (i = 1; i < tmpEntrada.nVariables; i++) {
+    char codigo[100];
+    sprintf(codigo, " %%%c ", tmpEntrada.cuantificadores[i]);
+    ccat(t, codigo);
+  }
+  
+  ccat(t, "\"");
+
+  for (i = 0; i < tmpEntrada.nVariables; i++) {
+    ccat(t, ", &");
+    ccat(t, tmpEntrada.variables[i]);
+  }
+
+  ccat(t, ");\n");
 }
