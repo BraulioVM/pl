@@ -339,8 +339,7 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
         $$.nombreSint = tempVar;
   }
   | PLUS_MINUS EXPR {
-    char mensaje[100];
-    if (tipo_numerico($2)) {
+    if(tipo_numerico($2)){
       $$.tipo = $2.tipo;
 
       char *tempVar = temporal();
@@ -349,8 +348,8 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
 
       tipoC(tipo, $$.tipo);
 
-      if ($1.atributo == 1) { // si es un menos
-         sprintf(instruccion, "-%s", $2.nombreSint);
+      if($1.atributo == 1){  // si es un menos
+        sprintf(instruccion, "-%s", $2.nombreSint);
       } else {
         sprintf(instruccion, "+%s", $2.nombreSint);
       }
@@ -359,10 +358,12 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
       $$.nombreSint = tempVar;
 
     } else {
+      char mensaje[100];
       sprintf(
               mensaje,
-              "el operador %s no soporta el tipo '%d'",
-              $1.lexema, $2.tipo
+              "el operador %s no soporta el tipo '%s'",
+              $1.lexema,
+              TS_nombre_tipo($2.tipo)
               );
       TS_error_tipos(mensaje);
     }
