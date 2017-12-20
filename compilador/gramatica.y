@@ -154,12 +154,19 @@ SENTENCIA : BLOQUE
   ;
 
 SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR EQUALS EXPR PYC {
-  if(!igualdad_de_tipos_y_dimensiones($1, $3)){
-
-      char mensaje[80];
-      sprintf( mensaje, "error al intentar asignar tipo %d a un identificador de tipo %d.", $3.tipo, $1.tipo );
-      yyerror( mensaje );
-    }
+  if ( !igualdad_de_tipos( $1, $3 ) ){
+    char mensaje[80];
+    sprintf( mensaje, "error al intentar asignar tipo %s a un identificador de tipo %s: %s.", nombre_tipo($3.tipo), nombre_tipo($1.tipo), $1.lexema );
+    TS_error_tipos( mensaje );
+  }
+  else if ( !igualdad_de_dimensiones( $1, $3 ) ){
+    char mensaje[80];
+    if ( $1.dimensiones == 0 )
+      sprintf( mensaje, "error al intentar asignar un valor no escalar a un identificador escalar: %s.", $1.lexema );
+    else
+      sprintf( mensaje, "error al intentar asignar un valor no escalar a un identificador de distitnas dimensiones: %s.", $1.lexema );
+    TS_error_dimensiones( mensaje );
+  }
 }
   ;
 

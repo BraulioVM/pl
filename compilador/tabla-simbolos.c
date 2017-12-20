@@ -268,6 +268,13 @@ bool igualdad_de_tipos(t_token t1, t_token t2){
   return t1.tipo == t2.tipo;
 }
 
+bool igualdad_de_dimensiones(t_token t1, t_token t2) {
+
+  return
+    t1.dimensiones == t2.dimensiones &&
+    ( t1.dimensiones < 1 || t1.dimension_1 == t2.dimension_1 ) &&
+    ( t1.dimensiones < 2 || t1.dimension_2 == t2.dimension_2 );
+}
 
 bool igualdad_de_tipos_y_dimensiones(t_token t1, t_token t2) {
   bool eq = igualdad_de_tipos(t1, t2) && t1.dimensiones == t2.dimensiones;
@@ -551,4 +558,18 @@ void TS_error_dimensiones_dimension2_argumento(const char* param, const char* pr
           recibido
           );
   TS_error_dimensiones(mensaje);
+}
+
+
+const char * nombre_tipo( t_dato tipo ){
+
+  char nombre[15];
+
+  switch ( tipo ){
+    case 1: return "booleano";
+    case 2: return "caracter";
+    case 3: return "entero";
+    case 4: return "real";
+    default: return "NA";
+  }
 }
