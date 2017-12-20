@@ -10,5 +10,5 @@ BIENVENIDO {
     a = a * b;
     a = a * c;
     a = a * e;
-    c = d * c;
+    c = c * d;
 }
