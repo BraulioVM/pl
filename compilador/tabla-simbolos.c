@@ -179,7 +179,6 @@ bool assert_tipo(t_token token, t_dato tipo) {
   return token.tipo == tipo;
 }
 
-
 void asignar_identificador(t_token *token, char *identificador) {
   t_posicion pos = TS_encontrar_entrada(identificador);
 
