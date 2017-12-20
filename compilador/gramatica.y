@@ -196,7 +196,7 @@ SENTENCIA : BLOQUE
   | SENTENCIA_SALIDA
   | LLAMADA_PROCED { $$.codigoSint = strdup(""); }
   | SENTENCIA_FOR { $$.codigoSint = strdup(""); }
-  | SENTENCIA_RETURN { $$.codigoSint = strdup(""); }
+  | SENTENCIA_RETURN { $$.codigoSint = "return;\n"; }
   ;
 
 SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR  { iniciarAsignacion(); } EQUALS EXPR PYC {
