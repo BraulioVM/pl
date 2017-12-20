@@ -218,8 +218,8 @@ SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR { iniciarAsignacion(); } EQUALS EXPR P
 ;
 
 SENTENCIA_IF : IF { iniciarAsignacion(); } PARENTESIS_IZQ EXPR {
-    if(!assert_tipo($3, booleano)) {
-      TS_error_tipos_condicion($3.tipo);
+    if(!assert_tipo($4, booleano)) {
+      TS_error_tipos_condicion($4.tipo);
     }
     iniciarCodigo(&$$, "");
     generarAsignacion(&$$);
