@@ -394,7 +394,7 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
     }
   }
   | EXPR OP_OR EXPR {
-    if(!(assert_tipo($1, booleano) && assert_tipo($3, booleano)){
+    if(!(assert_tipo($1, booleano) && assert_tipo($3, booleano))){
       TS_error_tipos_operacion($2.lexema, $1.tipo, $3.tipo);
     }
 
@@ -403,7 +403,7 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
     generarOperacionBasica(&$$, $2.lexema, $1, $3);
   }
   | EXPR OP_AND EXPR {
-    if(!(assert_tipo($1, booleano) && assert_tipo($3, booleano)){
+    if(!(assert_tipo($1, booleano) && assert_tipo($3, booleano))){
       TS_error_tipos_operacion($2.lexema, $1.tipo, $3.tipo);
     }
 
