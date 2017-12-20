@@ -200,8 +200,10 @@ SENTENCIA : BLOQUE
   ;
 
 SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR { iniciarAsignacion(); } EQUALS EXPR PYC {
-  if(!igualdad_de_tipos_y_dimensiones($1, $4)){
+  if(!igualdad_de_tipos($1, $4)){
     TS_error_tipos_asignacion($1, $4);
+  } else if(!igualdad_de_tipos_y_dimensiones($1, $4)){
+    TS_error_dimensiones_asignacion($1, $4);
   } else {
     asignarNombre($1.lexema);
     iniciarCodigo(&$$, NULL);
