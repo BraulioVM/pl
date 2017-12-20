@@ -204,7 +204,7 @@ SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR  { iniciarAsignacion(); } EQUALS EXPR 
     TS_error_tipos_asignacion($1, $4);
   } else {
     asignarNombre($1.lexema);
-    iniciarCodigo(&$$);
+    iniciarCodigo(&$$, NULL);
     generarAsignacion(&$$);
 
     char codigoO[10000];
