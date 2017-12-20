@@ -485,14 +485,6 @@ void TS_error_referencia(const char* referencia){
 }
 
 
-void TS_error_dimensiones(const char* mensaje){
-  char tmp[400];
-  strcat(tmp, "Error de dimensiones: ");
-  strcat(tmp, mensaje);
-  TS_error(tmp);
-}
-
-
 void TS_error_numero_parametros(const char* proc, uint esperados, uint recibidos){
   char base[200];
   sprintf(
@@ -563,6 +555,29 @@ void TS_error_tipos_condicion(const t_dato recibido){
           mensaje,
           "la condición debe ser de tipo booleano. En su lugar se encontró un valor de tipo '%s'.",
           TS_nombre_tipo(recibido)
+          );
+  TS_error_tipos(mensaje);
+}
+
+
+void TS_error_dimensiones(const char* mensaje){
+  char tmp[400];
+  strcat(tmp, "Error de dimensiones: ");
+  strcat(tmp, mensaje);
+  TS_error(tmp);
+}
+
+
+void TS_error_dimensiones_asignacion(const t_token lhs, const t_token rhs){
+  char mensaje[200], *left_dim, *right_dim;
+  left_dim = TS_dimensiones(lhs);
+  right_dim = TS_dimensiones(rhs);
+  sprintf(
+          mensaje,
+          "no se pudo asignar un valor de dimensiones '%s' al identificador '%s' (de dimensiones '%s').",
+          right_dim,
+          lhs.lexema,
+          left_dim
           );
   TS_error_tipos(mensaje);
 }

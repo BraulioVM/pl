@@ -133,6 +133,7 @@ void TS_error_tipos_operacion(const char* op, const t_dato tipoA, const t_dato t
 void TS_error_tipos_for_init(const t_dato recibido);
 void TS_error_tipos_condicion(const t_dato recibido);
 void TS_error_dimensiones(const char* mensaje);
+void TS_error_dimensiones_asignacion(const t_token lhs, const t_token rhs);
 void TS_error_dimensiones_argumento(const char* param, const char* proc, uint esperadas, uint recibidas);
 void TS_error_dimensiones_dimension1_argumento(const char* param, const char* proc, uint esperado, uint recibido);
 void TS_error_dimensiones_dimension2_argumento(const char* param, const char* proc, uint esperado, uint recibido);
