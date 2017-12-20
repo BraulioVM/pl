@@ -216,7 +216,7 @@ SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR  { iniciarAsignacion(); } EQUALS EXPR 
 ;
 
 SENTENCIA_IF : IF { iniciarAsignacion(); } PARENTESIS_IZQ EXPR {
-    if(!assert_tipo($3.tipo, booleano)) {
+    if(!assert_tipo($3, booleano)) {
       TS_error_tipos_condicion($3.tipo);
     }
     iniciarCodigo(&$$, "");
@@ -246,7 +246,7 @@ SENTENCIA_ELSE : ELSE SENTENCIA { $$.codigoSint = $2.codigoSint; }
   ;
 
 SENTENCIA_WHILE : WHILE { iniciarAsignacion(); } PARENTESIS_IZQ EXPR {
-    if(!assert_tipo($3.tipo, booleano)){
+    if(!assert_tipo($3, booleano)){
       TS_error_tipos_condicion($3.tipo);
     } else {
       iniciarCodigo(&$$, "");
