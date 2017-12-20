@@ -280,9 +280,9 @@ SENTENCIA_WHILE : WHILE { iniciarAsignacion(); } PARENTESIS_IZQ EXPR {
 SENTENCIA_FOR : FOR NOMBRE INIT_FOR EXPR {
   asignar_identificador(&$2, $2.lexema);
     if(!assert_tipo($2, entero)){
-      TS_error_tipos_for_init($2);
+      TS_error_tipos_for_init($2.tipo);
     } else if(!assert_tipo($4, entero)){
-      TS_error_tipos_for_init($4);
+      TS_error_tipos_for_init($4.tipo);
     }
   } DIRECCION_FOR EXPR DO SENTENCIA
   ;
