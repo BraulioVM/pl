@@ -218,7 +218,7 @@ void asignar_identificador_matriz(t_token *token, char *nombre) {
   t_posicion var_pos = TS_encontrar_entrada(nombre);
 
   if(var_pos == -1){
-    TS_error_referencia(identificador);
+    TS_error_referencia(nombre);
   } else {
     Entrada var = tabla.pila[var_pos];
 
