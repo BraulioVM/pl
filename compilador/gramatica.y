@@ -199,7 +199,7 @@ SENTENCIA : BLOQUE
   | SENTENCIA_RETURN { $$.codigoSint = strdup(""); }
   ;
 
-SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR  { iniciarAsignacion(); } EQUALS EXPR PYC {
+SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR { iniciarAsignacion(); } EQUALS EXPR PYC {
   if(!igualdad_de_tipos_y_dimensiones($1, $4)){
     TS_error_tipos_asignacion($1, $4);
   } else {
