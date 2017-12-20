@@ -524,10 +524,10 @@ void TS_error_tipos_asignacion(const t_token lhs, const t_token rhs){
   char mensaje[200];
   sprintf(
           mensaje,
-          "no se pudo asignar un valor de tipo '%s' al identificador '%s' de tipo '%s'.",
-          TS_nombre_tipo(recibido),
+          "no se pudo asignar un valor de tipo '%s' al identificador '%s' (de tipo '%s').",
+          TS_nombre_tipo(rhs.tipo),
           lhs.lexema,
-          TS_nombre_tipo(esperado)
+          TS_nombre_tipo(lhs.tipo)
           );
   TS_error_tipos(mensaje);
 }
