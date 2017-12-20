@@ -442,7 +442,8 @@ void TS_error_redeclaracion_parametro(const char *parametro){
   char base[100];
   sprintf(
           base,
-          "Error: argumento '%s' duplicado en declaración de procedimiento",
+          "Error en la línea %d: argumento '%s' duplicado en declaración de procedimiento",
+          yyget_lineno(),
           parametro
           );
   TS_error(base);
@@ -451,8 +452,11 @@ void TS_error_redeclaracion_parametro(const char *parametro){
 
 void TS_error_tipos(const char* mensaje){
   char tmp[400];
-  strcat(tmp, "Error de tipos: ");
-  strcat(tmp, mensaje);
+  sprintf(
+    tmp,
+    "Error de tipos en la línea %d: %s",
+    yyget_lineno(),
+    mensaje );
   TS_error(tmp);
 }
 
@@ -462,7 +466,8 @@ void TS_error_referencia(const char* referencia){
   char base[100];
   sprintf(
           base,
-          "Error de referencia: el nombre '%s' no ha sido definido.",
+          "Error de referencia en la línea %d: el nombre '%s' no ha sido definido.",
+          yyget_lineno(),
           referencia
           );
   TS_error(base);
@@ -471,8 +476,11 @@ void TS_error_referencia(const char* referencia){
 
 void TS_error_dimensiones(const char* mensaje){
   char tmp[400];
-  strcat(tmp, "Error de dimensiones: ");
-  strcat(tmp, mensaje);
+  sprintf(
+    tmp,
+    "Error de dimensiones en la línea %d: %s",
+    yyget_lineno(),
+    mensaje );
   TS_error(tmp);
 }
 
