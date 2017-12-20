@@ -395,7 +395,7 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
   }
   | EXPR OP_OR EXPR {
     if(!(assert_tipo($1, booleano) && assert_tipo($3, booleano)){
-      TS_error_tipos_operacion($2.lexema, $1, $3);
+      TS_error_tipos_operacion($2.lexema, $1.tipo, $3.tipo);
     }
 
     $$.tipo = booleano;
@@ -404,7 +404,7 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
   }
   | EXPR OP_AND EXPR {
     if(!(assert_tipo($1, booleano) && assert_tipo($3, booleano)){
-      TS_error_tipos_operacion($2.lexema, $1, $3);
+      TS_error_tipos_operacion($2.lexema, $1.tipo, $3.tipo);
     }
 
     $$.tipo = booleano;
@@ -413,7 +413,7 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
   }
   | EXPR OP_EQ EXPR {
     if(!(assert_tipo($1, booleano) && assert_tipo($3, booleano))){
-      TS_error_tipos_operacion($2.lexema, $1, $3);
+      TS_error_tipos_operacion($2.lexema, $1.tipo, $3.tipo);
     } else {
       $$.tipo = booleano;
 
@@ -422,7 +422,7 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
   }
   | EXPR OP_CMP EXPR {
     if(!(igualdad_de_tipos($1, $3) && tipo_numerico($1))){
-      TS_error_tipos_operacion($2.lexema, $1, $3);
+      TS_error_tipos_operacion($2.lexema, $1.tipo, $3.tipo);
     } else {
       $$.tipo = booleano;
 
@@ -459,7 +459,7 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
   }
   | EXPR OP_MULT_MAT EXPR   {
     if(!(tipo_numerico($1) && igualdad_de_tipos($1, $3))){
-      TS_error_tipos_operacion($2.lexema, $1, $3);
+      TS_error_tipos_operacion($2.lexema, $1.tipo, $3.tipo);
     } else if(!($1.dimensiones == 2 && $3.dimensiones == 2)){
       TS_error_dimensiones("alguno de los operandos no es una matriz");
     } else {
