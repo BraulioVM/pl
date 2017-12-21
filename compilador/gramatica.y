@@ -62,10 +62,12 @@ PROGRAMA : CABECERA_PROGRAMA BLOQUE {
     // de ser globales
     cargaBloquePrincipal(&$$, $2.codigoBloque);
 
-    if(!TS_ERROR && !ERROR){
-      printf("%s", $$.codigoSint);
-      finDePrograma();
+    if(TS_ERROR || ERROR){
+      exit(1);
     }
+
+    printf("%s", $$.codigoSint);
+    finDePrograma();
   }
   ;
 
