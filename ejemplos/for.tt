@@ -1,7 +1,7 @@
 BIENVENIDO {
     sea entero unt, i.
-    
-    para i := 0 hasta 10 hacer {
+
+    para i := 2-2 hasta -1 hacer {
         unt = unt + i;
     }
 
