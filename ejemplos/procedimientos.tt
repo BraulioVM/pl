@@ -1,6 +1,7 @@
 BIENVENIDO {
     sea
-        booleano t
+        booleano t;
+        caracter x
     .
 
     procedimiento hey(entero n, caracter c) {
@@ -8,5 +9,6 @@ BIENVENIDO {
     }
 
     t = falso;
-    hey(4, 'c');
+    x = 'c';
+    hey(4*1-(3/7), x);
 }
