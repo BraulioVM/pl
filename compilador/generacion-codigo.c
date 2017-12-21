@@ -252,9 +252,26 @@ void reservarBloque(t_token *t) {
   cb->nProcedimientos = 0;
 }
 
+void reservarProcedimiento(t_token *t) {
+  reservarBloque(t);
+  procedimientoActual = bloqueActual->procedimientos;
+  procedimientoActual->numeroDeParametros = 0;
+  procedimientoActual->parametros = malloc(sizeof(DeclaracionVariable)*30);
+}
+
 void addVariableAlBloque(t_dato tipo, char *nombre) {
   bloqueActual->variablesLocales[bloqueActual->nVariables].nombre = nombre;
   bloqueActual->variablesLocales[bloqueActual->nVariables++].tipo = tipo;
+}
+
+void addParametroAlProcedimiento(t_dato tipo, char *nombre) {
+  DeclaracionProcedimiento *p = procedimientoActual;
+  p->parametros[p->numeroDeParametros].nombre = nombre;
+  p->parametros[p->numeroDeParametros++].tipo = tipo;
+}
+
+void addProcedimientoAlBloque(CodigoBloque *cb, DeclaracionProcedimiento *p) {
+  cb->procedimientos[bloqueActual->nProcedimientos++] = *p;
 }
 
 char *codigoDeclaraciones(CodigoBloque *cb) {
