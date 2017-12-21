@@ -7,6 +7,7 @@
   int yylex(void);
   void yyerror(const char *s);
   int yydebug = 0;
+  int ERROR = 0;
 %}
 
 %token CABECERA_PROGRAMA
@@ -58,8 +59,11 @@ PROGRAMA : CABECERA_PROGRAMA BLOQUE {
          $$.codigoSint[0] = 0;
          inicioDePrograma(&$$);
          ccat(&$$, $2.codigoSint);
-         printf("%s", $$.codigoSint);
-         finDePrograma();
+
+         if(!TS_ERROR && !ERROR){
+           printf("%s", $$.codigoSint);
+           finDePrograma();
+         }
   }
   ;
 
@@ -589,11 +593,13 @@ VECTOR : LLAVE_IZQ { inicia_vector(); } LISTA_EXPR LLAVE_DER {
 #include "tokenizador.c"
 
 void yyerror(const char *s) {
-    printf(
-           "Yacc error at line %d: %s. Unexpected \"%s\"\n",
-           yylineno,
-           s,
-           yytext);
+  ERROR = 1;
+  printf(
+         "Yacc error at line %d: %s. Unexpected \"%s\"\n",
+         yylineno,
+         s,
+         yytext
+         );
 }
 
 int main(){

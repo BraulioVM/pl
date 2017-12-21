@@ -10,6 +10,8 @@ int yylineno;  // viene del tokenizador con un extern
 #define false 0
 
 Tabla tabla = { .tope = 0 };
+bool TS_ERROR = false;
+
 
 bool TS_ififitsisits(){
   return tabla.tope < MAX_TS_SIZE - 1;
@@ -438,6 +440,7 @@ void TS_finalizar_llamada(){
 
 void TS_error(const char* mensaje){
   fprintf(stderr, "L%d: %s\n", yylineno, mensaje);
+  TS_ERROR = true;
 }
 
 

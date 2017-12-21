@@ -144,6 +144,7 @@ fin_declaracion_variables       \.
 [\ \t]                 { }
 [\n]                   { yylineno++; }
 .                      {
+    ERROR = 1;
     printf("Error léxico: %s no esperado en línea %d\n", yytext, yylineno );
 }
 
