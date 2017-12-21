@@ -65,5 +65,6 @@ CodigoBloque *bloqueActual;
 DeclaracionProcedimiento *procedimientoActual;
 
 char *codigoDeclaraciones(CodigoBloque*);
+char *codigoProcedimientos(CodigoBloque*);
 
 #endif

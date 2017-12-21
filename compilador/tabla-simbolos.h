@@ -51,8 +51,8 @@ typedef struct {
 typedef struct {
   char *nombre;
   DeclaracionVariable *parametros;
-  uint numeroDeParametros;
-  struct CodigoBloque* codigo;
+  uint nParametros;
+  char *codigo;
 } DeclaracionProcedimiento;
 
 typedef struct {

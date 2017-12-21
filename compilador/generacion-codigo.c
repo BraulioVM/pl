@@ -164,6 +164,7 @@ void cargaBloquePrincipal(t_token *t, CodigoBloque *cb) {
   ccat(t, "#define true 1\n");
   ccat(t, "#define false 0\n");
   ccat(t, codigoDeclaraciones(cb));
+  ccat(t, codigoProcedimientos(cb));
   ccat(t, "int main() { \n");
   ccat(t, cb->codigo);
   ccat(t, "}\n");
@@ -255,7 +256,7 @@ void reservarBloque(t_token *t) {
 void reservarProcedimiento(t_token *t) {
   reservarBloque(t);
   procedimientoActual = bloqueActual->procedimientos;
-  procedimientoActual->numeroDeParametros = 0;
+  procedimientoActual->nParametros = 0;
   procedimientoActual->parametros = malloc(sizeof(DeclaracionVariable)*30);
 }
 
@@ -266,8 +267,8 @@ void addVariableAlBloque(t_dato tipo, char *nombre) {
 
 void addParametroAlProcedimiento(t_dato tipo, char *nombre) {
   DeclaracionProcedimiento *p = procedimientoActual;
-  p->parametros[p->numeroDeParametros].nombre = nombre;
-  p->parametros[p->numeroDeParametros++].tipo = tipo;
+  p->parametros[p->nParametros].nombre = nombre;
+  p->parametros[p->nParametros++].tipo = tipo;
 }
 
 void addProcedimientoAlBloque(CodigoBloque *cb, DeclaracionProcedimiento *p) {
@@ -290,4 +291,38 @@ char *codigoDeclaraciones(CodigoBloque *cb) {
   }
 
   return strdup(declaraciones);
+}
+
+char *codigoProcedimientos(CodigoBloque *cb) {
+  char codigo[10000];
+  strcpy(codigo, "");
+
+  int i, j;
+
+  for(i = 0; i < cb->nProcedimientos; i++) {
+    DeclaracionProcedimiento p = cb->procedimientos[i];
+    char cabecera[10000];
+    sprintf(cabecera, "void %s(", p.nombre);
+
+    for (j = 0; j < p.nParametros; j++) {
+      char codigoParametro[50];
+      char tipoP[10];
+      tipoC(tipoP, p.parametros[j].tipo);
+      sprintf(codigoParametro, "%s %s,", tipoP, p.parametros[j].nombre);
+      strcat(cabecera, codigoParametro);
+    }
+
+    if (p.nParametros > 0)
+      cabecera[strlen(cabecera)-1] = 0x0; // borra la ultima coma
+
+    strcat(cabecera, ") {\n");
+    strcat(cabecera, p.codigo);
+    strcat(cabecera, "}\n");
+
+    strcat(codigo, cabecera);
+
+  }
+
+  return strdup(codigo);
+
 }
