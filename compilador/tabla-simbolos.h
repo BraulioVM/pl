@@ -43,6 +43,28 @@ typedef struct {
   uint tope;
 } Tabla;
 
+typedef struct {
+  char *nombre;
+  t_dato tipo;
+} DeclaracionVariable;
+
+typedef struct {
+  char *nombre;
+  DeclaracionVariable *parametros;
+  uint numeroDeParametros;
+  struct CodigoBloque* codigo;
+} DeclaracionProcedimiento;
+
+typedef struct {
+  DeclaracionVariable *variablesLocales;
+  DeclaracionProcedimiento *procedimientos;
+  char *codigo;
+
+  int nVariables;
+  int nProcedimientos;
+
+} CodigoBloque;
+
 
 typedef struct {
   int atributo;
@@ -53,6 +75,7 @@ typedef struct {
   uint dimension_2;
   char *nombreSint;
   char *codigoSint;
+  CodigoBloque *codigoBloque;
 } t_token;
 
 #define YYSTYPE t_token

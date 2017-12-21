@@ -49,30 +49,35 @@
 
 %start PROGRAMA
 
-
 %%
-
 
 PROGRAMA : CABECERA_PROGRAMA BLOQUE {
          iniciarCodigo(&$$, "");
          $$.codigoSint[0] = 0;
-         inicioDePrograma(&$$);
-         ccat(&$$, $2.codigoSint);
+         // carga en $$.codigoSint el codigo de todo el programa
+         // esto tiene en cuenta que las variables del main han
+         // de ser globales
+         cargaBloquePrincipal(&$$, $2.codigoBloque);
+
          printf("%s", $$.codigoSint);
          finDePrograma();
   }
   ;
 
 BLOQUE :
-  INICIO_DE_BLOQUE { TS_insertar_marca(); }
-  DECLARACION_VARIABLES_LOCALES
-  DECLARACION_SUBPROGRAMAS
+  INICIO_DE_BLOQUE { TS_insertar_marca(); reservarBloque(&$$); }
+  DECLARACION_VARIABLES_LOCALES {
+      $$.codigoBloque = bloqueActual;
+  }
+  DECLARACION_SUBPROGRAMAS 
   SENTENCIAS
   FIN_DE_BLOQUE {
     TS_fin_bloque();
     iniciarCodigo(&$$, "{\n");
+    $$.codigoBloque = $4.codigoBloque;
+    $$.codigoBloque->codigo = $6.codigoSint;
     ccat(&$$, $3.codigoSint);
-    ccat(&$$, $5.codigoSint);
+    ccat(&$$, $6.codigoSint);
     ccat(&$$, "}\n");
   }
   ;
@@ -111,6 +116,7 @@ LISTA_IDENTIFICADOR : IDENTIFICADOR {
                        tipoC(tipo, tipoTmp);
                        sprintf(codigo, "%s %s;\n", tipo, $1.lexema);
                        iniciarCodigo(&$$, codigo);
+                       addVariableAlBloque(tipoTmp, strdup($1.lexema));
                     }
   }
   | IDENTIFICADOR COMA LISTA_IDENTIFICADOR {
@@ -122,6 +128,7 @@ LISTA_IDENTIFICADOR : IDENTIFICADOR {
        sprintf(codigo, "%s %s;\n", tipo, $1.lexema);
        iniciarCodigo(&$$, codigo);
        ccat(&$$, $3.codigoSint);
+       addVariableAlBloque(tipoTmp, strdup($1.lexema));
     }
   }
   | error
