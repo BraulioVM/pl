@@ -287,33 +287,36 @@ SENTENCIA_WHILE : WHILE { iniciarAsignacion(); } PARENTESIS_IZQ EXPR {
   ;
 
 SENTENCIA_FOR : FOR { iniciarAsignacion(); } NOMBRE INIT_FOR EXPR {
-    asignar_identificador(&$3, $3.lexema);
-    if(!assert_tipo($3, entero)){
-      TS_error_tipos_for_init($3.tipo);
-    } else if(!assert_tipo($5, entero)){
-      TS_error_tipos_for_init($5.tipo);
-    } else {
-      iniciarCodigo(&$$, NULL);
-      generarAsignacion(&$$);
-    }
+      asignar_identificador(&$3, $3.lexema);
+      if(!assert_tipo($3, entero)){
+        TS_error_tipos_for_init($3.tipo);
+      } else if(!assert_tipo($5, entero)){
+        TS_error_tipos_for_init($5.tipo);
+      } else {
+        iniciarCodigo(&$$, NULL);
+        generarAsignacion(&$$);
+      }
     } DIRECCION_FOR EXPR DO SENTENCIA {
       char *etiquetaEntrada = etiqueta(), *etiquetaSalida = etiqueta();
       iniciarCodigo(&$$, "{\n");
       char codigoEntrada[1000], codigoInterior[10000], condicion[25], incr[5];
       sprintf(
               incr,
-              "%si",
-              $7.atributo == 0 ? "--" : "++"
+              "%s%s",
+              $7.atributo == 0 ? "--" : "++",
+              $3.lexema  // nombreSint
               );
       sprintf(
               condicion,
-              "i %c= %s",
+              "%s %c= %s",
+              $3.lexema,
               $7.atributo == 0 ? '>' : '<',
-              $8.nombreSint
+              $8.nombreSint  // nombreSint
               );
       sprintf(
               codigoEntrada,
-              "int i = %s;\n%s: {\n%s\n if(!(%s)){ goto %s; }}\n",
+              "%s = %s;\n%s: {\n%s\n if(!(%s)){ goto %s; }\n}\n",
+              $3.lexema,  // nombreSint
               $5.nombreSint,
               etiquetaEntrada,
               $6.codigoSint,
@@ -462,6 +465,8 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
   | EXPR OP_EQ EXPR {
     if(!igualdad_de_tipos($1, $3)){
       TS_error_tipos_operacion($2.lexema, $1.tipo, $3.tipo);
+    } else if(!igualdad_de_tipos_y_dimensiones($1, $3)){
+      TS_error_dimensiones_operacion($2.lexema, $1, $3);
     } else {
       $$.tipo = booleano;
 

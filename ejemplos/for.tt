@@ -1,9 +1,9 @@
 BIENVENIDO {
-    sea entero int, i.
+    sea entero unt, i.
     
     para i := 0 hasta 10 hacer {
-        int = int + i;
+        unt = unt + i;
     }
 
-    imprimir int;
+    imprimir unt;
 }
