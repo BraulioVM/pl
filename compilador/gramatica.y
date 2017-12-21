@@ -206,7 +206,7 @@ SENTENCIA_ASIGNACION : IDENTIFICADOR_EXPR { iniciarAsignacion(); } EQUALS EXPR P
     TS_error_dimensiones_asignacion($1, $4);
   } else {
     asignarNombre($1.lexema);
-    iniciarCodigo(&$$, NULL);
+    iniciarCodigo(&$$, "{\n");
     generarAsignacion(&$$);
 
     char codigoO[10000];
@@ -453,7 +453,7 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
     generarOperacionBasica(&$$, $2.lexema, $1, $3);
   }
   | EXPR OP_EQ EXPR {
-    if(!(assert_tipo($1, booleano) && assert_tipo($3, booleano))){
+    if(!igualdad_de_tipos($1, $3)){
       TS_error_tipos_operacion($2.lexema, $1.tipo, $3.tipo);
     } else {
       $$.tipo = booleano;
