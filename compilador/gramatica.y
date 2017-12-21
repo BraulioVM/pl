@@ -571,12 +571,22 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
   | FL_BOOL_CH {
     char *lexema = $1.lexema;
 
-    $$.nombreSint = $1.lexema;
     switch(lexema[0]) {
-        case 'v': $$.tipo = booleano; break;
-        case 'f': $$.tipo = booleano; break;
-        case '\'': $$.tipo = caracter; break;
-        default: $$.tipo = real;
+        case 'v':
+          $$.tipo = booleano;
+          $$.nombreSint = "true";
+          break;
+        case 'f':
+          $$.tipo = booleano;
+          $$.nombreSint = "false";
+          break;
+        case '\'':
+          $$.tipo = caracter;
+          $$.nombreSint = $1.lexema;
+          break;
+        default:
+          $$.tipo = real;
+          $$.nombreSint = $1.lexema;
     }
   }
   | NATURAL {
