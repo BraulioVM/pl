@@ -8,6 +8,7 @@
   void yyerror(const char *s);
   int yydebug = 0;
   int ERROR = 0;
+  char argumentos[1000];
 %}
 
 %token CABECERA_PROGRAMA
@@ -61,10 +62,12 @@ PROGRAMA : CABECERA_PROGRAMA BLOQUE {
     // de ser globales
     cargaBloquePrincipal(&$$, $2.codigoBloque);
 
-    if(!TS_ERROR && !ERROR){
-      printf("%s", $$.codigoSint);
-      finDePrograma();
+    if(TS_ERROR || ERROR){
+      exit(1);
     }
+
+    printf("%s", $$.codigoSint);
+    finDePrograma();
   }
   ;
 
@@ -218,7 +221,7 @@ SENTENCIA : BLOQUE
   | SENTENCIA_WHILE
   | SENTENCIA_ENTRADA
   | SENTENCIA_SALIDA
-  | LLAMADA_PROCED { $$.codigoSint = strdup(""); }
+  | LLAMADA_PROCED
   | SENTENCIA_FOR
   | SENTENCIA_RETURN { $$.codigoSint = "return;\n"; }
   ;
@@ -309,11 +312,15 @@ SENTENCIA_FOR : FOR { iniciarAsignacion(); } NOMBRE INIT_FOR EXPR {
         TS_error_tipos_for_init($3.tipo);
       } else if(!assert_tipo($5, entero)){
         TS_error_tipos_for_init($5.tipo);
-      } else {
-        iniciarCodigo(&$$, NULL);
-        generarAsignacion(&$$);
       }
-    } DIRECCION_FOR EXPR DO SENTENCIA {
+  } DIRECCION_FOR EXPR {
+    if(!assert_tipo($8, entero)){
+      TS_error_tipos_for_init($8.tipo);
+    }
+
+    iniciarCodigo(&$$, "");
+    generarAsignacion(&$$);
+  } DO SENTENCIA {
       char *etiquetaEntrada = etiqueta(), *etiquetaSalida = etiqueta();
       iniciarCodigo(&$$, "{\n");
       char codigoEntrada[1000], codigoInterior[10000], condicion[25], incr[5];
@@ -332,18 +339,18 @@ SENTENCIA_FOR : FOR { iniciarAsignacion(); } NOMBRE INIT_FOR EXPR {
               );
       sprintf(
               codigoEntrada,
-              "%s = %s;\n%s: {\n%s\n if(!(%s)){ goto %s; }\n}\n",
+              "%s;\n%s = %s;\n%s: {\n if(!(%s)){ goto %s; }\n}\n",
+              $9.codigoSint,
               $3.lexema,  // nombreSint
               $5.nombreSint,
               etiquetaEntrada,
-              $6.codigoSint,
               condicion,
               etiquetaSalida
               );
       sprintf(
               codigoInterior,
               "%s\n%s;\n goto %s; %s: asm(\"nop\");\n}\n",
-              $10.codigoSint,
+              $11.codigoSint,
               incr,
               etiquetaEntrada,
               etiquetaSalida
@@ -387,9 +394,21 @@ ARGUMENTOS_PROCEDIMIENTO : LISTA_EXPR
 
 LLAMADA_PROCED : NOMBRE PARENTESIS_IZQ {
     TS_iniciar_llamada($1.lexema);
-  } ARGUMENTOS_PROCEDIMIENTO PARENTESIS_DER {
+    argumentos[0] = '\0';
+    iniciarAsignacion();
+  } ARGUMENTOS_PROCEDIMIENTO PARENTESIS_DER PYC {
     TS_finalizar_llamada();
-  } PYC
+    iniciarCodigo(&$$, "{\n");
+    generarAsignacion(&$$);
+    char codigo[1000];
+    sprintf(
+            codigo,
+            "%s(%s);\n}\n",
+            $1.lexema,  // nombreSint
+            argumentos
+            );
+    ccat(&$$, codigo);
+  }
   ;
 
 EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
@@ -552,12 +571,22 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
   | FL_BOOL_CH {
     char *lexema = $1.lexema;
 
-    $$.nombreSint = $1.lexema;
     switch(lexema[0]) {
-        case 'v': $$.tipo = booleano; break;
-        case 'f': $$.tipo = booleano; break;
-        case '\'': $$.tipo = caracter; break;
-        default: $$.tipo = real;
+        case 'v':
+          $$.tipo = booleano;
+          $$.nombreSint = "true";
+          break;
+        case 'f':
+          $$.tipo = booleano;
+          $$.nombreSint = "false";
+          break;
+        case '\'':
+          $$.tipo = caracter;
+          $$.nombreSint = $1.lexema;
+          break;
+        default:
+          $$.tipo = real;
+          $$.nombreSint = $1.lexema;
     }
   }
   | NATURAL {
@@ -589,6 +618,8 @@ LISTA_EXPR : EXPR {
       comprueba_elemento($1);
     } else if(llamando_procedimiento){
       TS_comprobar_parametro($1);
+      strcat(argumentos, $1.nombreSint);
+      strcat(argumentos, ", ");
     }
   } COMA LISTA_EXPR
   | EXPR {
@@ -596,6 +627,7 @@ LISTA_EXPR : EXPR {
       comprueba_elemento($1);
     } else if(llamando_procedimiento){
       TS_comprobar_parametro($1);
+      strcat(argumentos, $1.nombreSint);
     }
   }
   ;
