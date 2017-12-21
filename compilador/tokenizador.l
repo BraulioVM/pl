@@ -54,13 +54,13 @@ fin_declaracion_variables       \.
 {parentesis_der}       { return PARENTESIS_DER; }
 {token_subprograma}    { return TOKEN_SUBPROGRAMA; }
 {tipo}                 {
-                       switch(yytext[0]) {
-                       case 'b': yylval.tipo = booleano; break;
-                       case 'c': yylval.tipo = caracter; break;
-                       case 'e': yylval.tipo = entero; break;
-                       case 'r': yylval.tipo = real; break;
-                       }
-                       return TIPO;
+                         switch(yytext[0]) {
+                           case 'b': yylval.tipo = booleano; break;
+                           case 'c': yylval.tipo = caracter; break;
+                           case 'e': yylval.tipo = entero; break;
+                           case 'r': yylval.tipo = real; break;
+                         }
+                         return TIPO;
                        }
 {coma}                 { return COMA; }
 {PYC}                  { return PYC; }
@@ -68,7 +68,13 @@ fin_declaracion_variables       \.
 {else}                 { return ELSE; }
 {while}                { return WHILE; }
 {for}                  { return FOR; }
-{direccion_for}        { return DIRECCION_FOR; }
+{direccion_for}        {
+                         switch(yytext[0]){
+                           case 'b': yylval.atributo = 0; break;  // bajando_hasta
+                           case 'h': yylval.atributo = 1; break;  // hasta
+                         }
+                         return DIRECCION_FOR;
+                       }
 {init_for}             { return INIT_FOR; }
 {do}                   { return DO; }
 {scanf}                { return SCANF; }
