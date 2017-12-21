@@ -7,6 +7,7 @@
   int yylex(void);
   void yyerror(const char *s);
   int yydebug = 0;
+  int ERROR = 0;
 %}
 
 %token CABECERA_PROGRAMA
@@ -52,16 +53,18 @@
 %%
 
 PROGRAMA : CABECERA_PROGRAMA BLOQUE {
-         iniciarCodigo(&$$, "");
-         $$.codigoSint[0] = 0;
-         // carga en $$.codigoSint el codigo de todo el programa
-         // esto tiene en cuenta que las variables del main han
-         // de ser globales
-         cargaBloquePrincipal(&$$, $2.codigoBloque);
-         
+    iniciarCodigo(&$$, "");
+    $$.codigoSint[0] = 0;
 
-         printf("%s", $$.codigoSint);
-         finDePrograma();
+    // carga en $$.codigoSint el codigo de todo el programa
+    // esto tiene en cuenta que las variables del main han
+    // de ser globales
+    cargaBloquePrincipal(&$$, $2.codigoBloque);
+
+    if(!TS_ERROR && !ERROR){
+      printf("%s", $$.codigoSint);
+      finDePrograma();
+    }
   }
   ;
 
@@ -581,13 +584,13 @@ LISTA_IDENTIFICADOR_EXPR : IDENTIFICADOR_EXPR { recibirAVariable($1); }
   | IDENTIFICADOR_EXPR COMA LISTA_IDENTIFICADOR_EXPR { recibirAVariable($1); }
   ;
 
-LISTA_EXPR : EXPR COMA LISTA_EXPR {
+LISTA_EXPR : EXPR {
     if(definiendo_vector()){
       comprueba_elemento($1);
     } else if(llamando_procedimiento){
       TS_comprobar_parametro($1);
     }
-  }
+  } COMA LISTA_EXPR
   | EXPR {
     if(definiendo_vector()){
       comprueba_elemento($1);
@@ -610,11 +613,13 @@ VECTOR : LLAVE_IZQ { inicia_vector(); } LISTA_EXPR LLAVE_DER {
 #include "tokenizador.c"
 
 void yyerror(const char *s) {
-    printf(
-           "Yacc error at line %d: %s. Unexpected \"%s\"\n",
-           yylineno,
-           s,
-           yytext);
+  ERROR = 1;
+  printf(
+         "Yacc error at line %d: %s. Unexpected \"%s\"\n",
+         yylineno,
+         s,
+         yytext
+         );
 }
 
 int main(){

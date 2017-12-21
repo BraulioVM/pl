@@ -83,6 +83,7 @@ typedef struct {
 #define bool unsigned short
 
 Tabla tabla;
+extern bool TS_ERROR;
 
 
 void TS_insertar_marca();
