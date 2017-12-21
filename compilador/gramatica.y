@@ -455,6 +455,8 @@ EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
   | EXPR OP_EQ EXPR {
     if(!igualdad_de_tipos($1, $3)){
       TS_error_tipos_operacion($2.lexema, $1.tipo, $3.tipo);
+    } else if(!igualdad_de_tipos_y_dimensiones($1, $3)){
+      TS_error_dimensiones_operacion($2.lexema, $1, $3);
     } else {
       $$.tipo = booleano;
 
