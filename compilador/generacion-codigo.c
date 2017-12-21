@@ -158,12 +158,15 @@ void imprimePrintf(t_token *t) {
 
 bool declarandoVariables = false;
 
-void inicioDePrograma(t_token *t) {
+void cargaBloquePrincipal(t_token *t, CodigoBloque *cb) {
   ccat(t, "#include <stdio.h>\n");
   ccat(t, "typedef int bool;\n");
   ccat(t, "#define true 1\n");
   ccat(t, "#define false 0\n");
-  ccat(t, "int main()\n");
+  ccat(t, codigoDeclaraciones(cb));
+  ccat(t, "int main() { \n");
+  ccat(t, cb->codigo);
+  ccat(t, "}\n");
 }
 
 void finDePrograma() {
@@ -235,4 +238,39 @@ void imprimeScanf(t_token *t) {
   }
 
   ccat(t, ");\n");
+}
+CodigoBloque *bloqueActual;
+
+void reservarBloque(t_token *t) {
+  t->codigoBloque = malloc(sizeof(CodigoBloque));
+  CodigoBloque *cb = t->codigoBloque;
+  bloqueActual = cb;
+  cb->variablesLocales = malloc(sizeof (DeclaracionVariable) * 30);
+  cb->procedimientos = malloc(sizeof(DeclaracionProcedimiento) * 10);
+  cb->codigo = malloc(sizeof(char) * 100000);
+  cb->nVariables = 0;
+  cb->nProcedimientos = 0;
+}
+
+void addVariableAlBloque(t_dato tipo, char *nombre) {
+  bloqueActual->variablesLocales[bloqueActual->nVariables].nombre = nombre;
+  bloqueActual->variablesLocales[bloqueActual->nVariables++].tipo = tipo;
+}
+
+char *codigoDeclaraciones(CodigoBloque *cb) {
+  char declaraciones[10000];
+  strcpy(declaraciones, "");
+
+  int i;
+  for (i = 0; i < cb->nVariables; i++) {
+    char linea[1000];
+    char *nombre = cb->variablesLocales[i].nombre;
+    t_dato tipo = cb->variablesLocales[i].tipo;
+    char tipoS[10];
+    tipoC(tipoS, tipo);
+    sprintf(linea, "%s %s;\n", tipoS, nombre);
+    strcat(declaraciones, linea);
+  }
+
+  return strdup(declaraciones);
 }

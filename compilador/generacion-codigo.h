@@ -49,10 +49,16 @@ void imprimeScanf(t_token*);
 
 bool declarandoVariables;
 
-void inicioDePrograma(t_token*);
+void cargaBloquePrincipal(t_token*, CodigoBloque*);
 void finDePrograma();
 
 void iniciarCodigo(t_token *c, char*);
 void ccat(t_token*, char*);
 
+void reservarBloque(t_token *t);
+void addVariableAlBloque(t_dato tipo, char *nombre);
+
+CodigoBloque *bloqueActual;
+
+char *codigoDeclaraciones(CodigoBloque*);
 #endif
