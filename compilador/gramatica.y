@@ -299,11 +299,15 @@ SENTENCIA_FOR : FOR { iniciarAsignacion(); } NOMBRE INIT_FOR EXPR {
         TS_error_tipos_for_init($3.tipo);
       } else if(!assert_tipo($5, entero)){
         TS_error_tipos_for_init($5.tipo);
-      } else {
-        iniciarCodigo(&$$, "");
-        generarAsignacion(&$$);
       }
-    } DIRECCION_FOR EXPR DO SENTENCIA {
+  } DIRECCION_FOR EXPR {
+    if(!assert_tipo($8, entero)){
+      TS_error_tipos_for_init($8.tipo);
+    }
+
+    iniciarCodigo(&$$, "");
+    generarAsignacion(&$$);
+  } DO SENTENCIA {
       char *etiquetaEntrada = etiqueta(), *etiquetaSalida = etiqueta();
       iniciarCodigo(&$$, "{\n");
       char codigoEntrada[1000], codigoInterior[10000], condicion[25], incr[5];
@@ -322,18 +326,18 @@ SENTENCIA_FOR : FOR { iniciarAsignacion(); } NOMBRE INIT_FOR EXPR {
               );
       sprintf(
               codigoEntrada,
-              "%s = %s;\n%s: {\n%s\n if(!(%s)){ goto %s; }\n}\n",
+              "%s;\n%s = %s;\n%s: {\n if(!(%s)){ goto %s; }\n}\n",
+              $9.codigoSint,
               $3.lexema,  // nombreSint
               $5.nombreSint,
               etiquetaEntrada,
-              $6.codigoSint,
               condicion,
               etiquetaSalida
               );
       sprintf(
               codigoInterior,
               "%s\n%s;\n goto %s; %s: asm(\"nop\");\n}\n",
-              $10.codigoSint,
+              $11.codigoSint,
               incr,
               etiquetaEntrada,
               etiquetaSalida
