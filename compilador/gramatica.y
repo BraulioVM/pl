@@ -8,6 +8,7 @@
   void yyerror(const char *s);
   int yydebug = 0;
   int ERROR = 0;
+  char argumentos[1000];
 %}
 
 %token CABECERA_PROGRAMA
@@ -205,7 +206,7 @@ SENTENCIA : BLOQUE
   | SENTENCIA_WHILE
   | SENTENCIA_ENTRADA
   | SENTENCIA_SALIDA
-  | LLAMADA_PROCED { $$.codigoSint = strdup(""); }
+  | LLAMADA_PROCED
   | SENTENCIA_FOR
   | SENTENCIA_RETURN { $$.codigoSint = "return;\n"; }
   ;
@@ -297,7 +298,7 @@ SENTENCIA_FOR : FOR { iniciarAsignacion(); } NOMBRE INIT_FOR EXPR {
       } else if(!assert_tipo($5, entero)){
         TS_error_tipos_for_init($5.tipo);
       } else {
-        iniciarCodigo(&$$, NULL);
+        iniciarCodigo(&$$, "");
         generarAsignacion(&$$);
       }
     } DIRECCION_FOR EXPR DO SENTENCIA {
@@ -374,9 +375,21 @@ ARGUMENTOS_PROCEDIMIENTO : LISTA_EXPR
 
 LLAMADA_PROCED : NOMBRE PARENTESIS_IZQ {
     TS_iniciar_llamada($1.lexema);
-  } ARGUMENTOS_PROCEDIMIENTO PARENTESIS_DER {
+    argumentos[0] = '\0';
+    iniciarAsignacion();
+  } ARGUMENTOS_PROCEDIMIENTO PARENTESIS_DER PYC {
     TS_finalizar_llamada();
-  } PYC
+    iniciarCodigo(&$$, "{\n");
+    generarAsignacion(&$$);
+    char codigo[1000];
+    sprintf(
+            codigo,
+            "%s(%s);\n}\n",
+            $1.lexema,  // nombreSint
+            argumentos
+            );
+    ccat(&$$, codigo);
+  }
   ;
 
 EXPR : PARENTESIS_IZQ EXPR PARENTESIS_DER { $$ = $2; }
@@ -576,6 +589,8 @@ LISTA_EXPR : EXPR {
       comprueba_elemento($1);
     } else if(llamando_procedimiento){
       TS_comprobar_parametro($1);
+      strcat(argumentos, $1.nombreSint);
+      strcat(argumentos, ", ");
     }
   } COMA LISTA_EXPR
   | EXPR {
@@ -583,6 +598,7 @@ LISTA_EXPR : EXPR {
       comprueba_elemento($1);
     } else if(llamando_procedimiento){
       TS_comprobar_parametro($1);
+      strcat(argumentos, $1.nombreSint);
     }
   }
   ;
