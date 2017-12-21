@@ -195,7 +195,7 @@ SENTENCIA : BLOQUE
   | SENTENCIA_ENTRADA
   | SENTENCIA_SALIDA
   | LLAMADA_PROCED { $$.codigoSint = strdup(""); }
-  | SENTENCIA_FOR { $$.codigoSint = strdup(""); }
+  | SENTENCIA_FOR
   | SENTENCIA_RETURN { $$.codigoSint = "return;\n"; }
   ;
 
@@ -279,14 +279,52 @@ SENTENCIA_WHILE : WHILE { iniciarAsignacion(); } PARENTESIS_IZQ EXPR {
   }
   ;
 
-SENTENCIA_FOR : FOR NOMBRE INIT_FOR EXPR {
-  asignar_identificador(&$2, $2.lexema);
-    if(!assert_tipo($2, entero)){
-      TS_error_tipos_for_init($2.tipo);
-    } else if(!assert_tipo($4, entero)){
-      TS_error_tipos_for_init($4.tipo);
+SENTENCIA_FOR : FOR { iniciarAsignacion(); } NOMBRE INIT_FOR EXPR {
+    asignar_identificador(&$3, $3.lexema);
+    if(!assert_tipo($3, entero)){
+      TS_error_tipos_for_init($3.tipo);
+    } else if(!assert_tipo($5, entero)){
+      TS_error_tipos_for_init($5.tipo);
+    } else {
+      iniciarCodigo(&$$, NULL);
+      generarAsignacion(&$$);
     }
-  } DIRECCION_FOR EXPR DO SENTENCIA
+    } DIRECCION_FOR EXPR DO SENTENCIA {
+      char *etiquetaEntrada = etiqueta(), *etiquetaSalida = etiqueta();
+      iniciarCodigo(&$$, "{\n");
+      char codigoEntrada[1000], codigoInterior[10000], condicion[25], incr[5];
+      sprintf(
+              incr,
+              "%si",
+              $7.atributo == 0 ? "--" : "++"
+              );
+      sprintf(
+              condicion,
+              "i %c= %s",
+              $7.atributo == 0 ? '>' : '<',
+              $8.nombreSint
+              );
+      sprintf(
+              codigoEntrada,
+              "int i = %s;\n%s: {\n%s\n if(!(%s)){ goto %s; }}\n",
+              $5.nombreSint,
+              etiquetaEntrada,
+              $6.codigoSint,
+              condicion,
+              etiquetaSalida
+              );
+      sprintf(
+              codigoInterior,
+              "%s\n%s;\n goto %s; %s: asm(\"nop\");\n}\n",
+              $10.codigoSint,
+              incr,
+              etiquetaEntrada,
+              etiquetaSalida
+              );
+
+      ccat(&$$, codigoEntrada);
+      ccat(&$$, codigoInterior);
+    }
   ;
 
 SENTENCIA_ENTRADA : SCANF { iniciarEntrada(); } LISTA_IDENTIFICADOR_EXPR PYC {
