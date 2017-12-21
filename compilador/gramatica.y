@@ -76,15 +76,17 @@ BLOQUE :
   DECLARACION_VARIABLES_LOCALES {
       $$.codigoBloque = bloqueActual;
   }
-  DECLARACION_SUBPROGRAMAS
+  DECLARACION_SUBPROGRAMAS { $$.codigoBloque = bloqueActual; }
   SENTENCIAS
   FIN_DE_BLOQUE {
     TS_fin_bloque();
     iniciarCodigo(&$$, "{\n");
     $$.codigoBloque = $4.codigoBloque;
-    $$.codigoBloque->codigo = $6.codigoSint;
+    $$.codigoBloque->nProcedimientos = $6.codigoBloque->nProcedimientos;
+    $$.codigoBloque->procedimientos = $6.codigoBloque->procedimientos;
+    $$.codigoBloque->codigo = $7.codigoSint;
     ccat(&$$, $3.codigoSint);
-    ccat(&$$, $6.codigoSint);
+    ccat(&$$, $7.codigoSint);
     ccat(&$$, "}\n");
   }
   ;
@@ -162,18 +164,26 @@ DIMENSIONES : NATURAL    {
   | NATURAL COMA NATURAL { $$.dimensiones = 2; $$.dimension_1 = $1.atributo; $$.dimension_2 = $3.atributo; }
   ;
 
-DECLARACION_SUBPROGRAMAS : DECLARACION_SUBPROGRAMAS DECLARACION_SUBPROGRAMA
+DECLARACION_SUBPROGRAMAS : DECLARACION_SUBPROGRAMAS DECLARACION_SUBPROGRAMA {
+                         reservarBloque(&$$);
+                         addProcedimientoAlBloque($$.codigoBloque, $2.codigoBloque->procedimientos);
+}
   |
   ;
 
 DECLARACION_SUBPROGRAMA : CABECERA_SUBPROGRAMA BLOQUE {
-
+                        $$.codigoBloque->procedimientos[0] = $1.codigoBloque->procedimientos[0];
+                        $$.codigoBloque->procedimientos[0].codigo = $2.codigoSint;
   }
   ;
 
 CABECERA_SUBPROGRAMA : TOKEN_SUBPROGRAMA
-                       NOMBRE { TS_insertar_procedimiento($2); }
-                       PARENTESIS_IZQ PARAMETROS_PROCEDIMIENTO PARENTESIS_DER
+                       NOMBRE {
+                              TS_insertar_procedimiento($2);
+                              reservarProcedimiento(&$$);
+                              $$.codigoBloque->procedimientos[0].nombre = $2.lexema;
+                       }
+                       PARENTESIS_IZQ PARAMETROS_PROCEDIMIENTO PARENTESIS_DER { $$.codigoBloque = $3.codigoBloque; }
   ;
 
 INICIO_DE_BLOQUE : LLAVE_IZQ
@@ -182,7 +192,10 @@ INICIO_DE_BLOQUE : LLAVE_IZQ
 FIN_DE_BLOQUE : LLAVE_DER
   ;
 
-PARAMETRO : TIPO IDENTIFICADOR { TS_insertar_parametro($2); }
+PARAMETRO : TIPO IDENTIFICADOR {
+          TS_insertar_parametro($2);
+          addParametroAlProcedimiento($1.tipo, $2.lexema);
+  }
   | error
   ;
 

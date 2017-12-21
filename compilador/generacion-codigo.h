@@ -56,9 +56,15 @@ void iniciarCodigo(t_token *c, char*);
 void ccat(t_token*, char*);
 
 void reservarBloque(t_token *t);
+void reservarProcedimiento(t_token *t);
 void addVariableAlBloque(t_dato tipo, char *nombre);
+void addParametroAlProcedimiento(t_dato tipo, char *nombre);
+void addProcedimientoAlBloque(CodigoBloque *cb, DeclaracionProcedimiento *p);
 
 CodigoBloque *bloqueActual;
+DeclaracionProcedimiento *procedimientoActual;
 
 char *codigoDeclaraciones(CodigoBloque*);
+char *codigoProcedimientos(CodigoBloque*);
+
 #endif
