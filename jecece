@@ -1,0 +1,5 @@
+#!/bin/bash
+
+base=$(basename $1)
+./bin/gramatizador < $1 > obj/$base.c
+gcc -g obj/$base.c
