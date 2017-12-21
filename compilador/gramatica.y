@@ -571,13 +571,13 @@ LISTA_IDENTIFICADOR_EXPR : IDENTIFICADOR_EXPR { recibirAVariable($1); }
   | IDENTIFICADOR_EXPR COMA LISTA_IDENTIFICADOR_EXPR { recibirAVariable($1); }
   ;
 
-LISTA_EXPR : EXPR COMA LISTA_EXPR {
+LISTA_EXPR : EXPR {
     if(definiendo_vector()){
       comprueba_elemento($1);
     } else if(llamando_procedimiento){
       TS_comprobar_parametro($1);
     }
-  }
+  } COMA LISTA_EXPR
   | EXPR {
     if(definiendo_vector()){
       comprueba_elemento($1);
