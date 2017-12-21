@@ -1,5 +1,5 @@
 BIENVENIDO {
-    sea entero int.
+    sea entero int, i.
     
     para i := 0 hasta 10 hacer {
         int = int + i;
