@@ -20,7 +20,7 @@ BIENVENIDO {
         }
 
         procedimiento impr(){
-            imprimir f, m;
+            imprimir f, "  ", m;
         }
 
         m = 2 * n;
@@ -28,6 +28,7 @@ BIENVENIDO {
         impr();
     }
 
+    imprimir "introduzca el limite";
     captar limite;
     
     para i := 0 hasta limite hacer {

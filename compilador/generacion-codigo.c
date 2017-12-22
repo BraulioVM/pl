@@ -272,7 +272,7 @@ void addParametroAlProcedimiento(t_dato tipo, char *nombre) {
 }
 
 void addProcedimientoAlBloque(CodigoBloque *cb, DeclaracionProcedimiento *p) {
-  cb->procedimientos[bloqueActual->nProcedimientos++] = *p;
+  cb->procedimientos[cb->nProcedimientos++] = *p;
 }
 
 char *codigoDeclaraciones(CodigoBloque *cb) {
