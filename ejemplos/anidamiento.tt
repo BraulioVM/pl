@@ -1,0 +1,36 @@
+BIENVENIDO {
+    sea entero i, limite.
+
+    procedimiento par(entero n){
+        sean entero f, m.
+
+        procedimiento fib(){
+            sean entero a, b, c, j.
+            a = 0;
+            b = 1;
+            c = 0;
+
+            para j := 0 hasta n hacer {
+                c = a;
+                a = b;
+                b = c + b;
+            }
+
+            f = b;
+        }
+
+        procedimiento impr(){
+            imprimir f, m;
+        }
+
+        m = 2 * n;
+        fib();
+        impr();
+    }
+
+    captar limite;
+    
+    para i := 0 hasta limite hacer {
+        par(i);
+    }
+}
