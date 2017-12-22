@@ -43,14 +43,11 @@ BIENVENIDO {
            }
 
            si (cuenta > 0) {
-              si (primero == 0) {
-
                  si (cuenta > 1) {
                     imprimir curr, "^", cuenta;
                  } si_no {
                     imprimir curr;
                  }
-              }
               
            }
 }

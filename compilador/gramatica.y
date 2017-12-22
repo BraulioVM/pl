@@ -86,6 +86,7 @@ BLOQUE :
     $$.codigoBloque->procedimientos = $6.codigoBloque->procedimientos;
     $$.codigoBloque->codigo = $7.codigoSint;
     ccat(&$$, $3.codigoSint);
+    ccat(&$$, codigoProcedimientos($$.codigoBloque));
     ccat(&$$, $7.codigoSint);
     ccat(&$$, "}\n");
   }

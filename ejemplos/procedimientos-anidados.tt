@@ -1,0 +1,14 @@
+BIENVENIDO {
+           sean entero n, x.
+
+           procedimiento hey(entero x) {
+                         procedimiento hey2 (entero a) {
+                                       volver;
+                                       imprimir x + a;   
+                         }
+                         hey2(3);
+                         imprimir "hola";
+           }
+
+           hey(23);
+}
