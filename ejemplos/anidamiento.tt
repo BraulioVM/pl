@@ -24,6 +24,7 @@ BIENVENIDO {
         }
 
         m = 2 * n;
+        fib();
         impr();
     }
 
