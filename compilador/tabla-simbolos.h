@@ -164,5 +164,5 @@ void TS_error_dimensiones_acceso(uint esperadas, uint recibidas);
 void TS_error_referencia(const char* mensaje);
 void TS_error_redeclaracion_parametro(const char* parametro);
 void TS_error_numero_parametros(const char* proc, uint esperados, uint recibidos);
-
+void TS_error_redeclaracion(const char*);
 #endif
