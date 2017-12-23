@@ -165,26 +165,26 @@ DIMENSIONES : NATURAL    {
   | NATURAL COMA NATURAL { $$.dimensiones = 2; $$.dimension_1 = $1.atributo; $$.dimension_2 = $3.atributo; }
   ;
 
-DECLARACION_SUBPROGRAMAS : DECLARACION_SUBPROGRAMAS DECLARACION_SUBPROGRAMA {
-                         reservarBloque(&$$);
-                         addProcedimientoAlBloque($$.codigoBloque, $2.codigoBloque->procedimientos);
-}
+DECLARACION_SUBPROGRAMAS : DECLARACION_SUBPROGRAMA {
+    reservarBloque(&$$);
+    addProcedimientoAlBloque($$.codigoBloque, $1.codigoBloque->procedimientos);
+  } DECLARACION_SUBPROGRAMAS
   |
   ;
 
 DECLARACION_SUBPROGRAMA : CABECERA_SUBPROGRAMA BLOQUE {
-                        $$.codigoBloque->procedimientos[0] = $1.codigoBloque->procedimientos[0];
-                        $$.codigoBloque->procedimientos[0].codigo = $2.codigoSint;
+    $$.codigoBloque->procedimientos[0] = $1.codigoBloque->procedimientos[0];
+    $$.codigoBloque->procedimientos[0].codigo = $2.codigoSint;
   }
   ;
 
-CABECERA_SUBPROGRAMA : TOKEN_SUBPROGRAMA
-                       NOMBRE {
-                              TS_insertar_procedimiento($2);
-                              reservarProcedimiento(&$$);
-                              $$.codigoBloque->procedimientos[0].nombre = $2.lexema;
-                       }
-                       PARENTESIS_IZQ PARAMETROS_PROCEDIMIENTO PARENTESIS_DER { $$.codigoBloque = $3.codigoBloque; }
+CABECERA_SUBPROGRAMA : TOKEN_SUBPROGRAMA NOMBRE {
+    TS_insertar_procedimiento($2);
+    reservarProcedimiento(&$$);
+    $$.codigoBloque->procedimientos[0].nombre = $2.lexema;
+  } PARENTESIS_IZQ PARAMETROS_PROCEDIMIENTO PARENTESIS_DER {
+    $$.codigoBloque = $3.codigoBloque;
+  }
   ;
 
 INICIO_DE_BLOQUE : LLAVE_IZQ
@@ -194,8 +194,8 @@ FIN_DE_BLOQUE : LLAVE_DER
   ;
 
 PARAMETRO : TIPO IDENTIFICADOR {
-          TS_insertar_parametro($2);
-          addParametroAlProcedimiento($1.tipo, $2.lexema);
+    TS_insertar_parametro($2);
+    addParametroAlProcedimiento($1.tipo, $2.lexema);
   }
   | error
   ;
@@ -209,9 +209,9 @@ PARAMETROS_PROCEDIMIENTO : LISTA_PARAMETROS
   ;
 
 SENTENCIAS : SENTENCIAS SENTENCIA {
-           iniciarCodigo(&$$, $1.codigoSint);
-           ccat(&$$, "\n");
-           ccat(&$$, $2.codigoSint);
+    iniciarCodigo(&$$, $1.codigoSint);
+    ccat(&$$, "\n");
+    ccat(&$$, $2.codigoSint);
   }
   | { $$.codigoSint = strdup(""); }
   ;
