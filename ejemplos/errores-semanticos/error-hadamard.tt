@@ -1,0 +1,14 @@
+BIENVENIDO {
+    sean
+        entero a[2, 2];
+        entero b[2, 3];
+        real c[2, 2];
+        entero d;
+        real e
+    .
+
+    a = a * b;
+    a = a * c;
+    a = a * e;
+    c = c * d;
+}

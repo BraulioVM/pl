@@ -54,13 +54,13 @@ fin_declaracion_variables       \.
 {parentesis_der}       { return PARENTESIS_DER; }
 {token_subprograma}    { return TOKEN_SUBPROGRAMA; }
 {tipo}                 {
-                       switch(yytext[0]) {
-                       case 'b': yylval.tipo = booleano; break;
-                       case 'c': yylval.tipo = caracter; break;
-                       case 'e': yylval.tipo = entero; break;
-                       case 'r': yylval.tipo = real; break;
-                       }
-                       return TIPO;
+                         switch(yytext[0]) {
+                           case 'b': yylval.tipo = booleano; break;
+                           case 'c': yylval.tipo = caracter; break;
+                           case 'e': yylval.tipo = entero; break;
+                           case 'r': yylval.tipo = real; break;
+                         }
+                         return TIPO;
                        }
 {coma}                 { return COMA; }
 {PYC}                  { return PYC; }
@@ -68,28 +68,75 @@ fin_declaracion_variables       \.
 {else}                 { return ELSE; }
 {while}                { return WHILE; }
 {for}                  { return FOR; }
-{direccion_for}        { return DIRECCION_FOR; }
+{direccion_for}        {
+                         switch(yytext[0]){
+                           case 'b': yylval.atributo = 0; break;  // bajando_hasta
+                           case 'h': yylval.atributo = 1; break;  // hasta
+                         }
+                         return DIRECCION_FOR;
+                       }
 {init_for}             { return INIT_FOR; }
 {do}                   { return DO; }
 {scanf}                { return SCANF; }
 {printf}               { return PRINTF; }
 {return}               { return RETURN; }
-{plus_minus}           { return PLUS_MINUS; }
+{plus_minus}           {
+                         if(yytext[0] == '-'){
+                           yylval.atributo = 1;
+                         } else {
+                            yylval.atributo = 0;
+                         }
+                         yylval.lexema = strdup(yytext);
+                         return PLUS_MINUS;
+                       }
 {not}                  { return NOT; }
-{op_or}                { return OP_OR; }
-{op_and}               { return OP_AND; }
-{op_eq}                { return OP_EQ; }
-{op_cmp}               { return OP_CMP; }
-{op_mult}              { return OP_MULT; }
+{op_or}                {
+                         yylval.lexema = strdup(yytext);
+                         return OP_OR;
+                       }
+{op_and}               {
+                         yylval.lexema = strdup(yytext);
+                         return OP_AND;
+                       }
+{op_eq}                {
+                         if(yytext[0] == '!'){
+                           yylval.atributo = 1;
+                         } else{
+                            yylval.atributo = 0;
+                         }
+                         yylval.lexema = strdup(yytext);
+                         return OP_EQ;
+                       }
+{op_cmp}               {
+                         if(strcmp(yytext, "<=") == 0){ yylval.atributo = 0; }
+                         if(strcmp(yytext, "<") == 0){  yylval.atributo = 1; }
+                         if(strcmp(yytext, ">=") == 0){ yylval.atributo = 2; }
+                         if(strcmp(yytext, ">") == 0){  yylval.atributo = 3; }
+                         yylval.lexema = strdup(yytext);
+                         return OP_CMP;
+                       }
+{op_mult}              {
+                         if(yytext[0] == '*'){
+                           yylval.atributo = 0;
+                         } else {
+                            yylval.atributo = 1;
+                         }
+                         yylval.lexema = strdup(yytext);
+                         return OP_MULT;
+                       }
 {op_mult_mat}          { return OP_MULT_MAT; }
 {equals}               { return EQUALS; }
 {natural}              { yylval.atributo = atoi(yytext);
+                         yylval.lexema = yytext;
                          return NATURAL; }
 {fl_bool_ch}           {
                        yylval.lexema = strdup(yytext);
                        return FL_BOOL_CH;
                        }
-{cadena}               { return CADENA; }
+{cadena}               {
+                         yylval.lexema = strdup(yytext);
+                         return CADENA;
+                       }
 {nombre}               {
                        yylval.lexema = strdup(yytext);
                        return NOMBRE;
@@ -97,6 +144,7 @@ fin_declaracion_variables       \.
 [\ \t]                 { }
 [\n]                   { yylineno++; }
 .                      {
+    ERROR = 1;
     printf("Error léxico: %s no esperado en línea %d\n", yytext, yylineno );
 }
 

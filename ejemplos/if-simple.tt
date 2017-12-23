@@ -1,0 +1,19 @@
+BIENVENIDO {
+           sean entero x, y.
+
+           x = 3;
+           y = x * x + 3;
+
+           si (x > y) {
+              imprimir "x mayor que y";
+           } si_no {
+              imprimir "que va y mayor que x", y, x;
+
+              si (x < y) {
+                 si (x <= y) {
+                    imprimir "esto es obligatorio";
+                 }
+              }
+
+           }
+}

@@ -1,0 +1,13 @@
+BIENVENIDO {
+           sean entero limite, x.
+
+           limite = 1000;
+           x = 0;
+
+           imprimir "cuadrados hasta ", limite;
+
+           mientras (x * x < limite) {
+                    imprimir x*x;
+                    x = x + 1;
+           }
+}

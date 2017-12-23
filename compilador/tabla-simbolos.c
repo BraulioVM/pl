@@ -1,11 +1,17 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
 #include "tabla-simbolos.h"
+
+int yylineno;  // viene del tokenizador con un extern
 
 #define true 1
 #define false 0
 
 Tabla tabla = { .tope = 0 };
+bool TS_ERROR = false;
+
 
 bool TS_ififitsisits(){
   return tabla.tope < MAX_TS_SIZE - 1;
@@ -16,7 +22,7 @@ bool TS_identificador_libre(char* identificador){
 
   while(tabla.pila[curr].tipoEntrada != marca){
     if(tabla.pila[curr].tipoEntrada == variable &&
-       strcmp(tabla.pila[curr].nombre, identificador) == 0){
+       stringeq(tabla.pila[curr].nombre, identificador)){
       return false;
     }
 
@@ -29,7 +35,7 @@ bool TS_identificador_libre(char* identificador){
     /* Estamos en el bloque de un subprograma/procedimiento,
      * por lo que debemos comprobar también en sus parámetros formales
      */
-    if(strcmp(tabla.pila[curr].nombre, identificador) == 0){
+    if(stringeq(tabla.pila[curr].nombre, identificador)){
       return false;
     }
 
@@ -43,7 +49,7 @@ bool TS_identificador_libre(char* identificador){
 bool TS_parametro_libre(char* parametro){
   t_posicion curr = tabla.tope + 1;
   while(tabla.pila[--curr].tipoEntrada == parametro_formal){
-    if(strcmp(tabla.pila[curr].nombre, parametro) == 0){
+    if(stringeq(tabla.pila[curr].nombre, parametro)){
       return false;
     }
   }
@@ -91,8 +97,7 @@ void TS_insertar_identificador(t_token identificador){
 
       TS_insertar_entrada(ident);
     } else {
-      printf(
-             "Error semántico: redeclaración de la variable %s\n",
+      TS_error_redeclaracion(
              identificador.lexema
              );
     }
@@ -171,77 +176,61 @@ void TS_dimension_matriz( t_token dimension_1, t_token dimension_2 ){
 }
 
 
-void assert_tipo(t_token token, t_dato tipo) {
-  if (token.tipo != tipo) {
-    yyerror("Error semántico: tipos incorrectos");
-  }
+bool assert_tipo(t_token token, t_dato tipo) {
+  return token.tipo == tipo;
 }
-
 
 void asignar_identificador(t_token *token, char *identificador) {
-  uint identificadorEncontrado = false;
-  int indicePila;
-  for (indicePila = tabla.tope; indicePila >= 0; indicePila--) {
+  t_posicion pos = TS_encontrar_entrada(identificador);
 
-    if (tabla.pila[indicePila].tipoEntrada == variable &&
-        strcmp(tabla.pila[indicePila].nombre, identificador) == 0) {
-
-      identificadorEncontrado = true;
-      break;
-    }
-  }
-
-  if (!identificadorEncontrado) {
-    yyerror("Identificador no encontrado");
+  if(pos == -1) {
+    TS_error_referencia(identificador);
   } else {
-    token->tipo = tabla.pila[indicePila].tipoDato;
-    token->lexema = tabla.pila[indicePila].nombre;
-    token->dimensiones = tabla.pila[indicePila].dimensiones;
-    token->dimension_1 = tabla.pila[indicePila].dimension_1;
-    token->dimension_2 = tabla.pila[indicePila].dimension_2;
+    token->tipo = tabla.pila[pos].tipoDato;
+    token->lexema = tabla.pila[pos].nombre;
+    token->dimensiones = tabla.pila[pos].dimensiones;
+    token->dimension_1 = tabla.pila[pos].dimension_1;
+    token->dimension_2 = tabla.pila[pos].dimension_2;
   }
 }
 
-void asignar_identificador_array(t_token *token, char *identificador) {
+void asignar_identificador_array(t_token *token, char *identificador){
   t_posicion var_pos = TS_encontrar_entrada(identificador);
 
-  if (var_pos != -1) {
+  if(var_pos == -1){
+    TS_error_referencia(identificador);
+  } else {
     Entrada var = tabla.pila[var_pos];
 
-    if (var.dimensiones == 0) {
-      yyerror("no se puede utilizar el operador de corchete sobre una variable primitiva");
+    if(var.dimensiones == 0){
+      TS_error_dimensiones_acceso(1, var.dimensiones);
     } else {
       token->lexema = var.nombre;
       token->tipo = var.tipoDato;
       token->dimensiones = var.dimensiones - 1;
-      token->dimension_1 = var.dimensiones == 1? 0 : var.dimension_2;
+      token->dimension_1 = var.dimensiones == 1 ? 0 : var.dimension_2;
       token->dimension_2 = 0;
     }
-
-  } else {
-    yyerror("no existe tal identificador");
   }
-
 }
 
 void asignar_identificador_matriz(t_token *token, char *nombre) {
   t_posicion var_pos = TS_encontrar_entrada(nombre);
 
-  if (var_pos != -1) {
+  if(var_pos == -1){
+    TS_error_referencia(nombre);
+  } else {
     Entrada var = tabla.pila[var_pos];
 
-    if (var.dimensiones == 2) {
+    if(var.dimensiones == 2){
       token->lexema = var.nombre;
       token->tipo = var.tipoDato;
       token->dimensiones = 0;
       token->dimension_1 = 0;
       token->dimension_2 = 0;
     } else {
-      yyerror("la variable debe ser una matriz");
+      TS_error_dimensiones_acceso(2, var.dimensiones);
     }
-
-  } else {
-    yyerror("no existe tal identificador");
   }
 }
 
@@ -259,6 +248,22 @@ t_posicion TS_ultimo_procedimiento(){
   return curr;
 }
 
+char* TS_dimensiones(t_token token){
+  char format[10], tmp[100];
+  format[0] = '\0';  // evita reutilización de memoria basura
+
+  if(token.dimensiones == 0){
+    strcat(format, "[]");
+  } else if(token.dimensiones == 1){
+    strcat(format, "[%d]");
+  } else if(token.dimensiones == 2){
+    strcat(format, "[%d, %d]");
+  }
+
+  sprintf(tmp, format, token.dimension_1, token.dimension_2);
+  char *ptr = strdup(tmp);
+  return ptr;
+}
 
 bool tipo_numerico(t_token t){
   return t.tipo == real || t.tipo == entero;
@@ -300,12 +305,12 @@ void inicia_vector() {
 }
 
 
-void comprueba_elemento (t_token token) {
-  if (elementos_leidos == 0) {
+void comprueba_elemento(t_token token) {
+  if(elementos_leidos == 0){
     tipo_elementos = token.tipo;
   } else {
-    if (token.tipo != tipo_elementos) {
-      yyerror("error de tipos en vector");
+    if(token.tipo != tipo_elementos){
+      TS_error_tipos_vector(tipo_elementos, token.tipo);
     }
   }
 
@@ -432,9 +437,9 @@ void TS_finalizar_llamada(){
   procedimiento_actual = 0;
 }
 
-
 void TS_error(const char* mensaje){
-  fprintf(stderr, "%s\n", mensaje);
+  fprintf(stderr, "L%d: %s\n", yylineno, mensaje);
+  TS_ERROR = true;
 }
 
 
@@ -449,11 +454,34 @@ void TS_error_redeclaracion_parametro(const char *parametro){
 }
 
 
+void TS_error_redeclaracion(const char *parametro){
+  char base[100];
+  sprintf(
+          base,
+          "Error: redeclaración de '%s'",
+          parametro
+          );
+  TS_error(base);
+}
+
+
 void TS_error_tipos(const char* mensaje){
   char tmp[400];
   strcat(tmp, "Error de tipos: ");
   strcat(tmp, mensaje);
   TS_error(tmp);
+}
+
+
+void TS_error_tipos_vector(const t_dato esperado, const t_dato recibido){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "se esperaba un valor de tipo '%s' en la inicialización del vector. En su lugar se encontró un valor de tipo '%s'.",
+          TS_nombre_tipo(esperado),
+          TS_nombre_tipo(recibido)
+          );
+  TS_error_tipos(mensaje);
 }
 
 
@@ -466,14 +494,6 @@ void TS_error_referencia(const char* referencia){
           referencia
           );
   TS_error(base);
-}
-
-
-void TS_error_dimensiones(const char* mensaje){
-  char tmp[400];
-  strcat(tmp, "Error de dimensiones: ");
-  strcat(tmp, mensaje);
-  TS_error(tmp);
 }
 
 
@@ -499,6 +519,77 @@ void TS_error_tipos_argumento(const char* param, const char* proc, t_dato espera
           proc,
           TS_nombre_tipo(esperado),
           TS_nombre_tipo(recibido)
+          );
+  TS_error_tipos(mensaje);
+}
+
+
+void TS_error_tipos_asignacion(const t_token lhs, const t_token rhs){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "no se pudo asignar un valor de tipo '%s' al identificador '%s' (de tipo '%s').",
+          TS_nombre_tipo(rhs.tipo),
+          lhs.lexema,
+          TS_nombre_tipo(lhs.tipo)
+          );
+  TS_error_tipos(mensaje);
+}
+
+
+void TS_error_tipos_operacion(const char* op, const t_dato tipoA, const t_dato tipoB){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "tipos no soportados por el operador '%s': '%s' y '%s'.",
+          op,
+          TS_nombre_tipo(tipoA),
+          TS_nombre_tipo(tipoB)
+          );
+  TS_error_tipos(mensaje);
+}
+
+
+void TS_error_tipos_for_init(const t_dato recibido){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "la variable iteradora debe ser de tipo entero. En su lugar se encontró un valor de tipo '%s'.",
+          TS_nombre_tipo(recibido)
+          );
+  TS_error_tipos(mensaje);
+}
+
+
+void TS_error_tipos_condicion(const t_dato recibido){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "la condición debe ser de tipo booleano. En su lugar se encontró un valor de tipo '%s'.",
+          TS_nombre_tipo(recibido)
+          );
+  TS_error_tipos(mensaje);
+}
+
+
+void TS_error_dimensiones(const char* mensaje){
+  char tmp[400];
+  strcat(tmp, "Error de dimensiones: ");
+  strcat(tmp, mensaje);
+  TS_error(tmp);
+}
+
+
+void TS_error_dimensiones_asignacion(const t_token lhs, const t_token rhs){
+  char mensaje[200], *left_dim, *right_dim;
+  left_dim = TS_dimensiones(lhs);
+  right_dim = TS_dimensiones(rhs);
+  sprintf(
+          mensaje,
+          "no se pudo asignar un valor de dimensiones '%s' al identificador '%s' (de dimensiones '%s').",
+          right_dim,
+          lhs.lexema,
+          left_dim
           );
   TS_error_tipos(mensaje);
 }
@@ -541,6 +632,51 @@ void TS_error_dimensiones_dimension2_argumento(const char* param, const char* pr
           param,
           esperado,
           recibido
+          );
+  TS_error_dimensiones(mensaje);
+}
+
+
+void TS_error_dimensiones_operacion(const char* op, const t_token left, const t_token right){
+  char mensaje[200], *dim_left, *dim_right;
+  dim_left = TS_dimensiones(left);
+  dim_right = TS_dimensiones(right);
+  sprintf(
+          mensaje,
+          "%s %s %s no soportado",
+          dim_left,
+          op,
+          dim_right
+          );
+  TS_error_dimensiones(mensaje);
+  free(dim_left);
+  free(dim_right);
+}
+
+
+void TS_error_dimensiones_producto_matrices(const t_token left, const t_token right){
+  char mensaje[200], *dim_left, *dim_right;
+  dim_left = TS_dimensiones(left);
+  dim_right = TS_dimensiones(right);
+  sprintf(
+          mensaje,
+          "%s ** %s no soportado. Las dimensiones de las matrices no son compatibles para su producto.",
+          dim_left,
+          dim_right
+          );
+  TS_error_dimensiones(mensaje);
+  free(dim_left);
+  free(dim_right);
+}
+
+
+void TS_error_dimensiones_acceso(uint esperadas, uint recibidas){
+  char mensaje[200];
+  sprintf(
+          mensaje,
+          "se esperaba un valor de %d dimensiones pero en su lugar se encontró uno de %d.",
+          esperadas,
+          recibidas
           );
   TS_error_dimensiones(mensaje);
 }
