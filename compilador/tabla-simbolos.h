@@ -100,7 +100,6 @@ static inline const char* TS_nombre_tipo(t_dato tipo){
 
 bool tipo_numerico(t_token);
 bool igualdad_de_tipos(t_token, t_token);
-bool igualdad_de_dimensiones(t_token, t_token);
 bool igualdad_de_tipos_y_dimensiones(t_token, t_token);
 
 void inicia_vector();
@@ -132,7 +131,5 @@ void TS_error_tipos_argumento(const char* param, const char* proc, t_dato espera
 void TS_error_dimensiones_argumento(const char* param, const char* proc, uint esperadas, uint recibidas);
 void TS_error_dimensiones_dimension1_argumento(const char* param, const char* proc, uint esperado, uint recibido);
 void TS_error_dimensiones_dimension2_argumento(const char* param, const char* proc, uint esperado, uint recibido);
-
-const char * nombre_tipo( t_dato tipo );
 
 #endif

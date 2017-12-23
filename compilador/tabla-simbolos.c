@@ -16,7 +16,7 @@ bool TS_identificador_libre(char* identificador){
 
   while(tabla.pila[curr].tipoEntrada != marca){
     if(tabla.pila[curr].tipoEntrada == variable &&
-       stringeq( tabla.pila[curr].nombre, identificador ) ){
+       strcmp(tabla.pila[curr].nombre, identificador) == 0){
       return false;
     }
 
@@ -29,7 +29,7 @@ bool TS_identificador_libre(char* identificador){
     /* Estamos en el bloque de un subprograma/procedimiento,
      * por lo que debemos comprobar también en sus parámetros formales
      */
-    if( stringeq( tabla.pila[curr].nombre, identificador ) ){
+    if(strcmp(tabla.pila[curr].nombre, identificador) == 0){
       return false;
     }
 
@@ -43,7 +43,7 @@ bool TS_identificador_libre(char* identificador){
 bool TS_parametro_libre(char* parametro){
   t_posicion curr = tabla.tope + 1;
   while(tabla.pila[--curr].tipoEntrada == parametro_formal){
-    if( stringeq( tabla.pila[curr].nombre, parametro ) ){
+    if(strcmp(tabla.pila[curr].nombre, parametro) == 0){
       return false;
     }
   }
@@ -184,7 +184,7 @@ void asignar_identificador(t_token *token, char *identificador) {
   for (indicePila = tabla.tope; indicePila >= 0; indicePila--) {
 
     if (tabla.pila[indicePila].tipoEntrada == variable &&
-        stringeq( tabla.pila[indicePila].nombre, identificador ) ) {
+        strcmp(tabla.pila[indicePila].nombre, identificador) == 0) {
 
       identificadorEncontrado = true;
       break;
@@ -268,13 +268,6 @@ bool igualdad_de_tipos(t_token t1, t_token t2){
   return t1.tipo == t2.tipo;
 }
 
-bool igualdad_de_dimensiones(t_token t1, t_token t2) {
-
-  return
-    t1.dimensiones == t2.dimensiones &&
-    ( t1.dimensiones < 1 || t1.dimension_1 == t2.dimension_1 ) &&
-    ( t1.dimensiones < 2 || t1.dimension_2 == t2.dimension_2 );
-}
 
 bool igualdad_de_tipos_y_dimensiones(t_token t1, t_token t2) {
   bool eq = igualdad_de_tipos(t1, t2) && t1.dimensiones == t2.dimensiones;
@@ -449,8 +442,7 @@ void TS_error_redeclaracion_parametro(const char *parametro){
   char base[100];
   sprintf(
           base,
-          "Error en la línea %d: argumento '%s' duplicado en declaración de procedimiento",
-          yyget_lineno(),
+          "Error: argumento '%s' duplicado en declaración de procedimiento",
           parametro
           );
   TS_error(base);
@@ -459,11 +451,8 @@ void TS_error_redeclaracion_parametro(const char *parametro){
 
 void TS_error_tipos(const char* mensaje){
   char tmp[400];
-  sprintf(
-    tmp,
-    "Error de tipos en la línea %d: %s",
-    yyget_lineno(),
-    mensaje );
+  strcat(tmp, "Error de tipos: ");
+  strcat(tmp, mensaje);
   TS_error(tmp);
 }
 
@@ -473,8 +462,7 @@ void TS_error_referencia(const char* referencia){
   char base[100];
   sprintf(
           base,
-          "Error de referencia en la línea %d: el nombre '%s' no ha sido definido.",
-          yyget_lineno(),
+          "Error de referencia: el nombre '%s' no ha sido definido.",
           referencia
           );
   TS_error(base);
@@ -483,11 +471,8 @@ void TS_error_referencia(const char* referencia){
 
 void TS_error_dimensiones(const char* mensaje){
   char tmp[400];
-  sprintf(
-    tmp,
-    "Error de dimensiones en la línea %d: %s",
-    yyget_lineno(),
-    mensaje );
+  strcat(tmp, "Error de dimensiones: ");
+  strcat(tmp, mensaje);
   TS_error(tmp);
 }
 
@@ -558,18 +543,4 @@ void TS_error_dimensiones_dimension2_argumento(const char* param, const char* pr
           recibido
           );
   TS_error_dimensiones(mensaje);
-}
-
-
-const char * nombre_tipo( t_dato tipo ){
-
-  char nombre[15];
-
-  switch ( tipo ){
-    case 1: return "booleano";
-    case 2: return "caracter";
-    case 3: return "entero";
-    case 4: return "real";
-    default: return "NA";
-  }
 }
