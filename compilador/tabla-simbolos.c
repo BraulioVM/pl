@@ -97,8 +97,7 @@ void TS_insertar_identificador(t_token identificador){
 
       TS_insertar_entrada(ident);
     } else {
-      printf(
-             "Error semántico: redeclaración de la variable %s\n",
+      TS_error_redeclaracion(
              identificador.lexema
              );
     }
@@ -449,6 +448,17 @@ void TS_error_redeclaracion_parametro(const char *parametro){
   sprintf(
           base,
           "Error: argumento '%s' duplicado en declaración de procedimiento",
+          parametro
+          );
+  TS_error(base);
+}
+
+
+void TS_error_redeclaracion(const char *parametro){
+  char base[100];
+  sprintf(
+          base,
+          "Error: redeclaración de '%s'",
           parametro
           );
   TS_error(base);

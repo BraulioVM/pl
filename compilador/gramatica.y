@@ -76,18 +76,20 @@ BLOQUE :
   DECLARACION_VARIABLES_LOCALES {
       $$.codigoBloque = bloqueActual;
   }
-  DECLARACION_SUBPROGRAMAS { $$.codigoBloque = bloqueActual; }
+  DECLARACION_SUBPROGRAMAS
   SENTENCIAS
   FIN_DE_BLOQUE {
     TS_fin_bloque();
     iniciarCodigo(&$$, "{\n");
     $$.codigoBloque = $4.codigoBloque;
-    $$.codigoBloque->nProcedimientos = $6.codigoBloque->nProcedimientos;
-    $$.codigoBloque->procedimientos = $6.codigoBloque->procedimientos;
-    $$.codigoBloque->codigo = $7.codigoSint;
+    if ($5.codigoBloque != 0x0) {
+       $$.codigoBloque->nProcedimientos = $5.codigoBloque->nProcedimientos;
+       $$.codigoBloque->procedimientos = $5.codigoBloque->procedimientos;
+    }
+    $$.codigoBloque->codigo = $6.codigoSint;
     ccat(&$$, $3.codigoSint);
     ccat(&$$, codigoProcedimientos($$.codigoBloque));
-    ccat(&$$, $7.codigoSint);
+    ccat(&$$, $6.codigoSint);
     ccat(&$$, "}\n");
   }
   ;
@@ -165,10 +167,13 @@ DIMENSIONES : NATURAL    {
   | NATURAL COMA NATURAL { $$.dimensiones = 2; $$.dimension_1 = $1.atributo; $$.dimension_2 = $3.atributo; }
   ;
 
-DECLARACION_SUBPROGRAMAS : DECLARACION_SUBPROGRAMA {
-    reservarBloque(&$$);
-    addProcedimientoAlBloque($$.codigoBloque, $1.codigoBloque->procedimientos);
-  } DECLARACION_SUBPROGRAMAS
+DECLARACION_SUBPROGRAMAS : DECLARACION_SUBPROGRAMAS DECLARACION_SUBPROGRAMA {
+    $$.codigoBloque = $1.codigoBloque;
+    if($$.codigoBloque == 0x0){
+      reservarBloque(&$$);
+    }
+    addProcedimientoAlBloque($$.codigoBloque, $2.codigoBloque->procedimientos);
+  }
   |
   ;
 
